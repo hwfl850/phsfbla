@@ -1,0 +1,2532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Pensacola High School FBLA – Future Business Leaders of America chapter site with study resources and AI-powered prep tools." />
+  <meta property="og:title" content="Pensacola High FBLA" />
+  <meta property="og:description" content="Future Business Leaders of America – Pensacola High School Chapter" />
+  <meta property="og:type" content="website" />
+  <title>Pensacola High FBLA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Merriweather:wght@700;900&display=swap" rel="stylesheet" />
+
+  <!--
+  ╔══════════════════════════════════════════════════════════════════╗
+  ║                     SECURITY NOTICE                             ║
+  ║                                                                 ║
+  ║  Password protection on this page is URL-obscurity-based.      ║
+  ║  The study page URL fragment is the SHA-256 hex digest of the  ║
+  ║  access password. SHA-256 is a one-way cryptographic hash —    ║
+  ║  the digest embedded here cannot be reversed to recover the    ║
+  ║  original password without an exhaustive preimage attack.      ║
+  ║                                                                 ║
+  ║  The password is NEVER stored or transmitted — only its hash   ║
+  ║  is compared at runtime in the browser using the Web Crypto    ║
+  ║  API (crypto.subtle). The study page URL is not linked from    ║
+  ║  any navigation element; direct URL knowledge is required.     ║
+  ║                                                                 ║
+  ║  The Gemini API key is stored exclusively in the visiting      ║
+  ║  user's own browser localStorage and is never sent anywhere    ║
+  ║  other than Google's Gemini API endpoint.                      ║
+  ╚══════════════════════════════════════════════════════════════════╝
+  -->
+
+  <style>
+    /* ── CSS custom properties (theme, overridden by admin panel) ── */
+    :root {
+      --primary:    #003DA5;
+      --accent:     #FFD100;
+      --bg:         #ffffff;
+      --surface:    #f4f6fb;
+      --text:       #0d1b3e;
+      --text-muted: #5a6a8a;
+      --border:     #d0d8ee;
+      --radius:     10px;
+      --font-body:  'Inter', sans-serif;
+      --font-head:  'Merriweather', serif;
+      --shadow:     0 4px 24px rgba(0,61,165,0.10);
+      --transition: 0.25s cubic-bezier(.4,0,.2,1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--primary);
+      color: #fff;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,.25);
+      min-height: 68px;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .logo-svg { flex-shrink: 0; }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+    }
+
+    .logo-text .chapter-name {
+      font-family: var(--font-head);
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--accent);
+      letter-spacing: .01em;
+    }
+
+    .logo-text .chapter-sub {
+      font-size: .72rem;
+      font-weight: 500;
+      color: rgba(255,255,255,.85);
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    nav { display: flex; gap: .25rem; align-items: center; }
+
+    nav a {
+      color: rgba(255,255,255,.88);
+      text-decoration: none;
+      padding: .45rem .85rem;
+      border-radius: var(--radius);
+      font-size: .88rem;
+      font-weight: 500;
+      transition: background var(--transition), color var(--transition);
+    }
+
+    nav a:hover, nav a.active {
+      background: rgba(255,255,255,.15);
+      color: #fff;
+    }
+
+    nav a.nav-accent {
+      background: var(--accent);
+      color: var(--primary);
+      font-weight: 700;
+      margin-left: .5rem;
+    }
+
+    nav a.nav-accent:hover { background: #ffe94d; }
+
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: .4rem;
+      color: #fff;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2.5px;
+      background: #fff;
+      border-radius: 2px;
+      transition: var(--transition);
+    }
+
+    /* ── Mobile nav ── */
+    @media (max-width: 640px) {
+      .hamburger { display: flex; }
+      nav {
+        display: none;
+        position: absolute;
+        top: 68px;
+        left: 0; right: 0;
+        background: var(--primary);
+        flex-direction: column;
+        padding: 1rem;
+        gap: .5rem;
+        box-shadow: 0 8px 24px rgba(0,0,0,.2);
+      }
+      nav.open { display: flex; }
+      nav a { width: 100%; text-align: center; padding: .7rem; }
+    }
+
+    /* ── Main content ── */
+    main {
+      flex: 1;
+      opacity: 1;
+      transition: opacity var(--transition);
+    }
+
+    main.fading { opacity: 0; }
+
+    /* ── Page container ── */
+    .page { max-width: 1100px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, var(--primary) 0%, #0057c8 100%);
+      color: #fff;
+      padding: 5rem 1.5rem 4.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 50%, rgba(255,209,0,.18) 0%, transparent 60%);
+    }
+
+    .hero-content { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; }
+
+    .hero h1 {
+      font-family: var(--font-head);
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 900;
+      line-height: 1.15;
+      margin-bottom: 1.1rem;
+    }
+
+    .hero h1 span { color: var(--accent); }
+
+    .hero p {
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: rgba(255,255,255,.9);
+      max-width: 580px;
+      margin: 0 auto 2rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .7rem 1.6rem;
+      border-radius: var(--radius);
+      font-weight: 700;
+      font-size: .95rem;
+      cursor: pointer;
+      text-decoration: none;
+      border: none;
+      transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
+    }
+
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.2); }
+    .btn:active { transform: translateY(0); }
+
+    .btn-primary { background: var(--accent); color: var(--primary); }
+    .btn-outline {
+      background: transparent;
+      color: #fff;
+      border: 2px solid rgba(255,255,255,.5);
+    }
+    .btn-outline:hover { border-color: #fff; }
+    .btn-danger { background: #dc3545; color: #fff; }
+
+    .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    /* ── Sections ── */
+    .section { padding: 3.5rem 1.5rem; }
+    .section-alt { background: var(--surface); }
+
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+
+    .section-title {
+      font-family: var(--font-head);
+      font-size: 1.75rem;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: 0.4rem;
+    }
+
+    .section-line {
+      width: 48px;
+      height: 4px;
+      background: var(--accent);
+      border-radius: 2px;
+      margin-bottom: 2rem;
+    }
+
+    /* ── Cards grid ── */
+    .cards { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+
+    .card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+
+    .card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,61,165,.13); }
+
+    .card-icon {
+      width: 44px; height: 44px;
+      background: var(--primary);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .card-icon svg { fill: var(--accent); }
+
+    .card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: .4rem;
+    }
+
+    .card p {
+      font-size: .88rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+
+    .card a.card-link {
+      display: inline-block;
+      margin-top: .8rem;
+      font-size: .82rem;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: underline;
+    }
+
+    /* ── Officers ── */
+    .officers { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+
+    .officer {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      flex: 1 1 160px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .officer-avatar {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto .75rem;
+      font-size: 1.5rem;
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    .officer h4 { font-size: .95rem; font-weight: 700; color: var(--primary); }
+    .officer span { font-size: .78rem; color: var(--text-muted); }
+
+    /* ── CTA banner ── */
+    .cta-banner {
+      background: linear-gradient(135deg, var(--primary), #0057c8);
+      color: #fff;
+      border-radius: 14px;
+      padding: 2.5rem;
+      text-align: center;
+    }
+
+    .cta-banner h2 {
+      font-family: var(--font-head);
+      font-size: 1.5rem;
+      margin-bottom: .7rem;
+    }
+
+    .cta-banner p { color: rgba(255,255,255,.85); margin-bottom: 1.5rem; }
+
+    /* ── Events ── */
+    .events-list { display: flex; flex-direction: column; gap: .75rem; }
+
+    .event-item {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      box-shadow: var(--shadow);
+    }
+
+    .event-date {
+      background: var(--primary);
+      color: var(--accent);
+      font-weight: 800;
+      font-size: .8rem;
+      text-align: center;
+      padding: .4rem .7rem;
+      border-radius: 6px;
+      flex-shrink: 0;
+      line-height: 1.2;
+    }
+
+    .event-info h4 { font-size: .95rem; font-weight: 700; color: var(--primary); }
+    .event-info p { font-size: .82rem; color: var(--text-muted); }
+
+    /* ── Admin panel ── */
+    .admin-panel { max-width: 720px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+
+    .admin-panel h2 {
+      font-family: var(--font-head);
+      font-size: 1.6rem;
+      color: var(--primary);
+      margin-bottom: .3rem;
+    }
+
+    .admin-section {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--shadow);
+    }
+
+    .admin-section h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 1.1rem;
+      padding-bottom: .6rem;
+      border-bottom: 2px solid var(--accent);
+    }
+
+    .admin-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: .9rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .admin-row:last-child { margin-bottom: 0; }
+
+    .admin-row label {
+      font-size: .9rem;
+      font-weight: 500;
+      color: var(--text);
+      flex: 1;
+    }
+
+    .admin-row input[type="color"] {
+      width: 48px; height: 36px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      padding: 2px;
+    }
+
+    .admin-row select, .admin-row input[type="text"], .admin-row input[type="password"] {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: .45rem .7rem;
+      font-size: .88rem;
+      font-family: var(--font-body);
+      color: var(--text);
+      background: var(--bg);
+      min-width: 200px;
+    }
+
+    .admin-row input[type="text"], .admin-row input[type="password"] { min-width: 260px; }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: .75rem;
+    }
+
+    .toggle-row label { font-size: .9rem; color: var(--text); flex: 1; }
+
+    /* toggle switch */
+    .toggle { position: relative; display: inline-block; width: 44px; height: 24px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: #ccc;
+      border-radius: 24px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .slider::before {
+      content: '';
+      position: absolute;
+      width: 18px; height: 18px;
+      left: 3px; bottom: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+    .toggle input:checked + .slider { background: var(--primary); }
+    .toggle input:checked + .slider::before { transform: translateX(20px); }
+
+    .admin-save-row { display: flex; gap: .75rem; margin-top: 1rem; flex-wrap: wrap; }
+
+    .btn-sm { padding: .45rem 1rem; font-size: .85rem; }
+
+    /* ── Password page ── */
+    .password-page {
+      max-width: 420px;
+      margin: 6rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .password-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 8px 40px rgba(0,61,165,.13);
+      text-align: center;
+    }
+
+    .password-card .lock-icon {
+      width: 64px; height: 64px;
+      background: var(--primary);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.25rem;
+    }
+
+    .password-card h2 {
+      font-family: var(--font-head);
+      font-size: 1.35rem;
+      color: var(--primary);
+      margin-bottom: .5rem;
+    }
+
+    .password-card p {
+      font-size: .88rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .password-input-wrap { position: relative; margin-bottom: 1rem; }
+
+    .password-input-wrap input {
+      width: 100%;
+      padding: .7rem 2.8rem .7rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 1rem;
+      font-family: var(--font-body);
+      color: var(--text);
+      background: var(--bg);
+      transition: border-color var(--transition);
+    }
+
+    .password-input-wrap input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: .75rem; top: 50%;
+      transform: translateY(-50%);
+      background: none; border: none;
+      cursor: pointer; color: var(--text-muted);
+      padding: 0;
+    }
+
+    .error-msg {
+      background: #fff0f0;
+      border: 1px solid #ffcdd2;
+      color: #c62828;
+      border-radius: 8px;
+      padding: .6rem .9rem;
+      font-size: .85rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .error-msg.show { display: block; }
+
+    .btn-full { width: 100%; justify-content: center; }
+
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2.5px solid rgba(255,255,255,.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      margin-left: .3rem;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Study page ── */
+    .study-header {
+      background: linear-gradient(135deg, var(--primary) 0%, #0057c8 100%);
+      color: #fff;
+      padding: 3rem 1.5rem;
+      text-align: center;
+    }
+
+    .study-header h1 {
+      font-family: var(--font-head);
+      font-size: clamp(1.5rem, 4vw, 2.3rem);
+      margin-bottom: .5rem;
+    }
+
+    .study-header p { color: rgba(255,255,255,.85); font-size: .95rem; }
+
+    .study-content { max-width: 1100px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+
+    .study-events { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); margin-bottom: 3rem; }
+
+    .event-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+
+    .event-card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,61,165,.12); }
+
+    .event-card-tag {
+      display: inline-block;
+      background: var(--primary);
+      color: var(--accent);
+      font-size: .7rem;
+      font-weight: 700;
+      padding: .2rem .6rem;
+      border-radius: 4px;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      align-self: flex-start;
+    }
+
+    .event-card h4 { font-size: .95rem; font-weight: 700; color: var(--primary); }
+    .event-card p { font-size: .82rem; color: var(--text-muted); line-height: 1.55; }
+
+    .event-card a {
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: underline;
+      margin-top: auto;
+    }
+
+    /* ── Chatbot ── */
+    .chatbot-section {
+      background: var(--surface);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .chatbot-header {
+      background: var(--primary);
+      color: #fff;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+    }
+
+    .chatbot-avatar {
+      width: 40px; height: 40px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .chatbot-header .bot-name { font-weight: 700; font-size: .95rem; }
+    .chatbot-header .bot-sub { font-size: .75rem; color: rgba(255,255,255,.75); }
+
+    .chatbot-status {
+      width: 9px; height: 9px;
+      background: #4cde80;
+      border-radius: 50%;
+      margin-left: auto;
+      box-shadow: 0 0 6px #4cde80;
+    }
+
+    .no-key-banner {
+      background: #fff8e1;
+      border-bottom: 1px solid #ffe082;
+      padding: .75rem 1.25rem;
+      font-size: .85rem;
+      color: #795548;
+      display: none;
+    }
+
+    .no-key-banner.show { display: block; }
+    .no-key-banner a { color: var(--primary); font-weight: 600; cursor: pointer; }
+
+    .chatbot-messages {
+      height: 380px;
+      overflow-y: auto;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: .85rem;
+      scroll-behavior: smooth;
+    }
+
+    .message {
+      max-width: 82%;
+      animation: msgIn .25s ease forwards;
+    }
+
+    @keyframes msgIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+    .message.user { align-self: flex-end; }
+    .message.bot  { align-self: flex-start; }
+
+    .msg-bubble {
+      padding: .65rem 1rem;
+      border-radius: 14px;
+      font-size: .88rem;
+      line-height: 1.6;
+    }
+
+    .message.user .msg-bubble {
+      background: var(--primary);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message.bot .msg-bubble {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+    }
+
+    .msg-name {
+      font-size: .72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: .2rem;
+      padding: 0 .25rem;
+    }
+
+    .typing-indicator {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      padding: .65rem 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      border-bottom-left-radius: 4px;
+      width: fit-content;
+    }
+
+    .typing-dot {
+      width: 7px; height: 7px;
+      background: var(--text-muted);
+      border-radius: 50%;
+      animation: typingBounce 1.2s infinite;
+    }
+
+    .typing-dot:nth-child(2) { animation-delay: .2s; }
+    .typing-dot:nth-child(3) { animation-delay: .4s; }
+
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-5px); }
+    }
+
+    .chatbot-input-area {
+      padding: 1rem 1.25rem;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: .6rem;
+      align-items: flex-end;
+    }
+
+    .chatbot-input-area textarea {
+      flex: 1;
+      resize: none;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: .65rem .9rem;
+      font-family: var(--font-body);
+      font-size: .88rem;
+      color: var(--text);
+      background: var(--surface);
+      max-height: 120px;
+      transition: border-color var(--transition);
+      line-height: 1.5;
+    }
+
+    .chatbot-input-area textarea:focus { outline: none; border-color: var(--primary); }
+
+    .send-btn {
+      width: 42px; height: 42px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: background var(--transition), transform var(--transition);
+    }
+
+    .send-btn:hover { background: #0057c8; transform: scale(1.05); }
+    .send-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+    /* ── Access denied ── */
+    .denied {
+      text-align: center;
+      padding: 8rem 1.5rem;
+    }
+
+    .denied h2 {
+      font-family: var(--font-head);
+      font-size: 2rem;
+      color: #c62828;
+      margin-bottom: .75rem;
+    }
+
+    .denied p { color: var(--text-muted); margin-bottom: 1.5rem; }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--primary);
+      color: rgba(255,255,255,.7);
+      text-align: center;
+      padding: 1.5rem;
+      font-size: .8rem;
+      margin-top: auto;
+    }
+
+    footer strong { color: var(--accent); }
+
+    /* ── Utility ── */
+    .badge {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--primary);
+      font-size: .72rem;
+      font-weight: 700;
+      padding: .15rem .55rem;
+      border-radius: 4px;
+      margin-left: .4rem;
+      text-transform: uppercase;
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .anim { animation: fadeUp .5s ease both; }
+    .anim-1 { animation-delay: .05s; }
+    .anim-2 { animation-delay: .12s; }
+    .anim-3 { animation-delay: .19s; }
+    .anim-4 { animation-delay: .26s; }
+
+    /* ── Quiz Me button on event cards ── */
+    .quiz-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      background: var(--primary);
+      color: var(--accent);
+      border: none;
+      border-radius: 6px;
+      padding: .38rem .8rem;
+      font-size: .78rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: .25rem;
+      align-self: flex-start;
+      transition: background var(--transition), transform var(--transition);
+    }
+    .quiz-btn:hover { background: #0057c8; transform: translateY(-1px); }
+
+    /* ── Quiz Overlay ── */
+    .quiz-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(0,0,0,.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      animation: qFadeIn .2s ease;
+    }
+    @keyframes qFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .quiz-box {
+      background: var(--bg);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 680px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .quiz-header {
+      background: var(--primary);
+      color: #fff;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .75rem;
+      border-radius: 16px 16px 0 0;
+      flex-shrink: 0;
+    }
+    .quiz-title { font-weight: 700; font-size: .95rem; flex: 1; }
+
+    .quiz-meta {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      font-size: .82rem;
+    }
+
+    .quiz-timer {
+      background: rgba(255,255,255,.18);
+      border-radius: 6px;
+      padding: .25rem .65rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: .04em;
+    }
+    .quiz-timer.warning { background: rgba(220,53,69,.85); animation: timerPulse .8s infinite; }
+    @keyframes timerPulse { 0%,100% { opacity: 1; } 50% { opacity: .65; } }
+
+    .quiz-progress-bar { height: 4px; background: var(--surface); flex-shrink: 0; }
+    .quiz-progress-fill { height: 100%; background: var(--accent); transition: width .35s ease; }
+
+    .quiz-body { padding: 1.75rem 1.5rem; flex: 1; }
+
+    .quiz-question-num {
+      font-size: .75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: .5rem;
+    }
+
+    .quiz-question-text {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.6;
+      margin-bottom: 1.25rem;
+    }
+
+    .quiz-options { display: flex; flex-direction: column; gap: .6rem; }
+
+    .quiz-option {
+      display: flex;
+      align-items: flex-start;
+      gap: .75rem;
+      padding: .8rem 1rem;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: .88rem;
+      color: var(--text);
+      background: var(--bg);
+      text-align: left;
+      transition: border-color .15s, background .15s, transform .1s;
+      width: 100%;
+      font-family: var(--font-body);
+      line-height: 1.45;
+    }
+    .quiz-option:hover:not(:disabled) { border-color: var(--primary); background: #eef2ff; transform: translateX(2px); }
+
+    .opt-letter {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px; height: 26px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: .78rem;
+      flex-shrink: 0;
+      transition: background .15s, border-color .15s, color .15s;
+    }
+
+    .quiz-option.correct { border-color: #2e7d32; background: #f1f8e9; }
+    .quiz-option.correct .opt-letter { background: #2e7d32; border-color: #2e7d32; color: #fff; }
+    .quiz-option.wrong   { border-color: #c62828; background: #fff5f5; }
+    .quiz-option.wrong   .opt-letter { background: #c62828; border-color: #c62828; color: #fff; }
+    .quiz-option:disabled { cursor: default; transform: none !important; }
+
+    .quiz-next-btn {
+      margin-top: 1.1rem;
+      width: 100%;
+      padding: .8rem;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      font-weight: 700;
+      font-size: .92rem;
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: background var(--transition), transform var(--transition);
+    }
+    .quiz-next-btn:hover { background: #0057c8; transform: translateY(-1px); }
+
+    /* Quiz loading state */
+    .quiz-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3.5rem 2rem;
+      gap: .85rem;
+      text-align: center;
+    }
+    .quiz-spinner {
+      width: 44px; height: 44px;
+      border: 4px solid var(--surface);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: qSpin .8s linear infinite;
+    }
+    @keyframes qSpin { to { transform: rotate(360deg); } }
+
+    /* Score screen */
+    .quiz-score-screen { padding: 2rem 1.5rem; text-align: center; }
+
+    .quiz-score-circle {
+      width: 118px; height: 118px;
+      border-radius: 50%;
+      border: 6px solid var(--primary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem;
+    }
+    .quiz-score-pct  { font-size: 2rem; font-weight: 900; line-height: 1; color: var(--primary); }
+    .quiz-score-lbl  { font-size: .72rem; color: var(--text-muted); margin-top: .1rem; }
+
+    .quiz-score-stats {
+      display: flex;
+      justify-content: center;
+      gap: 2.25rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .quiz-stat { display: flex; flex-direction: column; align-items: center; gap: .15rem; }
+    .quiz-stat-val { font-size: 1.3rem; font-weight: 800; }
+    .quiz-stat-key { font-size: .72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; }
+
+    .quiz-review { text-align: left; border-top: 1px solid var(--border); padding-top: 1.25rem; }
+    .quiz-review h3 { font-size: .9rem; font-weight: 700; color: var(--primary); margin-bottom: .85rem; }
+
+    .review-item {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: .9rem 1rem;
+      margin-bottom: .65rem;
+      border-left: 3px solid #c62828;
+    }
+    .review-item .rq { font-size: .86rem; font-weight: 600; margin-bottom: .4rem; line-height: 1.45; }
+    .review-item .ra { font-size: .8rem; color: var(--text-muted); line-height: 1.6; }
+
+    .quiz-score-actions {
+      display: flex;
+      gap: .75rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1.35rem;
+    }
+
+    /* Quiz history */
+    .quiz-history-section { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border); }
+
+    .quiz-history-list { display: flex; flex-direction: column; gap: .5rem; margin-top: 1rem; }
+
+    .quiz-history-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: .8rem 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .qhi-event { font-weight: 700; font-size: .88rem; flex: 1; min-width: 140px; }
+    .qhi-score { font-size: 1.1rem; font-weight: 800; }
+    .qhi-meta  { font-size: .76rem; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo-area" onclick="navigate('home')" role="link" tabindex="0" aria-label="Go to homepage">
+    <!-- FBLA Torch Logo SVG -->
+    <svg class="logo-svg" width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="22" cy="22" r="22" fill="#FFD100"/>
+      <!-- Flame -->
+      <path d="M22 6 C20 12 17 14 18 18 C16 16 16 12 18 10 C14 15 14 20 18 23 C17 21 18 19 20 19 C19 22 18 25 20 28 C21 26 22 24 22 22 C22 24 23 26 24 28 C26 25 25 22 24 19 C26 19 27 21 26 23 C30 20 30 15 26 10 C28 12 28 16 26 18 C27 14 24 12 22 6Z" fill="#003DA5"/>
+      <!-- Handle -->
+      <rect x="20" y="28" width="4" height="8" rx="2" fill="#003DA5"/>
+      <!-- Base -->
+      <rect x="17" y="35" width="10" height="3" rx="1.5" fill="#003DA5"/>
+    </svg>
+    <div class="logo-text">
+      <span class="chapter-name">Pensacola High FBLA</span>
+      <span class="chapter-sub">Future Business Leaders of America</span>
+    </div>
+  </div>
+
+  <button class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+
+  <nav id="main-nav" role="navigation" aria-label="Main navigation">
+    <a href="#home"  onclick="navigate('home')"  id="nav-home">Home</a>
+    <a href="#login" onclick="navigate('login')" id="nav-study">Study Resources</a>
+  </nav>
+</header>
+
+<main id="main-content" role="main" aria-live="polite"></main>
+
+<div id="quiz-overlay" hidden></div>
+
+<footer>
+  <strong>Pensacola High School FBLA</strong> &nbsp;|&nbsp; Future Business Leaders of America
+  &nbsp;|&nbsp; Pensacola, FL
+</footer>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// SECURITY CONSTANTS
+// Only the SHA-256 hex digest of the study-area password is stored here.
+// The plaintext password is never in this file.
+// ─────────────────────────────────────────────────────────────────────────────
+const STUDY_HASH = 'bbdff5ad5387d076ea4771fdf878d41486d7ea2b192a0581417bf9fe8704969a';
+
+// Default Gemini model for the AI chatbot and quiz generator.
+const GEMINI_MODEL = 'gemini-2.5-flash';
+const GEMINI_ENDPOINT = (key) =>
+  `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${key}`;
+
+// Chatbot conversation history (in-memory, not persisted)
+let chatHistory = [];
+let isBotTyping = false;
+
+// Server-loaded site data (null = not yet fetched or fetch failed)
+let _serverContent = null;
+let _serverTheme   = null;
+let _serverHasKey  = false; // true when the server has a GEMINI_API_KEY configured
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CONTENT — events, officers, page text (editable via admin panel)
+// ─────────────────────────────────────────────────────────────────────────────
+const CONTENT_DEFAULTS = {
+  headline:    "Pensacola High's Future Business Leaders of America",
+  subheadline: "Developing the next generation of business professionals and community leaders — one competition at a time.",
+  contactEmail: "fbla@pensacolahigh.edu",
+  events: [
+    { date: "JUL 12",  title: "Officer Meeting",              desc: "Planning for the upcoming school year – all officers required." },
+    { date: "AUG 19",  title: "New Member Recruitment Drive", desc: "Welcome incoming freshmen and new members to FBLA." },
+    { date: "SEP 6",   title: "Fall FBLA Meeting",            desc: "First chapter meeting of the school year — competition event sign-ups open." },
+    { date: "NOV 14",  title: "District Leadership Conference", desc: "Regional competitions and leadership workshops. Pre-registration required." },
+    { date: "FEB 2027",title: "State Leadership Conference",   desc: "Compete at the Florida state level — top performers advance to Nationals." },
+  ],
+  officers: [
+    { role: "President",      name: "" },
+    { role: "Vice President", name: "" },
+    { role: "Secretary",      name: "" },
+    { role: "Treasurer",      name: "" },
+    { role: "Reporter",       name: "" },
+    { role: "Adviser",        name: "" },
+  ],
+};
+
+function loadContent() {
+  try {
+    const base = _serverContent || JSON.parse(localStorage.getItem('fbla_content') || '{}');
+    return deepMergeContent(CONTENT_DEFAULTS, base);
+  } catch (_) { return JSON.parse(JSON.stringify(CONTENT_DEFAULTS)); }
+}
+
+function deepMergeContent(defaults, saved) {
+  const result = JSON.parse(JSON.stringify(defaults));
+  if (typeof saved.headline    === 'string') result.headline    = saved.headline;
+  if (typeof saved.subheadline === 'string') result.subheadline = saved.subheadline;
+  if (typeof saved.contactEmail === 'string') result.contactEmail = saved.contactEmail;
+  if (Array.isArray(saved.events))   result.events   = saved.events;
+  if (Array.isArray(saved.officers)) result.officers = saved.officers;
+  return result;
+}
+
+function saveContent(c) {
+  localStorage.setItem('fbla_content', JSON.stringify(c));
+}
+
+function currentContent() {
+  return loadContent();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// THEME / ADMIN SETTINGS
+// ─────────────────────────────────────────────────────────────────────────────
+const THEME_DEFAULTS = {
+  primary:    '#003DA5',
+  accent:     '#FFD100',
+  bg:         '#ffffff',
+  fontBody:   'Inter',
+  showEvents:   true,
+  showOfficers: true,
+  showCta:      true,
+};
+
+function loadTheme() {
+  try {
+    const base = _serverTheme || JSON.parse(localStorage.getItem('fbla_theme') || '{}');
+    const t = { ...THEME_DEFAULTS, ...base };
+    applyTheme(t);
+  } catch (_) { applyTheme(THEME_DEFAULTS); }
+}
+
+async function initSiteData() {
+  try {
+    const [contentRes, statusRes] = await Promise.all([
+      fetch('/api/admin/content', { signal: AbortSignal.timeout(4000) }),
+      fetch('/api/ai/status',     { signal: AbortSignal.timeout(4000) }),
+    ]);
+    if (contentRes.ok) {
+      const data = await contentRes.json();
+      if (data.content) _serverContent = data.content;
+      if (data.theme)   _serverTheme   = data.theme;
+    }
+    if (statusRes.ok) {
+      const s = await statusRes.json();
+      _serverHasKey = !!s.hasKey;
+    }
+  } catch (_) { /* fall through — loadTheme/loadContent use localStorage/defaults */ }
+}
+
+// ─── Gemini call helper ──────────────────────────────────────────────────────
+// Routes through the server proxy when the user has no personal key stored,
+// or calls Gemini directly when they do (preserving the admin-panel key flow).
+async function callGemini(body) {
+  const userKey = localStorage.getItem('fbla_gemini_key') || '';
+  const model   = localStorage.getItem('fbla_gemini_model') || GEMINI_MODEL;
+  if (userKey) {
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${userKey}`;
+    return fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  }
+  if (_serverHasKey) {
+    return fetch('/api/ai/generate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ model, ...body }) });
+  }
+  throw new Error('NO_KEY');
+}
+
+function applyTheme(t) {
+  const r = document.documentElement.style;
+  r.setProperty('--primary', t.primary);
+  r.setProperty('--accent',  t.accent);
+  r.setProperty('--bg',      t.bg);
+  r.setProperty('--font-body', `'${t.fontBody}', sans-serif`);
+  // Expose to sections
+  window.__theme = t;
+}
+
+function saveTheme(t) {
+  localStorage.setItem('fbla_theme', JSON.stringify(t));
+  applyTheme(t);
+}
+
+function currentTheme() {
+  try { return { ...THEME_DEFAULTS, ...JSON.parse(localStorage.getItem('fbla_theme') || '{}') }; }
+  catch (_) { return { ...THEME_DEFAULTS }; }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// HASH-BASED ROUTER
+// ─────────────────────────────────────────────────────────────────────────────
+function navigate(page) {
+  if (page === 'home')  { location.hash = '#home';  return; }
+  if (page === 'login') { location.hash = '#login'; return; }
+  if (page === 'admin') { location.hash = '#admin'; return; }
+  location.hash = '#' + page;
+}
+
+function getPage() {
+  const h = location.hash.replace('#', '').trim();
+  if (!h || h === 'home') return 'home';
+  if (h === 'admin')      return 'admin';
+  if (h === 'login')      return 'login';
+  if (h === STUDY_HASH)   return 'study';
+  return 'denied';
+}
+
+function updateNavActive(page) {
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+  if (page === 'home')  document.getElementById('nav-home')?.classList.add('active');
+  if (page === 'admin') document.getElementById('nav-admin')?.classList.add('active');
+}
+
+const main = document.getElementById('main-content');
+
+function renderPage() {
+  const page = getPage();
+  main.classList.add('fading');
+  setTimeout(() => {
+    main.innerHTML = '';
+    switch (page) {
+      case 'home':  renderHome();  break;
+      case 'admin': renderAdmin(); break;
+      case 'login': renderLogin(); break;
+      case 'study': renderStudy(); break;
+      default:      renderDenied(); break;
+    }
+    updateNavActive(page);
+    main.classList.remove('fading');
+    main.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 200);
+}
+
+window.addEventListener('hashchange', renderPage);
+window.addEventListener('load', async () => {
+  await initSiteData();
+  loadTheme();
+  renderPage();
+
+  // Hamburger menu
+  const ham = document.getElementById('hamburger');
+  const nav = document.getElementById('main-nav');
+  ham.addEventListener('click', () => {
+    const open = nav.classList.toggle('open');
+    ham.setAttribute('aria-expanded', String(open));
+  });
+
+  // Close mobile nav on link click
+  nav.addEventListener('click', () => { nav.classList.remove('open'); ham.setAttribute('aria-expanded', 'false'); });
+
+  // Keyboard: Enter on logo-area
+  document.querySelector('.logo-area').addEventListener('keydown', e => {
+    if (e.key === 'Enter') navigate('home');
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// HOME PAGE
+// ─────────────────────────────────────────────────────────────────────────────
+function renderHome() {
+  const t = currentTheme();
+  const c = currentContent();
+
+  const eventsHtml = c.events.map(ev => {
+    const parts = ev.date.trim().split(/\s+/);
+    const dateLine = parts.length > 1
+      ? parts.slice(0, -1).join(' ') + '<br/>' + parts[parts.length - 1]
+      : ev.date;
+    return `
+      <div class="event-item">
+        <div class="event-date">${dateLine}</div>
+        <div class="event-info">
+          <h4>${escHtml(ev.title)}</h4>
+          <p>${escHtml(ev.desc)}</p>
+        </div>
+      </div>`;
+  }).join('');
+
+  const officersHtml = c.officers.map(off => {
+    const initials = (off.name || off.role || '?')
+      .split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    const displayName = off.name || 'Pensacola High FBLA';
+    return `
+      <div class="officer">
+        <div class="officer-avatar">${escHtml(initials)}</div>
+        <h4>${escHtml(off.role)}</h4>
+        <span>${escHtml(displayName)}</span>
+      </div>`;
+  }).join('');
+
+  main.innerHTML = `
+    <div class="hero">
+      <div class="hero-content">
+        <h1 class="anim">${escHtml(c.headline)}</h1>
+        <p class="anim anim-1">${escHtml(c.subheadline)}</p>
+        <div class="hero-actions anim anim-2">
+          <button class="btn btn-primary" onclick="navigate('login')" aria-label="Go to study resources">Study Resources</button>
+          <a class="btn btn-outline" href="https://www.fbla-pbl.org/fbla/" target="_blank" rel="noopener">Learn About FBLA ↗</a>
+        </div>
+      </div>
+    </div>
+
+    ${t.showEvents && c.events.length ? `
+    <section class="section" id="section-events">
+      <div class="section-inner">
+        <h2 class="section-title">Upcoming Events</h2>
+        <div class="section-line"></div>
+        <div class="events-list">${eventsHtml}</div>
+      </div>
+    </section>
+    ` : ''}
+
+    ${t.showOfficers && c.officers.length ? `
+    <section class="section section-alt" id="section-officers">
+      <div class="section-inner">
+        <h2 class="section-title">Chapter Officers</h2>
+        <div class="section-line"></div>
+        <div class="officers">${officersHtml}</div>
+      </div>
+    </section>
+    ` : ''}
+
+    <section class="section">
+      <div class="section-inner">
+        <div class="cards">
+          <div class="card anim">
+            <div class="card-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 2L3 7l9 5 9-5-9-5zm0 7L3 14l9 5 9-5-9-5zm0 7l-9-5v.01L12 21l9-5V14l-9 5z"/></svg>
+            </div>
+            <h3>Competitive Events</h3>
+            <p>FBLA offers 70+ individual, chapter, and team events covering every area of business.</p>
+            <a class="card-link" href="https://www.fbla-pbl.org/fbla/competitive-events/" target="_blank" rel="noopener">Browse Events ↗</a>
+          </div>
+          <div class="card anim anim-1">
+            <div class="card-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24"><path d="M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2zm7 14l7-7-1.4-1.4L12 14.2l-2.6-2.6L8 13l4 4z"/></svg>
+            </div>
+            <h3>Study Resources</h3>
+            <p>Access study cards, practice tests, and our AI-powered FBLA prep assistant.</p>
+            <a class="card-link" href="#login" onclick="navigate('login')">Access Resources →</a>
+          </div>
+          <div class="card anim anim-2">
+            <div class="card-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+            </div>
+            <h3>Join Our Chapter</h3>
+            <p>Membership is open to all Pensacola High students. Gain leadership skills and compete nationally.</p>
+            <a class="card-link" href="https://www.fbla-pbl.org/fbla/join/" target="_blank" rel="noopener">How to Join ↗</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    ${t.showCta ? `
+    <section class="section section-alt" id="section-cta">
+      <div class="section-inner">
+        <div class="cta-banner">
+          <h2>Ready to Compete at the National Level?</h2>
+          <p>Join Pensacola High FBLA and start your journey to the National Leadership Conference. Past members have earned scholarships and launched careers.</p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" onclick="navigate('login')">Start Studying</button>
+            <a class="btn btn-outline" href="mailto:${escHtml(c.contactEmail)}">Contact Adviser</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    ` : ''}
+  `;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ADMIN PANEL
+// ─────────────────────────────────────────────────────────────────────────────
+
+function escHtml(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function buildEventRowHtml(ev, idx) {
+  return `
+    <div class="content-editor-row" data-idx="${idx}" style="display:flex;gap:.5rem;align-items:center;margin-bottom:.6rem;flex-wrap:wrap;">
+      <input type="text" class="ev-date" value="${escHtml(ev.date)}" placeholder="e.g. JUL 12"
+        style="width:90px;border:1px solid var(--border);border-radius:6px;padding:.4rem .6rem;font-size:.82rem;font-family:var(--font-body);color:var(--text);background:var(--bg);" />
+      <input type="text" class="ev-title" value="${escHtml(ev.title)}" placeholder="Event title"
+        style="flex:1;min-width:140px;border:1px solid var(--border);border-radius:6px;padding:.4rem .6rem;font-size:.82rem;font-family:var(--font-body);color:var(--text);background:var(--bg);" />
+      <input type="text" class="ev-desc" value="${escHtml(ev.desc)}" placeholder="Short description"
+        style="flex:2;min-width:180px;border:1px solid var(--border);border-radius:6px;padding:.4rem .6rem;font-size:.82rem;font-family:var(--font-body);color:var(--text);background:var(--bg);" />
+      <button class="btn btn-danger btn-sm" onclick="removeContentRow(this)" style="flex-shrink:0;">✕</button>
+    </div>`;
+}
+
+function buildOfficerRowHtml(off, idx) {
+  return `
+    <div class="content-editor-row" data-idx="${idx}" style="display:flex;gap:.5rem;align-items:center;margin-bottom:.6rem;flex-wrap:wrap;">
+      <input type="text" class="off-role" value="${escHtml(off.role)}" placeholder="Role (e.g. President)"
+        style="flex:1;min-width:140px;border:1px solid var(--border);border-radius:6px;padding:.4rem .6rem;font-size:.82rem;font-family:var(--font-body);color:var(--text);background:var(--bg);" />
+      <input type="text" class="off-name" value="${escHtml(off.name)}" placeholder="Member name"
+        style="flex:1;min-width:140px;border:1px solid var(--border);border-radius:6px;padding:.4rem .6rem;font-size:.82rem;font-family:var(--font-body);color:var(--text);background:var(--bg);" />
+      <button class="btn btn-danger btn-sm" onclick="removeContentRow(this)" style="flex-shrink:0;">✕</button>
+    </div>`;
+}
+
+function renderAdmin() {
+  const t = currentTheme();
+  const c = currentContent();
+  const savedKey = localStorage.getItem('fbla_gemini_key') || '';
+
+  const eventRowsHtml   = c.events.map((ev, i)  => buildEventRowHtml(ev, i)).join('');
+  const officerRowsHtml = c.officers.map((off, i) => buildOfficerRowHtml(off, i)).join('');
+
+  main.innerHTML = `
+    <div class="admin-panel">
+      <h2>Admin Panel</h2>
+      <p style="color:var(--text-muted);font-size:.85rem;margin-bottom:1.5rem;">
+        Customize the site appearance and manage settings. Changes save to your browser and apply instantly.
+      </p>
+
+      <!-- ── Page Content ── -->
+      <div class="admin-section">
+        <h3>Page Content</h3>
+        <div class="admin-row">
+          <label for="adm-headline" style="min-width:140px;">Hero Headline</label>
+          <input type="text" id="adm-headline" value="${escHtml(c.headline)}"
+            style="flex:1;min-width:280px;border:1px solid var(--border);border-radius:6px;padding:.45rem .7rem;font-size:.88rem;font-family:var(--font-body);color:var(--text);background:var(--bg);" />
+        </div>
+        <div class="admin-row">
+          <label for="adm-subheadline" style="min-width:140px;">Hero Subtext</label>
+          <input type="text" id="adm-subheadline" value="${escHtml(c.subheadline)}"
+            style="flex:1;min-width:280px;border:1px solid var(--border);border-radius:6px;padding:.45rem .7rem;font-size:.88rem;font-family:var(--font-body);color:var(--text);background:var(--bg);" />
+        </div>
+        <div class="admin-row">
+          <label for="adm-email" style="min-width:140px;">Contact Email</label>
+          <input type="text" id="adm-email" value="${escHtml(c.contactEmail)}" placeholder="adviser@school.edu"
+            style="min-width:260px;border:1px solid var(--border);border-radius:6px;padding:.45rem .7rem;font-size:.88rem;font-family:var(--font-body);color:var(--text);background:var(--bg);" />
+        </div>
+      </div>
+
+      <!-- ── Events editor ── -->
+      <div class="admin-section">
+        <h3>Upcoming Events</h3>
+        <p style="font-size:.8rem;color:var(--text-muted);margin-bottom:.9rem;">
+          Date · Title · Description — shown on the homepage when "Show Upcoming Events" is on.
+        </p>
+        <div style="display:flex;gap:.4rem;font-size:.75rem;font-weight:600;color:var(--text-muted);margin-bottom:.4rem;padding:0 .1rem;">
+          <span style="width:90px;">Date</span>
+          <span style="flex:1;">Title</span>
+          <span style="flex:2;">Description</span>
+          <span style="width:38px;"></span>
+        </div>
+        <div id="adm-events-list">${eventRowsHtml}</div>
+        <button class="btn btn-sm" style="background:var(--surface);color:var(--text);border:1px solid var(--border);margin-top:.25rem;"
+          onclick="addEventRow()">+ Add Event</button>
+      </div>
+
+      <!-- ── Officers editor ── -->
+      <div class="admin-section">
+        <h3>Chapter Officers</h3>
+        <p style="font-size:.8rem;color:var(--text-muted);margin-bottom:.9rem;">
+          Role · Member Name — shown on the homepage when "Show Chapter Officers" is on.
+        </p>
+        <div style="display:flex;gap:.4rem;font-size:.75rem;font-weight:600;color:var(--text-muted);margin-bottom:.4rem;padding:0 .1rem;">
+          <span style="flex:1;">Role / Title</span>
+          <span style="flex:1;">Member Name</span>
+          <span style="width:38px;"></span>
+        </div>
+        <div id="adm-officers-list">${officerRowsHtml}</div>
+        <button class="btn btn-sm" style="background:var(--surface);color:var(--text);border:1px solid var(--border);margin-top:.25rem;"
+          onclick="addOfficerRow()">+ Add Officer</button>
+      </div>
+
+      <!-- ── Colors ── -->
+      <div class="admin-section">
+        <h3>Colors</h3>
+        <div class="admin-row">
+          <label for="adm-primary">Primary Color</label>
+          <input type="color" id="adm-primary" value="${t.primary}" />
+        </div>
+        <div class="admin-row">
+          <label for="adm-accent">Accent / Gold</label>
+          <input type="color" id="adm-accent" value="${t.accent}" />
+        </div>
+        <div class="admin-row">
+          <label for="adm-bg">Background</label>
+          <input type="color" id="adm-bg" value="${t.bg}" />
+        </div>
+      </div>
+
+      <!-- ── Typography ── -->
+      <div class="admin-section">
+        <h3>Typography</h3>
+        <div class="admin-row">
+          <label for="adm-font">Body Font</label>
+          <select id="adm-font">
+            <option value="Inter" ${t.fontBody==='Inter'?'selected':''}>Inter (Default)</option>
+            <option value="Georgia" ${t.fontBody==='Georgia'?'selected':''}>Georgia</option>
+            <option value="Merriweather" ${t.fontBody==='Merriweather'?'selected':''}>Merriweather</option>
+            <option value="Roboto" ${t.fontBody==='Roboto'?'selected':''}>Roboto</option>
+            <option value="Arial" ${t.fontBody==='Arial'?'selected':''}>Arial</option>
+            <option value="Trebuchet MS" ${t.fontBody==='Trebuchet MS'?'selected':''}>Trebuchet MS</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- ── Section toggles ── -->
+      <div class="admin-section">
+        <h3>Homepage Sections</h3>
+        <div class="toggle-row">
+          <label for="tog-events">Show Upcoming Events</label>
+          <label class="toggle">
+            <input type="checkbox" id="tog-events" ${t.showEvents?'checked':''} />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <label for="tog-officers">Show Chapter Officers</label>
+          <label class="toggle">
+            <input type="checkbox" id="tog-officers" ${t.showOfficers?'checked':''} />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <label for="tog-cta">Show Join FBLA Banner</label>
+          <label class="toggle">
+            <input type="checkbox" id="tog-cta" ${t.showCta?'checked':''} />
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- ── AI key ── -->
+      <div class="admin-section">
+        <h3>AI Chatbot — Gemini API Key</h3>
+        <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:.9rem;">
+          The key is stored only in <em>your</em> browser's localStorage and sent only to Google's Gemini API.
+          Get a key at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color:var(--primary)">aistudio.google.com/apikey</a>.
+        </p>
+        <div class="admin-row">
+          <label for="adm-apikey">Gemini API Key</label>
+          <input type="password" id="adm-apikey" value="${savedKey}" placeholder="AIza..." autocomplete="off" />
+        </div>
+        <div class="admin-row">
+          <label for="adm-model">Gemini Model</label>
+          <select id="adm-model">
+            <option value="gemini-2.5-flash" ${(localStorage.getItem('fbla_gemini_model')||GEMINI_MODEL)==='gemini-2.5-flash'?'selected':''}>gemini-2.5-flash (Gemini 2.5 Flash — default)</option>
+            <option value="gemini-2.5-pro" ${(localStorage.getItem('fbla_gemini_model')||GEMINI_MODEL)==='gemini-2.5-pro'?'selected':''}>gemini-2.5-pro (Gemini 2.5 Pro — most capable)</option>
+            <option value="gemini-3-flash-preview" ${(localStorage.getItem('fbla_gemini_model')||GEMINI_MODEL)==='gemini-3-flash-preview'?'selected':''}>gemini-3-flash-preview (Gemini 3 Flash)</option>
+            <option value="gemini-3.1-pro-preview" ${(localStorage.getItem('fbla_gemini_model')||GEMINI_MODEL)==='gemini-3.1-pro-preview'?'selected':''}>gemini-3.1-pro-preview (Gemini 3.1 Pro)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <h3>Publish Changes</h3>
+        <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:.9rem;">
+          Enter the site password to save changes for <strong>all visitors</strong>. Without it, changes only apply in your own browser.
+        </p>
+        <div class="admin-row">
+          <label for="adm-server-pw">Site Password</label>
+          <input type="password" id="adm-server-pw" placeholder="Enter password to publish…" autocomplete="off" />
+        </div>
+      </div>
+
+      <div class="admin-save-row">
+        <button class="btn btn-primary btn-sm" onclick="adminSave()">Save &amp; Publish</button>
+        <button class="btn btn-sm" style="background:var(--surface);color:var(--text);border:1px solid var(--border);" onclick="adminReset()">Reset to Defaults</button>
+        <button class="btn btn-sm" style="background:var(--surface);color:var(--text);border:1px solid var(--border);" onclick="exportContent()">Export as JSON</button>
+      </div>
+      <p id="adm-status" style="margin-top:.75rem;font-size:.82rem;display:none;"></p>
+    </div>
+  `;
+
+  ['adm-primary', 'adm-accent', 'adm-bg'].forEach(id => {
+    document.getElementById(id)?.addEventListener('input', () => livePreview());
+  });
+  document.getElementById('adm-font')?.addEventListener('change', () => livePreview());
+}
+
+function addEventRow() {
+  const list = document.getElementById('adm-events-list');
+  if (!list) return;
+  const idx = list.querySelectorAll('.content-editor-row').length;
+  const tmp = document.createElement('div');
+  tmp.innerHTML = buildEventRowHtml({ date: '', title: '', desc: '' }, idx);
+  list.appendChild(tmp.firstElementChild);
+}
+
+function addOfficerRow() {
+  const list = document.getElementById('adm-officers-list');
+  if (!list) return;
+  const idx = list.querySelectorAll('.content-editor-row').length;
+  const tmp = document.createElement('div');
+  tmp.innerHTML = buildOfficerRowHtml({ role: '', name: '' }, idx);
+  list.appendChild(tmp.firstElementChild);
+}
+
+function removeContentRow(btn) {
+  btn.closest('.content-editor-row')?.remove();
+}
+
+function collectAdminContent() {
+  const events = [];
+  document.querySelectorAll('#adm-events-list .content-editor-row').forEach(row => {
+    events.push({
+      date:  row.querySelector('.ev-date')?.value?.trim()  || '',
+      title: row.querySelector('.ev-title')?.value?.trim() || '',
+      desc:  row.querySelector('.ev-desc')?.value?.trim()  || '',
+    });
+  });
+
+  const officers = [];
+  document.querySelectorAll('#adm-officers-list .content-editor-row').forEach(row => {
+    officers.push({
+      role: row.querySelector('.off-role')?.value?.trim() || '',
+      name: row.querySelector('.off-name')?.value?.trim() || '',
+    });
+  });
+
+  return {
+    headline:     document.getElementById('adm-headline')?.value?.trim()    || currentContent().headline,
+    subheadline:  document.getElementById('adm-subheadline')?.value?.trim() || currentContent().subheadline,
+    contactEmail: document.getElementById('adm-email')?.value?.trim()       || currentContent().contactEmail,
+    events,
+    officers,
+  };
+}
+
+function livePreview() {
+  const t = {
+    primary:      document.getElementById('adm-primary')?.value || currentTheme().primary,
+    accent:       document.getElementById('adm-accent')?.value  || currentTheme().accent,
+    bg:           document.getElementById('adm-bg')?.value      || currentTheme().bg,
+    fontBody:     document.getElementById('adm-font')?.value    || currentTheme().fontBody,
+    showEvents:   currentTheme().showEvents,
+    showOfficers: currentTheme().showOfficers,
+    showCta:      currentTheme().showCta,
+  };
+  applyTheme(t);
+}
+
+async function adminSave() {
+  const t = {
+    primary:      document.getElementById('adm-primary')?.value || currentTheme().primary,
+    accent:       document.getElementById('adm-accent')?.value  || currentTheme().accent,
+    bg:           document.getElementById('adm-bg')?.value      || currentTheme().bg,
+    fontBody:     document.getElementById('adm-font')?.value    || currentTheme().fontBody,
+    showEvents:   document.getElementById('tog-events')?.checked ?? true,
+    showOfficers: document.getElementById('tog-officers')?.checked ?? true,
+    showCta:      document.getElementById('tog-cta')?.checked ?? true,
+  };
+  saveTheme(t);
+
+  const c = collectAdminContent();
+  saveContent(c);
+
+  const key = document.getElementById('adm-apikey')?.value?.trim();
+  if (key) localStorage.setItem('fbla_gemini_key', key);
+  else     localStorage.removeItem('fbla_gemini_key');
+
+  const model = document.getElementById('adm-model')?.value;
+  if (model) localStorage.setItem('fbla_gemini_model', model);
+
+  const status = document.getElementById('adm-status');
+  const pw     = document.getElementById('adm-server-pw')?.value?.trim();
+
+  if (pw) {
+    if (status) { status.textContent = 'Publishing…'; status.style.color = '#555'; status.style.display = 'block'; }
+    try {
+      const token = await sha256Hex(pw);
+      const res = await fetch('/api/admin/save', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ token, content: c, theme: t }),
+      });
+      if (res.ok) {
+        _serverContent = c;
+        _serverTheme   = t;
+        document.getElementById('adm-server-pw').value = '';
+        if (status) { status.textContent = 'Published! All visitors will see the changes.'; status.style.color = 'green'; }
+      } else {
+        const err = await res.json().catch(() => ({}));
+        if (status) { status.textContent = 'Wrong password — changes saved to your browser only.'; status.style.color = '#c62828'; }
+      }
+    } catch (_) {
+      if (status) { status.textContent = 'Network error — saved to your browser only.'; status.style.color = '#c62828'; }
+    }
+  } else {
+    if (status) { status.textContent = 'Saved to your browser. Enter the site password above to publish for all visitors.'; status.style.color = '#7b6a00'; }
+  }
+
+  if (status) { status.style.display = 'block'; setTimeout(() => { status.style.display = 'none'; }, 5000); }
+}
+
+function adminReset() {
+  if (!confirm('Reset all settings and page content to defaults?')) return;
+  localStorage.removeItem('fbla_theme');
+  localStorage.removeItem('fbla_content');
+  loadTheme();
+  renderAdmin();
+}
+
+function exportContent() {
+  const payload = {
+    theme:   currentTheme(),
+    content: collectAdminContent(),
+  };
+  const json = JSON.stringify(payload, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = 'fbla-chapter-data.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PASSWORD / LOGIN PAGE
+// ─────────────────────────────────────────────────────────────────────────────
+function renderLogin() {
+  main.innerHTML = `
+    <div class="password-page">
+      <div class="password-card">
+        <div class="lock-icon" aria-hidden="true">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="${currentTheme().accent}">
+            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+          </svg>
+        </div>
+        <h2>Study Resources</h2>
+        <p>Enter the chapter access password to view study materials and the AI prep assistant.</p>
+
+        <div id="login-error" class="error-msg" role="alert"></div>
+
+        <div class="password-input-wrap">
+          <input type="password" id="pw-input" placeholder="Enter password" autocomplete="current-password"
+            aria-label="Study area password" onkeydown="if(event.key==='Enter')submitPassword()" />
+          <button class="password-toggle" onclick="togglePwVisibility()" aria-label="Toggle password visibility">
+            <svg id="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+            </svg>
+          </button>
+        </div>
+
+        <button class="btn btn-primary btn-full" id="submit-btn" onclick="submitPassword()" aria-label="Submit password">
+          <span id="btn-text">Enter</span>
+        </button>
+      </div>
+    </div>
+  `;
+  document.getElementById('pw-input')?.focus();
+}
+
+function togglePwVisibility() {
+  const input = document.getElementById('pw-input');
+  if (!input) return;
+  const isPassword = input.type === 'password';
+  input.type = isPassword ? 'text' : 'password';
+}
+
+async function sha256Hex(text) {
+  const enc = new TextEncoder();
+  const buf = await crypto.subtle.digest('SHA-256', enc.encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function submitPassword() {
+  const input = document.getElementById('pw-input');
+  const btn   = document.getElementById('submit-btn');
+  const txt   = document.getElementById('btn-text');
+  const err   = document.getElementById('login-error');
+  if (!input || !btn) return;
+
+  const pw = input.value;
+  if (!pw) { showError(err, 'Please enter the password.'); return; }
+
+  btn.disabled = true;
+  txt.innerHTML = 'Checking<span class="spinner"></span>';
+  err.classList.remove('show');
+
+  try {
+    const hex = await sha256Hex(pw);
+    if (hex === STUDY_HASH) {
+      location.hash = '#' + hex;
+    } else {
+      btn.disabled = false;
+      txt.textContent = 'Enter';
+      showError(err, 'Incorrect password. Please try again.');
+      input.value = '';
+      input.focus();
+    }
+  } catch (e) {
+    btn.disabled = false;
+    txt.textContent = 'Enter';
+    showError(err, 'An error occurred. Please try again.');
+  }
+}
+
+function showError(el, msg) {
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// STUDY RESOURCES PAGE
+// ─────────────────────────────────────────────────────────────────────────────
+const STUDY_EVENTS = [
+  { tag: 'Written', name: 'Business Calculations', desc: 'Math-heavy exam covering interest, depreciation, financial ratios, and payroll.', url: 'https://www.fbla-pbl.org/competitive-event/business-calculations/' },
+  { tag: 'Written', name: 'Economics', desc: 'Micro and macroeconomic principles, supply/demand, monetary policy, and trade.', url: 'https://www.fbla-pbl.org/competitive-event/economics/' },
+  { tag: 'Written', name: 'Business Law', desc: 'Contract law, business organizations, employment law, and consumer protection.', url: 'https://www.fbla-pbl.org/competitive-event/business-law/' },
+  { tag: 'Written', name: 'Intro to Business Communication', desc: 'Grammar, business writing, memo formatting, and professional correspondence.', url: 'https://www.fbla-pbl.org/competitive-event/introduction-to-business-communication/' },
+  { tag: 'Written', name: 'Accounting I', desc: 'Journal entries, T-accounts, trial balances, and basic financial statements.', url: 'https://www.fbla-pbl.org/competitive-event/accounting-i/' },
+  { tag: 'Written', name: 'Accounting II', desc: 'Advanced accounting: adjusting entries, depreciation, payroll, and partnerships.', url: 'https://www.fbla-pbl.org/competitive-event/accounting-ii/' },
+  { tag: 'Performance', name: 'Public Speaking', desc: 'Deliver a 3-5 minute prepared speech on a business-related topic.', url: 'https://www.fbla-pbl.org/competitive-event/public-speaking-i/' },
+  { tag: 'Performance', name: 'Parliamentary Procedure', desc: 'Team-based demonstration of parliamentary procedures following Robert\'s Rules.', url: 'https://www.fbla-pbl.org/competitive-event/parliamentary-procedure/' },
+  { tag: 'Performance', name: 'Job Interview', desc: 'Prepare a professional résumé and complete a simulated job interview.', url: 'https://www.fbla-pbl.org/competitive-event/job-interview/' },
+  { tag: 'Technology', name: 'Computer Problem Solving', desc: 'Computer concepts, programming logic, and technology problem-solving.', url: 'https://www.fbla-pbl.org/competitive-event/computer-problem-solving/' },
+  { tag: 'Technology', name: 'Spreadsheet Applications', desc: 'Excel functions, formulas, charts, pivot tables, and data analysis.', url: 'https://www.fbla-pbl.org/competitive-event/spreadsheet-applications/' },
+  { tag: 'Technology', name: 'Word Processing', desc: 'Document formatting, speed, and accuracy using word processing software.', url: 'https://www.fbla-pbl.org/competitive-event/word-processing/' },
+  { tag: 'Team', name: 'Business Ethics', desc: 'Analyze ethical dilemmas in business scenarios and present recommendations.', url: 'https://www.fbla-pbl.org/competitive-event/business-ethics/' },
+  { tag: 'Team', name: 'Entrepreneurship', desc: 'Develop a new business concept and present your business plan to judges.', url: 'https://www.fbla-pbl.org/competitive-event/entrepreneurship/' },
+  { tag: 'Team', name: 'Marketing', desc: 'Create and present a marketing campaign for a product, service, or organization.', url: 'https://www.fbla-pbl.org/competitive-event/marketing/' },
+  { tag: 'Written', name: 'Management Decision Making', desc: 'Analyze complex business scenarios and recommend strategic management decisions.', url: 'https://www.fbla-pbl.org/competitive-event/management-decision-making/' },
+];
+
+function renderStudy() {
+  const apiKey = localStorage.getItem('fbla_gemini_key') || '';
+
+  const cardsHtml = STUDY_EVENTS.map(ev => `
+    <div class="event-card">
+      <span class="event-card-tag">${ev.tag}</span>
+      <h4>${ev.name}</h4>
+      <p>${ev.desc}</p>
+      <a href="${ev.url}" target="_blank" rel="noopener">Official Resources ↗</a>
+      <button class="quiz-btn" data-event="${escapeHtml(ev.name)}" onclick="startQuiz(this.dataset.event)">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+        Quiz Me
+      </button>
+    </div>
+  `).join('');
+
+  main.innerHTML = `
+    <div class="study-header">
+      <h1>Study Resources</h1>
+      <p>FBLA Competitive Events — Pensacola High Chapter &nbsp;<span style="opacity:.6">|</span>&nbsp; Access restricted</p>
+    </div>
+
+    <div class="study-content">
+      <h2 class="section-title" style="margin-bottom:.4rem;">Competitive Events</h2>
+      <div class="section-line"></div>
+      <p style="color:var(--text-muted);font-size:.88rem;margin-bottom:1.5rem;">
+        Click <strong>Quiz Me</strong> on any event to launch a timed 25-question practice quiz. Use the AI assistant below for open-ended study help.
+      </p>
+      <div class="study-events">${cardsHtml}</div>
+
+      <h2 class="section-title" style="margin-bottom:.4rem;">FBLA Study Assistant <span class="badge">AI</span></h2>
+      <div class="section-line"></div>
+
+      <div class="chatbot-section">
+        <div class="chatbot-header">
+          <div class="chatbot-avatar" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#003DA5">
+              <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="bot-name">FBLA Study Assistant</div>
+            <div class="bot-sub">Powered by Gemma — Google AI</div>
+          </div>
+          <div class="chatbot-status" title="Online"></div>
+        </div>
+
+        <div class="no-key-banner ${(!apiKey && !_serverHasKey) ? 'show' : ''}" id="no-key-banner">
+          No API key found. Go to <a onclick="navigate('admin')">Admin Panel</a> to add your Gemini API key and enable the AI chatbot.
+        </div>
+
+        <div class="chatbot-messages" id="chat-messages" role="log" aria-label="Chat messages" aria-live="polite">
+          <div class="message bot">
+            <div class="msg-name">FBLA Study Assistant</div>
+            <div class="msg-bubble">
+              Hey! I'm your FBLA Study Assistant. I can help you prep for any FBLA competitive event — whether it's Business Calculations, Parliamentary Procedure, Public Speaking, or anything else. What would you like to study today?
+            </div>
+          </div>
+        </div>
+
+        <div class="chatbot-input-area">
+          <textarea id="chat-input" rows="1" placeholder="Ask about any FBLA topic..." aria-label="Chat input"
+            onkeydown="chatKeydown(event)" oninput="autoResize(this)"></textarea>
+          <button class="send-btn" id="send-btn" onclick="sendMessage()" aria-label="Send message" ${!apiKey ? 'disabled' : ''}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div style="margin-top:1.5rem;padding:1rem 1.25rem;background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);">
+        <p style="font-size:.82rem;color:var(--text-muted);line-height:1.6;">
+          <strong style="color:var(--primary);">Study Tips:</strong>
+          Practice with the official FBLA study guides, use the AI assistant to quiz yourself, review Robert's Rules of Order for Parliamentary Procedure events, and practice timed writing for objective tests.
+          Good luck at Districts, States, and Nationals — <strong>Headed to Ohio!</strong>
+        </p>
+      </div>
+
+      ${renderQuizHistoryHtml()}
+    </div>
+  `;
+
+  // Initialize chat history with a welcome
+  chatHistory = [];
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// QUIZ GENERATOR
+// ─────────────────────────────────────────────────────────────────────────────
+
+let quizState = null;
+
+function loadQuizHistory() {
+  try { return JSON.parse(localStorage.getItem('fbla_quiz_history') || '[]'); }
+  catch { return []; }
+}
+
+function renderQuizHistoryHtml() {
+  const history = loadQuizHistory();
+  if (history.length === 0) return '';
+  const items = history.slice(0, 10).map(h => {
+    const color = h.pct >= 80 ? '#2e7d32' : h.pct >= 60 ? 'var(--primary)' : '#c62828';
+    return `
+      <div class="quiz-history-item">
+        <span class="qhi-event">${escapeHtml(h.event)}</span>
+        <span class="qhi-score" style="color:${color}">${h.pct}%</span>
+        <span class="qhi-meta">${h.score}/${h.total} correct &middot; ${formatQuizTime(h.timeTaken)} &middot; ${escapeHtml(h.date)}</span>
+      </div>`;
+  }).join('');
+  return `
+    <div class="quiz-history-section">
+      <h2 class="section-title" style="margin-bottom:.4rem;">Quiz History <span class="badge">Local</span></h2>
+      <div class="section-line"></div>
+      <p style="color:var(--text-muted);font-size:.82rem;margin-bottom:.5rem;">Your recent quiz results — stored locally in this browser.</p>
+      <div class="quiz-history-list">${items}</div>
+      <button onclick="clearQuizHistory()" style="margin-top:.75rem;background:none;border:none;font-size:.78rem;color:var(--text-muted);cursor:pointer;text-decoration:underline;">Clear history</button>
+    </div>`;
+}
+
+function clearQuizHistory() {
+  if (confirm('Clear all quiz history?')) {
+    localStorage.removeItem('fbla_quiz_history');
+    renderStudy();
+  }
+}
+
+function formatQuizTime(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+function startQuiz(eventName) {
+  if (!localStorage.getItem('fbla_gemini_key') && !_serverHasKey) {
+    alert('A Gemini API key is required to generate quizzes. Add it in the Admin Panel.');
+    navigate('admin');
+    return;
+  }
+  showQuizOverlay();
+  renderQuizLoading(eventName);
+  generateQuizQuestions(eventName);
+}
+
+function showQuizOverlay() {
+  const el = document.getElementById('quiz-overlay');
+  el.hidden = false;
+  el.className = 'quiz-overlay';
+  document.body.style.overflow = 'hidden';
+}
+
+function hideQuizOverlay() {
+  const el = document.getElementById('quiz-overlay');
+  el.hidden = true;
+  el.innerHTML = '';
+  document.body.style.overflow = '';
+  if (quizState?.timerInterval) clearInterval(quizState.timerInterval);
+  quizState = null;
+}
+
+function renderQuizLoading(eventName) {
+  document.getElementById('quiz-overlay').innerHTML = `
+    <div class="quiz-box">
+      <div class="quiz-header">
+        <span class="quiz-title">${escapeHtml(eventName)} — Practice Quiz</span>
+        <button onclick="hideQuizOverlay()" style="background:none;border:none;color:rgba(255,255,255,.8);font-size:1.4rem;cursor:pointer;line-height:1;flex-shrink:0;" aria-label="Close quiz">&#x2715;</button>
+      </div>
+      <div class="quiz-loading">
+        <div class="quiz-spinner"></div>
+        <p style="font-weight:600;color:var(--primary);font-size:.95rem;">Generating your quiz&hellip;</p>
+        <p style="font-size:.83rem;color:var(--text-muted);">Creating 25 questions for <strong>${escapeHtml(eventName)}</strong></p>
+      </div>
+    </div>`;
+}
+
+async function generateQuizQuestions(eventName) {
+  const prompt = `Generate exactly 25 multiple-choice practice quiz questions for the FBLA competitive event: "${eventName}".
+
+Return ONLY a valid JSON array with exactly 25 objects. Each object must have:
+- "q": the question text (string)
+- "opts": array of exactly 4 answer choices (strings, no letter labels like "A." or "1.")
+- "ans": 0-based integer index of the correct answer (0, 1, 2, or 3)
+- "exp": brief explanation of why the correct answer is right (1-2 sentences)
+
+Questions should cover key topics, vocabulary, concepts, formulas, and skills tested in the FBLA ${eventName} objective exam. Vary difficulty (easy, medium, hard). Do not repeat questions.
+
+Return ONLY the JSON array — no markdown, no code fences, no extra text.`;
+
+  try {
+    const response = await callGemini({
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: 0.7,
+        maxOutputTokens: 8192,
+        responseMimeType: 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errJson = await response.json().catch(() => ({}));
+      throw new Error(errJson?.error?.message || `HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!raw) throw new Error('Empty response from AI.');
+
+    let questions;
+    try {
+      questions = JSON.parse(raw);
+    } catch (_) {
+      const match = raw.match(/\[[\s\S]*\]/);
+      if (!match) throw new Error('Could not parse questions from AI response. Try again.');
+      questions = JSON.parse(match[0]);
+    }
+
+    if (!Array.isArray(questions) || questions.length === 0) {
+      throw new Error('No questions returned. Please try again.');
+    }
+
+    questions = questions.map(q => ({
+      q:    String(q.q   || '').trim(),
+      opts: Array.isArray(q.opts) ? q.opts.slice(0, 4).map(String) : [],
+      ans:  Number.isInteger(q.ans) ? Math.max(0, Math.min(3, q.ans)) : 0,
+      exp:  String(q.exp  || '').trim(),
+    })).filter(q => q.q && q.opts.length === 4).slice(0, 25);
+
+    if (questions.length < 25) {
+      throw new Error(`Only ${questions.length} usable questions returned (need 25). Please try again.`);
+    }
+
+    startQuizSession(eventName, questions);
+
+  } catch (err) {
+    const safeEvent = escapeHtml(eventName);
+    document.getElementById('quiz-overlay').innerHTML = `
+      <div class="quiz-box">
+        <div class="quiz-header">
+          <span class="quiz-title">${safeEvent} — Practice Quiz</span>
+          <button onclick="hideQuizOverlay()" style="background:none;border:none;color:rgba(255,255,255,.8);font-size:1.4rem;cursor:pointer;line-height:1;flex-shrink:0;" aria-label="Close">&#x2715;</button>
+        </div>
+        <div class="quiz-loading">
+          <p style="font-size:2.5rem;line-height:1;">&#x26A0;&#xFE0F;</p>
+          <p style="font-weight:700;color:#c62828;">Failed to generate quiz</p>
+          <p style="font-size:.83rem;color:var(--text-muted);max-width:360px;">${escapeHtml(err.message)}</p>
+          <button class="quiz-next-btn" style="max-width:200px;margin-top:.5rem;" data-event="${escapeHtml(eventName)}" onclick="startQuiz(this.dataset.event)">Try Again</button>
+          <button onclick="hideQuizOverlay()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:.82rem;margin-top:.25rem;text-decoration:underline;">Cancel</button>
+        </div>
+      </div>`;
+  }
+}
+
+function startQuizSession(eventName, questions) {
+  quizState = {
+    eventName,
+    questions,
+    current:       0,
+    answers:       new Array(questions.length).fill(null),
+    startTime:     Date.now(),
+    timerInterval: null,
+    timeLimit:     300,
+    timeLeft:      300,
+    finished:      false,
+  };
+
+  renderCurrentQuestion();
+
+  quizState.timerInterval = setInterval(() => {
+    if (!quizState || quizState.finished) return;
+    quizState.timeLeft -= 1;
+    updateTimerDisplay();
+    if (quizState.timeLeft <= 0) {
+      clearInterval(quizState.timerInterval);
+      finishQuiz(true);
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const el = document.getElementById('quiz-timer');
+  if (!el || !quizState) return;
+  el.textContent = formatQuizTime(quizState.timeLeft);
+  if (quizState.timeLeft <= 60) el.classList.add('warning');
+  else el.classList.remove('warning');
+}
+
+function renderCurrentQuestion() {
+  if (!quizState) return;
+  const { questions, current, timeLeft, eventName } = quizState;
+  const q       = questions[current];
+  const total   = questions.length;
+  const progress = (current / total) * 100;
+  const letters  = ['A','B','C','D'];
+
+  document.getElementById('quiz-overlay').innerHTML = `
+    <div class="quiz-box">
+      <div class="quiz-header">
+        <span class="quiz-title">${escapeHtml(eventName)}</span>
+        <div class="quiz-meta">
+          <span style="opacity:.85">${current + 1}&thinsp;/&thinsp;${total}</span>
+          <span class="quiz-timer ${timeLeft <= 60 ? 'warning' : ''}" id="quiz-timer">${formatQuizTime(timeLeft)}</span>
+        </div>
+        <button onclick="confirmQuitQuiz()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:1.3rem;cursor:pointer;line-height:1;padding:0;flex-shrink:0;" aria-label="Quit quiz">&#x2715;</button>
+      </div>
+      <div class="quiz-progress-bar">
+        <div class="quiz-progress-fill" style="width:${progress}%"></div>
+      </div>
+      <div class="quiz-body">
+        <div class="quiz-question-num">Question ${current + 1} of ${total}</div>
+        <div class="quiz-question-text">${escapeHtml(q.q)}</div>
+        <div class="quiz-options" id="quiz-options">
+          ${q.opts.map((opt, i) => `
+            <button class="quiz-option" id="opt-${i}" onclick="selectAnswer(${i})">
+              <span class="opt-letter">${letters[i]}</span>
+              <span>${escapeHtml(opt)}</span>
+            </button>`).join('')}
+        </div>
+        <div id="quiz-feedback"></div>
+      </div>
+    </div>`;
+}
+
+function selectAnswer(chosenIdx) {
+  if (!quizState) return;
+  const { questions, current } = quizState;
+  const q       = questions[current];
+  const letters = ['A','B','C','D'];
+
+  quizState.answers[current] = chosenIdx;
+
+  document.querySelectorAll('.quiz-option').forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.ans)                          btn.classList.add('correct');
+    else if (i === chosenIdx && i !== q.ans)  btn.classList.add('wrong');
+  });
+
+  const isLast    = (current + 1) >= questions.length;
+  const isCorrect = chosenIdx === q.ans;
+  const feedback  = document.getElementById('quiz-feedback');
+
+  feedback.innerHTML = `
+    <div style="margin-top:.9rem;padding:.8rem 1rem;background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);font-size:.82rem;color:var(--text-muted);line-height:1.55;">
+      <strong style="color:${isCorrect ? '#2e7d32' : '#c62828'}">${isCorrect ? '&#x2713; Correct!' : '&#x2717; Incorrect.'}</strong>
+      ${q.exp ? ' ' + escapeHtml(q.exp) : ''}
+    </div>
+    <button class="quiz-next-btn" onclick="${isLast ? 'finishQuiz(false)' : 'nextQuestion()'}">
+      ${isLast ? 'See Results &#x2192;' : 'Next Question &#x2192;'}
+    </button>`;
+}
+
+function nextQuestion() {
+  if (!quizState) return;
+  quizState.current += 1;
+  if (quizState.current >= quizState.questions.length) finishQuiz(false);
+  else renderCurrentQuestion();
+}
+
+function confirmQuitQuiz() {
+  if (confirm('Quit this quiz? Your progress will not be saved.')) hideQuizOverlay();
+}
+
+function finishQuiz(timedOut) {
+  if (!quizState || quizState.finished) return;
+  quizState.finished = true;
+  clearInterval(quizState.timerInterval);
+
+  const elapsed   = Math.round((Date.now() - quizState.startTime) / 1000);
+  const { questions, answers, eventName } = quizState;
+  const total     = questions.length;
+  const correct   = answers.reduce((n, a, i) => n + (a === questions[i].ans ? 1 : 0), 0);
+  const pct       = Math.round((correct / total) * 100);
+  const letters   = ['A','B','C','D'];
+
+  const history = loadQuizHistory();
+  history.unshift({
+    event:     eventName,
+    score:     correct,
+    total,
+    pct,
+    timeTaken: elapsed,
+    date:      new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+  });
+  localStorage.setItem('fbla_quiz_history', JSON.stringify(history.slice(0, 50)));
+
+  const missed = questions
+    .map((q, i) => ({ q, userAns: answers[i] }))
+    .filter(({ q, userAns }) => userAns !== q.ans);
+
+  const missedHtml = missed.length === 0
+    ? '<p style="text-align:center;color:#2e7d32;font-weight:600;padding:1rem 0;">Perfect score — no missed questions! &#x1F389;</p>'
+    : missed.map(({ q, userAns }) => `
+        <div class="review-item">
+          <div class="rq">${escapeHtml(q.q)}</div>
+          <div class="ra">
+            ${userAns !== null
+              ? `Your answer: <span style="color:#c62828">${letters[userAns]}. ${escapeHtml(q.opts[userAns])}</span><br/>`
+              : '<em>Not answered (time ran out)</em><br/>'}
+            Correct: <span style="color:#2e7d32;font-weight:600">${letters[q.ans]}. ${escapeHtml(q.opts[q.ans])}</span><br/>
+            ${q.exp ? `<em style="opacity:.8">${escapeHtml(q.exp)}</em>` : ''}
+          </div>
+        </div>`).join('');
+
+  const circleColor = pct >= 80 ? '#2e7d32' : pct >= 60 ? 'var(--primary)' : '#c62828';
+
+  document.getElementById('quiz-overlay').innerHTML = `
+    <div class="quiz-box">
+      <div class="quiz-header">
+        <span class="quiz-title">${escapeHtml(eventName)} &mdash; Results</span>
+        <button onclick="hideQuizOverlay()" style="background:none;border:none;color:rgba(255,255,255,.8);font-size:1.4rem;cursor:pointer;line-height:1;flex-shrink:0;" aria-label="Close">&#x2715;</button>
+      </div>
+      <div class="quiz-score-screen">
+        ${timedOut ? '<p style="color:#c62828;font-weight:700;margin-bottom:.75rem;">&#x23F1; Time\'s up!</p>' : ''}
+        <div class="quiz-score-circle" style="border-color:${circleColor}">
+          <span class="quiz-score-pct" style="color:${circleColor}">${pct}%</span>
+          <span class="quiz-score-lbl">Score</span>
+        </div>
+        <div class="quiz-score-stats">
+          <div class="quiz-stat">
+            <span class="quiz-stat-val" style="color:#2e7d32">${correct}</span>
+            <span class="quiz-stat-key">Correct</span>
+          </div>
+          <div class="quiz-stat">
+            <span class="quiz-stat-val" style="color:#c62828">${total - correct}</span>
+            <span class="quiz-stat-key">Missed</span>
+          </div>
+          <div class="quiz-stat">
+            <span class="quiz-stat-val">${formatQuizTime(elapsed)}</span>
+            <span class="quiz-stat-key">Time Taken</span>
+          </div>
+        </div>
+        <div class="quiz-review">
+          <h3>&#x1F4DD; Review Missed Questions (${missed.length})</h3>
+          ${missedHtml}
+        </div>
+        <div class="quiz-score-actions">
+          <button class="btn btn-primary" data-event="${escapeHtml(eventName)}" onclick="startQuiz(this.dataset.event)">Retake Quiz</button>
+          <button class="btn" style="background:var(--surface);border:1px solid var(--border);color:var(--text);" onclick="hideQuizOverlay()">Back to Study</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CHATBOT LOGIC
+// ─────────────────────────────────────────────────────────────────────────────
+const SYSTEM_PROMPT = `You are the FBLA Study Assistant for Pensacola High School's Future Business Leaders of America chapter. Your role is to help students prepare for FBLA competitive events at the district, state, and national levels.
+
+You have deep knowledge of:
+- All FBLA competitive events: written objective tests, performance events, and team events
+- Business Calculations (financial math, interest, depreciation, payroll, ratios)
+- Economics (micro/macro, supply/demand, GDP, monetary/fiscal policy, trade)
+- Business Law (contracts, torts, business organizations, employment, consumer protection)
+- Accounting I & II (journal entries, ledgers, trial balances, financial statements, depreciation, payroll)
+- Business Communication (grammar, memo writing, business letters, professional email)
+- Parliamentary Procedure (Robert's Rules of Order, motions, voting, quorum, minutes)
+- Public Speaking (speech structure, delivery, professional presence)
+- Marketing (4 Ps, market research, branding, advertising, consumer behavior)
+- Entrepreneurship (business plans, startup finance, competitive analysis, pitching)
+- Business Ethics (ethical frameworks, case analysis, stakeholder theory)
+- Computer concepts, spreadsheet formulas (Excel/Sheets), and word processing
+- Job interview preparation, résumé writing, professional etiquette
+- FBLA history, mission, and organizational structure
+- Test-taking strategies for timed FBLA objective tests
+- State and National Leadership Conference preparation
+
+Respond in a friendly, encouraging, and knowledgeable tone. When students ask about specific topics, provide clear explanations, practice questions, or key facts they should memorize. Always be accurate. If asked to quiz the student, generate relevant practice questions. Keep answers concise unless the student asks for more detail.`;
+
+function chatKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function autoResize(ta) {
+  ta.style.height = 'auto';
+  ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
+}
+
+function appendMessage(role, text) {
+  const container = document.getElementById('chat-messages');
+  if (!container) return;
+
+  const div = document.createElement('div');
+  div.className = `message ${role}`;
+  div.innerHTML = `
+    <div class="msg-name">${role === 'user' ? 'You' : 'FBLA Study Assistant'}</div>
+    <div class="msg-bubble">${escapeHtml(text).replace(/\n/g, '<br/>')}</div>
+  `;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function showTyping() {
+  const container = document.getElementById('chat-messages');
+  if (!container) return;
+  const div = document.createElement('div');
+  div.className = 'message bot';
+  div.id = 'typing-indicator';
+  div.innerHTML = `
+    <div class="msg-name">FBLA Study Assistant</div>
+    <div class="typing-indicator">
+      <span class="typing-dot"></span>
+      <span class="typing-dot"></span>
+      <span class="typing-dot"></span>
+    </div>
+  `;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function removeTyping() {
+  document.getElementById('typing-indicator')?.remove();
+}
+
+function escapeHtml(t) {
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function sendMessage() {
+  if (isBotTyping) return;
+  const input   = document.getElementById('chat-input');
+  const sendBtn = document.getElementById('send-btn');
+
+  if (!localStorage.getItem('fbla_gemini_key') && !_serverHasKey) {
+    const banner = document.getElementById('no-key-banner');
+    if (banner) banner.classList.add('show');
+    return;
+  }
+
+  const text = input?.value?.trim();
+  if (!text) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+  appendMessage('user', text);
+  chatHistory.push({ role: 'user', parts: [{ text }] });
+
+  isBotTyping = true;
+  sendBtn.disabled = true;
+  showTyping();
+
+  try {
+    const response = await callGemini({
+      system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+      contents: chatHistory,
+      generationConfig: {
+        temperature: 0.7,
+        topP: 0.95,
+        maxOutputTokens: 1024,
+      },
+    });
+
+    if (!response.ok) {
+      const errJson = await response.json().catch(() => ({}));
+      throw new Error(errJson?.error?.message || `HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    if (!reply) throw new Error('Empty response from AI.');
+
+    chatHistory.push({ role: 'model', parts: [{ text: reply }] });
+    removeTyping();
+    appendMessage('bot', reply);
+
+  } catch (err) {
+    removeTyping();
+    const errMsg = err.message === 'NO_KEY'
+      ? 'No API key configured. Ask your chapter admin to set one up.'
+      : err.message.includes('API key') || err.message.includes('403') || err.message.includes('401')
+        ? 'Invalid or expired API key. Please update it in the Admin Panel.'
+        : `Error: ${err.message}. Check your internet connection.`;
+    appendMessage('bot', errMsg);
+  } finally {
+    isBotTyping = false;
+    sendBtn.disabled = !localStorage.getItem('fbla_gemini_key') && !_serverHasKey;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ACCESS DENIED
+// ─────────────────────────────────────────────────────────────────────────────
+function renderDenied() {
+  main.innerHTML = `
+    <div class="denied">
+      <h2>Access Denied</h2>
+      <p>The URL you requested does not match any known resource. If you're looking for study materials, please enter the correct password.</p>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="navigate('home')">Go Home</button>
+        <button class="btn" style="background:var(--surface);border:1px solid var(--border);color:var(--text);" onclick="navigate('login')">Enter Password</button>
+      </div>
+    </div>
+  `;
+}
+</script>
+</body>
+</html>
