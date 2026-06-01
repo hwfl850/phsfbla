@@ -794,24 +794,35 @@
 
     .study-content { max-width: 1100px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
 
-    .study-events { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); margin-bottom: 3rem; }
+    .study-events { display: flex; flex-direction: column; gap: .65rem; margin-bottom: 3rem; }
 
-    .event-card {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 1.4rem 1.25rem;
-      box-shadow: var(--shadow);
-      display: flex;
-      flex-direction: column;
-      gap: .55rem;
-      transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+    .events-search-wrap {
+      position: relative;
+      margin-bottom: 1.25rem;
     }
-
-    .event-card:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-lg);
-      border-color: rgba(29,82,188,.25);
+    .events-search-wrap svg {
+      position: absolute;
+      left: .9rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+    .events-search {
+      width: 100%;
+      padding: .7rem 1rem .7rem 2.4rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg);
+      font-family: var(--font-body);
+      font-size: .9rem;
+      color: var(--text);
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .events-search:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(29,82,188,.15);
     }
 
     .event-card-tag {
@@ -824,19 +835,46 @@
       border-radius: var(--radius-pill);
       letter-spacing: .08em;
       text-transform: uppercase;
-      align-self: flex-start;
+      flex-shrink: 0;
     }
 
-    .event-card h4 {
+    .event-row {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: .9rem 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: var(--shadow);
+      transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+    }
+    .event-row:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+      border-color: rgba(29,82,188,.25);
+    }
+    .event-row-info { flex: 1; min-width: 0; }
+    .event-row-info h4 {
       font-family: var(--font-body);
       font-size: .98rem;
       font-weight: 600;
       color: var(--navy);
       letter-spacing: -0.01em;
+      margin-bottom: .15rem;
     }
-    .event-card p { font-size: .85rem; color: var(--text-muted); line-height: 1.55; }
-
-    .event-card a {
+    .event-row-info p {
+      font-size: .82rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+    .event-row-actions {
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      flex-shrink: 0;
+    }
+    .event-row-actions a {
       display: inline-flex;
       align-items: center;
       gap: .35rem;
@@ -844,11 +882,27 @@
       font-weight: 600;
       color: var(--blue);
       text-decoration: none;
-      margin-top: auto;
-      padding-top: .25rem;
       transition: color var(--transition), gap var(--transition);
+      white-space: nowrap;
     }
-    .event-card a:hover { color: var(--navy); gap: .55rem; }
+    .event-row-actions a:hover { color: var(--navy); gap: .55rem; }
+
+    .events-empty {
+      text-align: center;
+      padding: 1.75rem 1rem;
+      color: var(--text-muted);
+      font-size: .9rem;
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+    }
+
+    @media (max-width: 640px) {
+      .event-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .event-row-actions { justify-content: space-between; }
+    }
 
     /* ── Chatbot ── */
     .chatbot-section {
@@ -1888,18 +1942,25 @@ const STUDY_EVENTS = [
 function renderStudy() {
   const apiKey = localStorage.getItem('fbla_gemini_key') || '';
 
-  const cardsHtml = STUDY_EVENTS.map(ev => `
-    <div class="event-card">
+  const rowsHtml = STUDY_EVENTS.map(ev => {
+    const haystack = `${ev.name} ${ev.tag} ${ev.desc}`.toLowerCase();
+    return `
+    <div class="event-row" data-search="${escapeHtml(haystack)}">
       <span class="event-card-tag">${ev.tag}</span>
-      <h4>${ev.name}</h4>
-      <p>${ev.desc}</p>
-      <a href="${ev.url}" target="_blank" rel="noopener">Official Resources ↗</a>
-      <button class="quiz-btn" data-event="${escapeHtml(ev.name)}" onclick="startQuiz(this.dataset.event)">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
-        Quiz Me
-      </button>
+      <div class="event-row-info">
+        <h4>${ev.name}</h4>
+        <p>${ev.desc}</p>
+      </div>
+      <div class="event-row-actions">
+        <a href="${ev.url}" target="_blank" rel="noopener">Official Resources ↗</a>
+        <button class="quiz-btn" data-event="${escapeHtml(ev.name)}" onclick="startQuiz(this.dataset.event)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+          Quiz Me
+        </button>
+      </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 
   main.innerHTML = `
     <div class="study-header">
@@ -1910,10 +1971,15 @@ function renderStudy() {
     <div class="study-content">
       <h2 class="section-title" style="margin-bottom:.4rem;">Competitive Events</h2>
       <div class="section-line"></div>
-      <p style="color:var(--text-muted);font-size:.88rem;margin-bottom:1.5rem;">
+      <p style="color:var(--text-muted);font-size:.88rem;margin-bottom:1.25rem;">
         Click <strong>Quiz Me</strong> on any event to launch a timed 25-question practice quiz. Use the AI assistant below for open-ended study help.
       </p>
-      <div class="study-events">${cardsHtml}</div>
+      <div class="events-search-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="search" id="events-search" class="events-search" placeholder="Search events by name, category, or topic..." aria-label="Search competitive events" oninput="filterStudyEvents(this.value)" />
+      </div>
+      <div class="study-events" id="study-events">${rowsHtml}</div>
+      <div class="events-empty" id="study-events-empty" style="display:none;">No events match your search.</div>
 
       <h2 class="section-title" style="margin-bottom:.4rem;">FBLA Study Assistant <span class="badge">AI</span></h2>
       <div class="section-line"></div>
@@ -1967,6 +2033,19 @@ function renderStudy() {
 
   // Initialize chat history with a welcome
   chatHistory = [];
+}
+
+function filterStudyEvents(query) {
+  const q = (query || '').trim().toLowerCase();
+  const rows = document.querySelectorAll('#study-events .event-row');
+  let visible = 0;
+  rows.forEach(row => {
+    const match = !q || (row.dataset.search || '').includes(q);
+    row.style.display = match ? '' : 'none';
+    if (match) visible++;
+  });
+  const empty = document.getElementById('study-events-empty');
+  if (empty) empty.style.display = visible === 0 ? '' : 'none';
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
