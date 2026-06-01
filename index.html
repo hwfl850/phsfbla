@@ -1464,7 +1464,8 @@ const STUDY_HASH = 'bbdff5ad5387d076ea4771fdf878d41486d7ea2b192a0581417bf9fe8704
 // Default Gemini model for the AI chatbot and quiz generator.
 const GEMINI_MODEL = 'gemma-4-31b-it';
 // Embedded fallback key — used when no personal key is set and no server key is available.
-const EMBEDDED_KEY  = 'AIzaSyDK7PrgSqRhpqY2aS5l_d568IHp3Ev-9KE';
+// Set a valid Google AI Studio key (AIza...) here for GitHub Pages deployments.
+const EMBEDDED_KEY  = '';
 const GEMINI_ENDPOINT = (key) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${key}`;
 
@@ -1595,17 +1596,17 @@ async function callGemini(body) {
     return fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   }
   // 2. Always try the server proxy first — works on Replit regardless of whether
-  //    _serverHasKey has been set yet. A 503 means no server key; a network error
-  //    means we're on static hosting (GitHub Pages). Both fall through to option 3.
+  //    _serverHasKey has been set yet. 503 = server has no key configured;
+  //    404 = no server at all (GitHub Pages static hosting). Both fall through.
   try {
     const proxyRes = await fetch('/api/ai/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ model, ...body }),
     });
-    if (proxyRes.status !== 503) return proxyRes;
+    if (proxyRes.status !== 503 && proxyRes.status !== 404) return proxyRes;
   } catch (_) {
-    // server not reachable (static host) — fall through
+    // network error — server not reachable, fall through
   }
   // 3. Embedded fallback key → call Google directly (static hosting / no server key)
   if (EMBEDDED_KEY) {
@@ -2611,7 +2612,7 @@ async function sendMessage() {
   } catch (err) {
     removeTyping();
     const errMsg = err.message === 'NO_KEY'
-      ? 'No API key configured. Ask your chapter admin to set one up.'
+      ? 'The AI assistant is only available on the hosted version of this site. Visit the Replit-hosted app to use the chatbot.'
       : err.message.includes('API key') || err.message.includes('403') || err.message.includes('401')
         ? 'Invalid or expired API key. Please update it in the Admin Panel.'
         : `Error: ${err.message}. Check your internet connection.`;
