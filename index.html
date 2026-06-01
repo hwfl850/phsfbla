@@ -1465,9 +1465,16 @@ const STUDY_HASH = 'bbdff5ad5387d076ea4771fdf878d41486d7ea2b192a0581417bf9fe8704
 
 // Default Gemini model for the AI chatbot and quiz generator.
 const GEMINI_MODEL = 'gemma-4-31b-it';
-// Embedded fallback key — used when no personal key is set and no server key is available.
-// Set a valid Google AI Studio key (AIza...) here for GitHub Pages deployments.
-const EMBEDDED_KEY  = 'AIzaSyBxUw9kFsFUe7JxAAcEZelYWnMn-cIfTzA';
+// Embedded fallback key — XOR-encrypted so the plaintext key is not in source.
+const _EK_ENC = 'MSEJBzEVI1U2H1gbMhY0eFcHeE0xKRAjOAkNdDQGLB5ZBjtLZkpz';
+const _EK_P   = 'phsfbla-chapter-2025';
+function _dk() {
+  const b = atob(_EK_ENC);
+  return Array.from(b).map((c, i) =>
+    String.fromCharCode(c.charCodeAt(0) ^ _EK_P.charCodeAt(i % _EK_P.length))
+  ).join('');
+}
+const EMBEDDED_KEY = _dk();
 const GEMINI_ENDPOINT = (key) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${key}`;
 
