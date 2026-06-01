@@ -2567,9 +2567,8 @@ async function sendMessage() {
   try {
     // Gemma doesn't support system_instruction — inject as a priming turn instead
     const primedContents = [
-      { role: 'user',  parts: [{ text: '[System context — follow these instructions for the entire conversation]
-' + SYSTEM_PROMPT }] },
-      { role: 'model', parts: [{ text: 'Understood! I'm your FBLA Study Assistant for Pensacola High School. Ready to help you prep for any competitive event.' }] },
+      { role: 'user',  parts: [{ text: `[System context — follow these instructions for the entire conversation]\n${SYSTEM_PROMPT}` }] },
+      { role: 'model', parts: [{ text: `Understood! I'm your FBLA Study Assistant for Pensacola High School. Ready to help you prep for any competitive event.` }] },
       ...chatHistory,
     ];
     const response = await callGemini({
