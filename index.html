@@ -597,52 +597,51 @@
 
     /* ── Events ── */
     .events-list {
-      display: grid;
-      gap: .85rem;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      max-height: 360px;
+      overflow-y: auto;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
     }
+    .events-list::-webkit-scrollbar { width: 8px; }
+    .events-list::-webkit-scrollbar-thumb {
+      background: rgba(10,46,127,.18);
+      border-radius: 4px;
+    }
+    .events-list::-webkit-scrollbar-thumb:hover { background: rgba(10,46,127,.32); }
 
     .event-item {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 1.15rem 1.35rem;
       display: flex;
       gap: 1rem;
-      align-items: center;
-      box-shadow: var(--shadow);
-      transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+      align-items: baseline;
+      padding: .7rem .25rem;
+      border-bottom: 1px solid var(--border);
     }
-    .event-item:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-lg);
-      border-color: rgba(29,82,188,.25);
-    }
+    .event-item:last-child { border-bottom: none; }
 
     .event-date {
-      background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
-      color: var(--gold);
+      color: var(--blue);
       font-family: var(--font-body);
       font-weight: 700;
-      font-size: .8rem;
-      text-align: center;
-      padding: .5rem .8rem;
-      border-radius: 10px;
+      font-size: .78rem;
+      letter-spacing: .04em;
+      text-transform: uppercase;
       flex-shrink: 0;
-      line-height: 1.2;
-      min-width: 64px;
-      letter-spacing: .02em;
-      box-shadow: 0 4px 12px rgba(10,46,127,.18);
+      min-width: 92px;
+      line-height: 1.3;
     }
 
+    .event-info { display: flex; flex-wrap: wrap; gap: .5rem; align-items: baseline; flex: 1; }
     .event-info h4 {
       font-family: var(--font-body);
-      font-size: .98rem;
+      font-size: .92rem;
       font-weight: 600;
       color: var(--navy);
-      margin-bottom: .2rem;
     }
-    .event-info p { font-size: .85rem; color: var(--text-muted); line-height: 1.55; }
+    .event-info p {
+      font-size: .82rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
 
     /* ── Password page ── */
     .password-page {
@@ -1430,9 +1429,12 @@
   </button>
 
   <nav id="main-nav" role="navigation" aria-label="Main navigation">
-    <a href="#home"  onclick="navigate('home')"  id="nav-home">Home</a>
-    <a href="#about" onclick="navigate('about')" id="nav-about">About</a>
-    <a href="#login" onclick="navigate('login')" id="nav-study" class="nav-accent">Study Resources</a>
+    <a href="#home"     onclick="navigate('home')"     id="nav-home">Home</a>
+    <a href="#about"    onclick="navigate('about')"    id="nav-about">About</a>
+    <!-- Meetings tab: placeholder section. Populate via renderMeetings() below
+         (meeting schedule, agendas, minutes, slide decks, recordings, etc.). -->
+    <a href="#meetings" onclick="navigate('meetings')" id="nav-meetings">Meetings</a>
+    <a href="#login"    onclick="navigate('login')"    id="nav-study" class="nav-accent">Study Resources</a>
   </nav>
 </header>
 
@@ -1627,6 +1629,7 @@ function getPage() {
   const h = location.hash.replace('#', '').trim();
   if (!h || h === 'home') return 'home';
   if (h === 'about')      return 'about';
+  if (h === 'meetings')   return 'meetings';
   if (h === 'login')      return 'login';
   if (h === STUDY_HASH)   return 'study';
   return 'denied';
@@ -1634,8 +1637,9 @@ function getPage() {
 
 function updateNavActive(page) {
   document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-  if (page === 'home')  document.getElementById('nav-home')?.classList.add('active');
-  if (page === 'about') document.getElementById('nav-about')?.classList.add('active');
+  if (page === 'home')     document.getElementById('nav-home')?.classList.add('active');
+  if (page === 'about')    document.getElementById('nav-about')?.classList.add('active');
+  if (page === 'meetings') document.getElementById('nav-meetings')?.classList.add('active');
 }
 
 const main = document.getElementById('main-content');
@@ -1646,11 +1650,12 @@ function renderPage() {
   setTimeout(() => {
     main.innerHTML = '';
     switch (page) {
-      case 'home':  renderHome();  break;
-      case 'about': renderAbout(); break;
-      case 'login': renderLogin(); break;
-      case 'study': renderStudy(); break;
-      default:      renderDenied(); break;
+      case 'home':     renderHome();     break;
+      case 'about':    renderAbout();    break;
+      case 'meetings': renderMeetings(); break;
+      case 'login':    renderLogin();    break;
+      case 'study':    renderStudy();    break;
+      default:         renderDenied();   break;
     }
     updateNavActive(page);
     main.classList.remove('fading');
@@ -1694,20 +1699,14 @@ function renderHome() {
   const t = currentTheme();
   const c = currentContent();
 
-  const eventsHtml = c.events.map(ev => {
-    const parts = ev.date.trim().split(/\s+/);
-    const dateLine = parts.length > 1
-      ? parts.slice(0, -1).join(' ') + '<br/>' + parts[parts.length - 1]
-      : ev.date;
-    return `
+  const eventsHtml = c.events.map(ev => `
       <div class="event-item">
-        <div class="event-date">${dateLine}</div>
+        <div class="event-date">${escHtml(ev.date)}</div>
         <div class="event-info">
           <h4>${escHtml(ev.title)}</h4>
           <p>${escHtml(ev.desc)}</p>
         </div>
-      </div>`;
-  }).join('');
+      </div>`).join('');
 
   main.innerHTML = `
     <div class="hero">
@@ -1717,7 +1716,6 @@ function renderHome() {
             alt="FBLA — Future Business Leaders of America"
             style="height:72px;width:auto;display:inline-block;" />
         </div>
-        <div class="hero-eyebrow anim anim-1">Pensacola High Chapter · Florida FBLA</div>
         <h1 class="anim anim-1">${escHtml(c.headline)}</h1>
         <p class="anim anim-2">${escHtml(c.subheadline)}</p>
         <div class="hero-actions anim anim-3">
@@ -1737,40 +1735,6 @@ function renderHome() {
       </div>
     </section>
     ` : ''}
-
-    <section class="section">
-      <div class="section-inner">
-        <div class="section-eyebrow">Why FBLA</div>
-        <h2 class="section-title">Built for Future Business Leaders</h2>
-        <div class="section-line"></div>
-        <div class="cards">
-          <div class="card anim">
-            <div class="card-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 2L3 7l9 5 9-5-9-5zm0 7L3 14l9 5 9-5-9-5zm0 7l-9-5v.01L12 21l9-5V14l-9 5z"/></svg>
-            </div>
-            <h3>Competitive Events</h3>
-            <p>FBLA offers 70+ individual, chapter, and team events covering every area of business.</p>
-            <a class="card-link" href="https://www.fbla-pbl.org/fbla/competitive-events/" target="_blank" rel="noopener">Browse Events ↗</a>
-          </div>
-          <div class="card anim anim-1">
-            <div class="card-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24"><path d="M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2zm7 14l7-7-1.4-1.4L12 14.2l-2.6-2.6L8 13l4 4z"/></svg>
-            </div>
-            <h3>Study Resources</h3>
-            <p>Access study cards, practice tests, and our AI-powered FBLA prep assistant.</p>
-            <a class="card-link" href="#login" onclick="navigate('login')">Access Resources →</a>
-          </div>
-          <div class="card anim anim-2">
-            <div class="card-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-            </div>
-            <h3>Join Our Chapter</h3>
-            <p>Membership is open to all Pensacola High students. Gain leadership skills and compete nationally.</p>
-            <a class="card-link" href="https://www.fbla-pbl.org/fbla/join/" target="_blank" rel="noopener">How to Join ↗</a>
-          </div>
-        </div>
-      </div>
-    </section>
 
     ${t.showCta ? `
     <section class="section section-alt" id="section-cta">
@@ -1830,6 +1794,37 @@ function renderAbout() {
       </div>
     </section>
     ` : ''}
+  `;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MEETINGS PAGE
+// ─────────────────────────────────────────────────────────────────────────────
+// Placeholder page wired to the "Meetings" nav tab (#meetings).
+//
+// TODO — fill in with chapter meeting content. Suggested additions:
+//   • Recurring meeting schedule (day, time, room)
+//   • Upcoming meeting agenda
+//   • Past meeting minutes / notes (consider an array similar to c.events
+//     defined in the CONTENT block around line 1485, then map → list)
+//   • Slide decks, recordings, sign-in links
+//   • Officer contact for meeting questions
+//
+// To add data-driven content, extend the `content` object near the top of the
+// script (search "events: [") with a `meetings: [...]` array and render it
+// here the same way renderHome() renders events.
+function renderMeetings() {
+  main.innerHTML = `
+    <section class="section">
+      <div class="section-inner">
+        <div class="section-eyebrow">Chapter</div>
+        <h2 class="section-title">Meetings</h2>
+        <div class="section-line"></div>
+        <p style="color:var(--text-muted);font-size:1rem;line-height:1.7;max-width:780px;">
+          Meeting details coming soon. Check back here for the schedule, agendas, and notes.
+        </p>
+      </div>
+    </section>
   `;
 }
 
