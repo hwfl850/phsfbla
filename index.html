@@ -1464,7 +1464,8 @@ const STUDY_HASH = 'bbdff5ad5387d076ea4771fdf878d41486d7ea2b192a0581417bf9fe8704
 // Default Gemini model for the AI chatbot and quiz generator.
 const GEMINI_MODEL = 'gemma-4-31b-it';
 // Embedded fallback key — used when no personal key is set and no server key is available.
-const EMBEDDED_KEY  = 'AIzaSyDK7PrgSqRhpqY2aS5l_d568IHp3Ev-9KE';
+// Set a valid Google AI Studio key (AIza...) here for GitHub Pages deployments.
+const EMBEDDED_KEY  = 'AQ.Ab8RN6JUv0PdWI9aixPD3jdZfbZQiYsm0gO2uC5t0xYXFd4epg';
 const GEMINI_ENDPOINT = (key) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${key}`;
 
@@ -2611,7 +2612,7 @@ async function sendMessage() {
   } catch (err) {
     removeTyping();
     const errMsg = err.message === 'NO_KEY'
-      ? 'No API key configured. Ask your chapter admin to set one up.'
+      ? 'The AI assistant is only available on the hosted version of this site. Visit the Replit-hosted app to use the chatbot.'
       : err.message.includes('API key') || err.message.includes('403') || err.message.includes('401')
         ? 'Invalid or expired API key. Please update it in the Admin Panel.'
         : `Error: ${err.message}. Check your internet connection.`;
