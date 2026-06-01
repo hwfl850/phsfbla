@@ -1596,17 +1596,17 @@ async function callGemini(body) {
     return fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   }
   // 2. Always try the server proxy first — works on Replit regardless of whether
-  //    _serverHasKey has been set yet. 503 = server has no key configured;
-  //    404 = no server at all (GitHub Pages static hosting). Both fall through.
+  //    _serverHasKey has been set yet. A 503 means no server key; a network error
+  //    means we're on static hosting (GitHub Pages). Both fall through to option 3.
   try {
     const proxyRes = await fetch('/api/ai/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ model, ...body }),
     });
-    if (proxyRes.status !== 503 && proxyRes.status !== 404) return proxyRes;
+    if (proxyRes.status !== 503) return proxyRes;
   } catch (_) {
-    // network error — server not reachable, fall through
+    // server not reachable (static host) — fall through
   }
   // 3. Embedded fallback key → call Google directly (static hosting / no server key)
   if (EMBEDDED_KEY) {
