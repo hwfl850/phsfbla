@@ -1584,8 +1584,8 @@ async function initSiteData() {
 }
 
 // ─── Gemini call helper ──────────────────────────────────────────────────────
-// Routes through the server proxy when the user has no personal key stored,
-// or calls Gemini directly when they do (preserving the admin-panel key flow).
+// Priority: 1) personal key (admin panel)  2) server proxy (always tried first
+// so the race with initSiteData doesn't matter)  3) embedded fallback key
 async function callGemini(body) {
   const userKey = localStorage.getItem('fbla_gemini_key') || '';
   const model   = localStorage.getItem('fbla_gemini_model') || GEMINI_MODEL;
@@ -1594,11 +1594,20 @@ async function callGemini(body) {
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${userKey}`;
     return fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   }
-  // 2. Server-side proxy key available (hosted on Replit)
-  if (_serverHasKey) {
-    return fetch('/api/ai/generate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ model, ...body }) });
+  // 2. Always try the server proxy first — works on Replit regardless of whether
+  //    _serverHasKey has been set yet. A 503 means no server key; a network error
+  //    means we're on static hosting (GitHub Pages). Both fall through to option 3.
+  try {
+    const proxyRes = await fetch('/api/ai/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model, ...body }),
+    });
+    if (proxyRes.status !== 503) return proxyRes;
+  } catch (_) {
+    // server not reachable (static host) — fall through
   }
-  // 3. Embedded fallback key → call Google directly (works on static hosting like GitHub Pages)
+  // 3. Embedded fallback key → call Google directly (static hosting / no server key)
   if (EMBEDDED_KEY) {
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${EMBEDDED_KEY}`;
     return fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
