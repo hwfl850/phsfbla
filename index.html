@@ -113,8 +113,9 @@
 
       --radius:     12px;
       --radius-pill: 999px;
-      --font-body:  'Apercu Pro', 'Helvetica Neue', Arial, sans-serif;
-      --font-head:  'Gelasio', Georgia, 'Times New Roman', serif;
+      --font-body:    'Apercu Pro', 'Helvetica Neue', Arial, sans-serif;
+      --font-head:    'Apercu Pro', 'Helvetica Neue', Arial, sans-serif;
+      --font-display: 'Gelasio', Georgia, 'Times New Roman', serif;
       --shadow:     0 8px 24px rgba(10,46,127,0.08);
       --shadow-lg:  0 16px 40px rgba(10,46,127,0.14);
       --transition: 0.25s cubic-bezier(.4,0,.2,1);
@@ -338,7 +339,7 @@
     }
 
     .hero h1 {
-      font-family: var(--font-head);
+      font-family: var(--font-display);
       font-size: clamp(2.1rem, 5vw, 3.4rem);
       font-weight: 700;
       line-height: 1.12;
@@ -414,7 +415,7 @@
     }
 
     .section-title {
-      font-family: var(--font-head);
+      font-family: var(--font-display);
       font-size: clamp(1.65rem, 2.6vw, 2.1rem);
       font-weight: 700;
       color: var(--navy);
@@ -1430,6 +1431,7 @@
 
   <nav id="main-nav" role="navigation" aria-label="Main navigation">
     <a href="#home"  onclick="navigate('home')"  id="nav-home">Home</a>
+    <a href="#about" onclick="navigate('about')" id="nav-about">About</a>
     <a href="#login" onclick="navigate('login')" id="nav-study" class="nav-accent">Study Resources</a>
   </nav>
 </header>
@@ -1645,6 +1647,7 @@ function navigate(page) {
 function getPage() {
   const h = location.hash.replace('#', '').trim();
   if (!h || h === 'home') return 'home';
+  if (h === 'about')      return 'about';
   if (h === 'login')      return 'login';
   if (h === STUDY_HASH)   return 'study';
   return 'denied';
@@ -1653,6 +1656,7 @@ function getPage() {
 function updateNavActive(page) {
   document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
   if (page === 'home')  document.getElementById('nav-home')?.classList.add('active');
+  if (page === 'about') document.getElementById('nav-about')?.classList.add('active');
 }
 
 const main = document.getElementById('main-content');
@@ -1664,6 +1668,7 @@ function renderPage() {
     main.innerHTML = '';
     switch (page) {
       case 'home':  renderHome();  break;
+      case 'about': renderAbout(); break;
       case 'login': renderLogin(); break;
       case 'study': renderStudy(); break;
       default:      renderDenied(); break;
@@ -1725,18 +1730,6 @@ function renderHome() {
       </div>`;
   }).join('');
 
-  const officersHtml = c.officers.map(off => {
-    const initials = (off.name || off.role || '?')
-      .split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
-    const displayName = off.name || 'Pensacola High FBLA';
-    return `
-      <div class="officer">
-        <div class="officer-avatar">${escHtml(initials)}</div>
-        <h4>${escHtml(off.role)}</h4>
-        <span>${escHtml(displayName)}</span>
-      </div>`;
-  }).join('');
-
   main.innerHTML = `
     <div class="hero">
       <div class="hero-content">
@@ -1762,17 +1755,6 @@ function renderHome() {
         <h2 class="section-title">Upcoming Events</h2>
         <div class="section-line"></div>
         <div class="events-list">${eventsHtml}</div>
-      </div>
-    </section>
-    ` : ''}
-
-    ${t.showOfficers && c.officers.length ? `
-    <section class="section section-alt" id="section-officers">
-      <div class="section-inner">
-        <div class="section-eyebrow">2026 – 2027 Leadership</div>
-        <h2 class="section-title">Chapter Officers</h2>
-        <div class="section-line"></div>
-        <div class="officers">${officersHtml}</div>
       </div>
     </section>
     ` : ''}
@@ -1822,6 +1804,50 @@ function renderHome() {
             <a class="btn btn-outline" href="mailto:${escHtml(c.contactEmail)}">Contact Adviser</a>
           </div>
         </div>
+      </div>
+    </section>
+    ` : ''}
+  `;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ABOUT PAGE
+// ─────────────────────────────────────────────────────────────────────────────
+function renderAbout() {
+  const t = currentTheme();
+  const c = currentContent();
+
+  const officersHtml = c.officers.map(off => {
+    const initials = (off.name || off.role || '?')
+      .split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    const displayName = off.name || 'Pensacola High FBLA';
+    return `
+      <div class="officer">
+        <div class="officer-avatar">${escHtml(initials)}</div>
+        <h4>${escHtml(off.role)}</h4>
+        <span>${escHtml(displayName)}</span>
+      </div>`;
+  }).join('');
+
+  main.innerHTML = `
+    <section class="section">
+      <div class="section-inner">
+        <div class="section-eyebrow">About Us</div>
+        <h2 class="section-title">Pensacola High FBLA</h2>
+        <div class="section-line"></div>
+        <p style="color:var(--text-muted);font-size:1rem;line-height:1.7;max-width:780px;">
+          ${escHtml(c.subheadline)}
+        </p>
+      </div>
+    </section>
+
+    ${t.showOfficers && c.officers.length ? `
+    <section class="section section-alt" id="section-officers">
+      <div class="section-inner">
+        <div class="section-eyebrow">2026 – 2027 Leadership</div>
+        <h2 class="section-title">Chapter Officers</h2>
+        <div class="section-line"></div>
+        <div class="officers">${officersHtml}</div>
       </div>
     </section>
     ` : ''}
