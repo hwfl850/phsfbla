@@ -415,7 +415,7 @@
     }
 
     .section-title {
-      font-family: var(--font-head);
+      font-family: var(--font-display);
       font-size: clamp(1.65rem, 2.6vw, 2.1rem);
       font-weight: 700;
       color: var(--navy);
@@ -1467,7 +1467,7 @@ const STUDY_HASH = 'bbdff5ad5387d076ea4771fdf878d41486d7ea2b192a0581417bf9fe8704
 const GEMINI_MODEL = 'gemma-4-31b-it';
 // Embedded fallback key — used when no personal key is set and no server key is available.
 // Set a valid Google AI Studio key (AIza...) here for GitHub Pages deployments.
-const EMBEDDED_KEY  = 'AQ.Ab8RN6JUv0PdWI9aixPD3jdZfbZQiYsm0gO2uC5t0xYXFd4epg';
+const EMBEDDED_KEY  = 'AIzaSyBxUw9kFsFUe7JxAAcEZelYWnMn-cIfTzA';
 const GEMINI_ENDPOINT = (key) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${key}`;
 
