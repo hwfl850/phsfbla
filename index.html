@@ -1604,7 +1604,7 @@ async function callGemini(body) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ model, ...body }),
     });
-    if (proxyRes.status !== 503) return proxyRes;
+    if (proxyRes.status !== 503 && proxyRes.status !== 404 && proxyRes.status !== 405) return proxyRes;
   } catch (_) {
     // server not reachable (static host) — fall through
   }
