@@ -85,9 +85,9 @@
   ║  API (crypto.subtle). The study page URL is not linked from    ║
   ║  any navigation element; direct URL knowledge is required.     ║
   ║                                                                 ║
-  ║  The NVIDIA API key is stored exclusively in the visiting      ║
+  ║  The Groq API key is stored exclusively in the visiting        ║
   ║  user's own browser localStorage and is never sent anywhere    ║
-  ║  other than NVIDIA's NIM API endpoint.                         ║
+  ║  other than Groq's API endpoint.                               ║
   ╚══════════════════════════════════════════════════════════════════╝
   -->
 
@@ -1463,11 +1463,11 @@
 // ─────────────────────────────────────────────────────────────────────────────
 const STUDY_HASH = 'bbdff5ad5387d076ea4771fdf878d41486d7ea2b192a0581417bf9fe8704969a';
 
-// NVIDIA NIM model for the AI chatbot and quiz generator.
-const NVIDIA_MODEL = 'nvidia/llama-3.3-nemotron-super-49b-v1';
-const NVIDIA_ENDPOINT = 'https://integrate.api.nvidia.com/v1/chat/completions';
+// Groq model for the AI chatbot and quiz generator.
+const AI_MODEL = 'llama-3.1-8b-instant';
+const AI_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
 // Embedded fallback key (XOR-encrypted; plaintext never stored in source).
-const EMBEDDED_KEY = (() => { const p = 'phsfbla-chapter-2025', b = atob('Hh4SFgtBCmk8BDscLA1FfQZKSlIpEB0PKBgZaxkYNDsYMRp3Z2R/ZxgOIj8WJTRDDC8EFgM/OHQEVwJTGRsCUD1fBGMGWA=='); return Array.from(b).map((c,i) => String.fromCharCode(c.charCodeAt(0) ^ p.charCodeAt(i % p.length))).join(''); })();
+const EMBEDDED_KEY = (() => { const p = 'phsfbla-chapter-2025', b = atob('FxsYOQwAOUILAy0iGSNFHX50dQxDW0M+NSsFVAFbJykCKSBlA31iQiRQCQoJXQJ+VjkkBQMERGw='); return Array.from(b).map((c,i) => String.fromCharCode(c.charCodeAt(0) ^ p.charCodeAt(i % p.length))).join(''); })();
 
 // Chatbot conversation history (in-memory, not persisted)
 let chatHistory = [];
@@ -1581,13 +1581,12 @@ async function initSiteData() {
   } catch (_) { /* fall through — loadTheme/loadContent use localStorage/defaults */ }
 }
 
-// ─── NVIDIA NIM call helper (OpenAI-compatible) ───────────────────────────────
-// Priority: 1) personal key (admin panel)  2) embedded fallback key
+// ─── AI call helper ───────────────────────────────────────────────────────────
+// Calls Groq directly from the browser — Groq supports CORS for browser clients.
 async function callAI(body) {
-  const userKey = localStorage.getItem('fbla_nvidia_key') || '';
-  const key = userKey || EMBEDDED_KEY;
+  const key = localStorage.getItem('fbla_groq_key') || EMBEDDED_KEY;
   if (!key) throw new Error('NO_KEY');
-  return fetch(NVIDIA_ENDPOINT, {
+  return fetch(AI_ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
     body: JSON.stringify(body),
@@ -1947,7 +1946,7 @@ const STUDY_EVENTS = [
 ];
 
 function renderStudy() {
-  const apiKey = localStorage.getItem('fbla_nvidia_key') || '';
+  const apiKey = localStorage.getItem('fbla_groq_key') || '';
 
   const rowsHtml = STUDY_EVENTS.map(ev => {
     const haystack = `${ev.name} ${ev.tag} ${ev.desc}`.toLowerCase();
@@ -2000,7 +1999,7 @@ function renderStudy() {
           </div>
           <div>
             <div class="bot-name">FBLA Study Assistant</div>
-            <div class="bot-sub">Powered by Nemotron — NVIDIA AI</div>
+            <div class="bot-sub">Powered by Llama 3.1 — Groq</div>
           </div>
           <div class="chatbot-status" title="Online"></div>
         </div>
@@ -2153,7 +2152,7 @@ Return ONLY the JSON array — no markdown, no code fences, no extra text.`;
 
   try {
     const response = await callAI({
-      model: NVIDIA_MODEL,
+      model: AI_MODEL,
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.7,
       max_tokens: 8192,
@@ -2482,7 +2481,7 @@ function escapeHtml(t) {
 }
 
 function renderMarkdown(raw) {
-  // 1. Strip <think>...</think> reasoning traces (Nemotron internal thoughts)
+  // 1. Strip <think>...</think> reasoning traces (model internal thoughts)
   let t = raw.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
 
   // 2. Escape HTML so we can safely insert user-facing content
@@ -2555,7 +2554,7 @@ async function sendMessage() {
 
   try {
     const response = await callAI({
-      model: NVIDIA_MODEL,
+      model: AI_MODEL,
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
         ...chatHistory,
@@ -2589,7 +2588,7 @@ async function sendMessage() {
     appendMessage('bot', errMsg);
   } finally {
     isBotTyping = false;
-    sendBtn.disabled = !localStorage.getItem('fbla_nvidia_key') && !EMBEDDED_KEY;
+    sendBtn.disabled = !localStorage.getItem('fbla_groq_key') && !EMBEDDED_KEY;
   }
 }
 
