@@ -1438,7 +1438,11 @@
   </nav>
 </header>
 
-<main id="main-content" role="main" aria-live="polite"></main>
+<main id="main-content" role="main" aria-live="polite">
+  <div class="hero" style="display:flex;align-items:center;justify-content:center;">
+    <p style="color:#fff;font-family:sans-serif;opacity:.6;">Loading…</p>
+  </div>
+</main>
 
 <div id="quiz-overlay" hidden></div>
 
@@ -1576,16 +1580,11 @@ function loadTheme() {
 
 async function initSiteData() {
   try {
-    const [contentRes, statusRes] = await Promise.all([
-      fetch('/api/admin/content', { signal: AbortSignal.timeout(4000) }),
-    ]);
+    const contentRes = await fetch('/api/admin/content', { signal: AbortSignal.timeout(3000) });
     if (contentRes.ok) {
       const data = await contentRes.json();
       if (data.content) _serverContent = data.content;
       if (data.theme)   _serverTheme   = data.theme;
-    }
-    if (statusRes.ok) {
-      const s = await statusRes.json();
     }
   } catch (_) { /* fall through — loadTheme/loadContent use localStorage/defaults */ }
 }
@@ -1653,9 +1652,8 @@ const main = document.getElementById('main-content');
 
 function renderPage() {
   const page = getPage();
-  main.classList.add('fading');
-  setTimeout(() => {
-    main.innerHTML = '';
+  main.innerHTML = '';
+  try {
     switch (page) {
       case 'home':     renderHome();     break;
       case 'about':    renderAbout();    break;
@@ -1664,37 +1662,41 @@ function renderPage() {
       case 'study':    renderStudy();    break;
       default:         renderDenied();   break;
     }
-    updateNavActive(page);
-    main.classList.remove('fading');
-    main.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 200);
+  } catch(e) {
+    main.innerHTML = `<div class="page"><p style="color:red;font-family:monospace;padding:2rem;">Render error: ${e.message}<br><pre>${e.stack}</pre></p></div>`;
+  }
+  updateNavActive(page);
 }
 
 window.addEventListener('hashchange', renderPage);
-window.addEventListener('load', async () => {
-  // Official FBLA brand kit logos (Horizontal lockup)
+
+// ── Boot: script runs synchronously after <main> is parsed, so DOM is ready ──
+loadTheme();
+renderPage();
+
+// Load server data in background; re-render only if it changes something
+initSiteData().then(() => {
+  if (_serverContent || _serverTheme) { loadTheme(); renderPage(); }
+}).catch(() => {});
+
+// Logos and UI listeners — set up after all resources are loaded
+window.addEventListener('load', () => {
   const logoNavEl = document.getElementById('logo-national-img');
   if (logoNavEl) logoNavEl.src = 'Horizontal/PNG/FBLA_Logo_Horizontal_color-LoRes.png';
   const logoFooterEl = document.getElementById('logo-footer-img');
   if (logoFooterEl) logoFooterEl.src = 'Horizontal/PNG/FBLA_Logo_Horizontal_white-LoRes.png';
 
-  await initSiteData();
-  loadTheme();
-  renderPage();
-
-  // Hamburger menu
   const ham = document.getElementById('hamburger');
   const nav = document.getElementById('main-nav');
-  ham.addEventListener('click', () => {
-    const open = nav.classList.toggle('open');
-    ham.setAttribute('aria-expanded', String(open));
-  });
+  if (ham && nav) {
+    ham.addEventListener('click', () => {
+      const open = nav.classList.toggle('open');
+      ham.setAttribute('aria-expanded', String(open));
+    });
+    nav.addEventListener('click', () => { nav.classList.remove('open'); ham.setAttribute('aria-expanded', 'false'); });
+  }
 
-  // Close mobile nav on link click
-  nav.addEventListener('click', () => { nav.classList.remove('open'); ham.setAttribute('aria-expanded', 'false'); });
-
-  // Keyboard: Enter on logo-area
-  document.querySelector('.logo-area').addEventListener('keydown', e => {
+  document.querySelector('.logo-area')?.addEventListener('keydown', e => {
     if (e.key === 'Enter') navigate('home');
   });
 });
@@ -2567,8 +2569,9 @@ async function sendMessage() {
   try {
     // Gemma doesn't support system_instruction — inject as a priming turn instead
     const primedContents = [
-      { role: 'user',  parts: [{ text: `[System context — follow these instructions for the entire conversation]\n${SYSTEM_PROMPT}` }] },
-      { role: 'model', parts: [{ text: `Understood! I'm your FBLA Study Assistant for Pensacola High School. Ready to help you prep for any competitive event.` }] },
+      { role: 'user',  parts: [{ text: '[System context — follow these instructions for the entire conversation]
+' + SYSTEM_PROMPT }] },
+      { role: 'model', parts: [{ text: 'Understood! I'm your FBLA Study Assistant for Pensacola High School. Ready to help you prep for any competitive event.' }] },
       ...chatHistory,
     ];
     const response = await callGemini({
