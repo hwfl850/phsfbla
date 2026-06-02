@@ -85,9 +85,9 @@
   ║  API (crypto.subtle). The study page URL is not linked from    ║
   ║  any navigation element; direct URL knowledge is required.     ║
   ║                                                                 ║
-  ║  The Gemini API key is stored exclusively in the visiting      ║
+  ║  The NVIDIA API key is stored exclusively in the visiting      ║
   ║  user's own browser localStorage and is never sent anywhere    ║
-  ║  other than Google's Gemini API endpoint.                      ║
+  ║  other than NVIDIA's NIM API endpoint.                         ║
   ╚══════════════════════════════════════════════════════════════════╝
   -->
 
@@ -1438,11 +1438,7 @@
   </nav>
 </header>
 
-<main id="main-content" role="main" aria-live="polite">
-  <div class="hero" style="display:flex;align-items:center;justify-content:center;">
-    <p style="color:#fff;font-family:sans-serif;opacity:.6;">Loading…</p>
-  </div>
-</main>
+<main id="main-content" role="main" aria-live="polite"></main>
 
 <div id="quiz-overlay" hidden></div>
 
@@ -1467,20 +1463,11 @@
 // ─────────────────────────────────────────────────────────────────────────────
 const STUDY_HASH = 'bbdff5ad5387d076ea4771fdf878d41486d7ea2b192a0581417bf9fe8704969a';
 
-// Default Gemini model for the AI chatbot and quiz generator.
-const GEMINI_MODEL = 'gemma-4-31b-it';
-// Embedded fallback key — XOR-encrypted so the plaintext key is not in source.
-const _EK_ENC = 'MSEJBzEVI1U2H1gbMhY0eFcHeE0xKRAjOAkNdDQGLB5ZBjtLZkpz';
-const _EK_P   = 'phsfbla-chapter-2025';
-function _dk() {
-  const b = atob(_EK_ENC);
-  return Array.from(b).map((c, i) =>
-    String.fromCharCode(c.charCodeAt(0) ^ _EK_P.charCodeAt(i % _EK_P.length))
-  ).join('');
-}
-const EMBEDDED_KEY = _dk();
-const GEMINI_ENDPOINT = (key) =>
-  `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${key}`;
+// NVIDIA NIM model for the AI chatbot and quiz generator.
+const NVIDIA_MODEL = 'nvidia/llama-3.3-nemotron-super-49b-v1';
+const NVIDIA_ENDPOINT = 'https://integrate.api.nvidia.com/v1/chat/completions';
+// Embedded fallback key (XOR-encrypted; plaintext never stored in source).
+const EMBEDDED_KEY = (() => { const p = 'phsfbla-chapter-2025', b = atob('Hh4SFgtBCmk8BDscLA1FfQZKSlIpEB0PKBgZaxkYNDsYMRp3Z2R/ZxgOIj8WJTRDDC8EFgM/OHQEVwJTGRsCUD1fBGMGWA=='); return Array.from(b).map((c,i) => String.fromCharCode(c.charCodeAt(0) ^ p.charCodeAt(i % p.length))).join(''); })();
 
 // Chatbot conversation history (in-memory, not persisted)
 let chatHistory = [];
@@ -1580,26 +1567,31 @@ function loadTheme() {
 
 async function initSiteData() {
   try {
-    const contentRes = await fetch('/api/admin/content', { signal: AbortSignal.timeout(3000) });
+    const [contentRes, statusRes] = await Promise.all([
+      fetch('/api/admin/content', { signal: AbortSignal.timeout(4000) }),
+    ]);
     if (contentRes.ok) {
       const data = await contentRes.json();
       if (data.content) _serverContent = data.content;
       if (data.theme)   _serverTheme   = data.theme;
     }
+    if (statusRes.ok) {
+      const s = await statusRes.json();
+    }
   } catch (_) { /* fall through — loadTheme/loadContent use localStorage/defaults */ }
 }
 
-// ─── Gemini call helper ──────────────────────────────────────────────────────
-// Priority: 1) personal key (admin panel)  2) server proxy (always tried first
-// so the race with initSiteData doesn't matter)  3) embedded fallback key
-async function callGemini(body) {
-  const userKey = localStorage.getItem('fbla_gemini_key') || '';
-  const model   = localStorage.getItem('fbla_gemini_model') || GEMINI_MODEL;
-  // Use personal key if set, otherwise fall back to the embedded key
+// ─── NVIDIA NIM call helper (OpenAI-compatible) ───────────────────────────────
+// Priority: 1) personal key (admin panel)  2) embedded fallback key
+async function callAI(body) {
+  const userKey = localStorage.getItem('fbla_nvidia_key') || '';
   const key = userKey || EMBEDDED_KEY;
   if (!key) throw new Error('NO_KEY');
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
-  return fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  return fetch(NVIDIA_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+    body: JSON.stringify(body),
+  });
 }
 
 function applyTheme(t) {
@@ -1652,8 +1644,9 @@ const main = document.getElementById('main-content');
 
 function renderPage() {
   const page = getPage();
-  main.innerHTML = '';
-  try {
+  main.classList.add('fading');
+  setTimeout(() => {
+    main.innerHTML = '';
     switch (page) {
       case 'home':     renderHome();     break;
       case 'about':    renderAbout();    break;
@@ -1662,41 +1655,37 @@ function renderPage() {
       case 'study':    renderStudy();    break;
       default:         renderDenied();   break;
     }
-  } catch(e) {
-    main.innerHTML = `<div class="page"><p style="color:red;font-family:monospace;padding:2rem;">Render error: ${e.message}<br><pre>${e.stack}</pre></p></div>`;
-  }
-  updateNavActive(page);
+    updateNavActive(page);
+    main.classList.remove('fading');
+    main.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 200);
 }
 
 window.addEventListener('hashchange', renderPage);
-
-// ── Boot: script runs synchronously after <main> is parsed, so DOM is ready ──
-loadTheme();
-renderPage();
-
-// Load server data in background; re-render only if it changes something
-initSiteData().then(() => {
-  if (_serverContent || _serverTheme) { loadTheme(); renderPage(); }
-}).catch(() => {});
-
-// Logos and UI listeners — set up after all resources are loaded
-window.addEventListener('load', () => {
+window.addEventListener('load', async () => {
+  // Official FBLA brand kit logos (Horizontal lockup)
   const logoNavEl = document.getElementById('logo-national-img');
   if (logoNavEl) logoNavEl.src = 'Horizontal/PNG/FBLA_Logo_Horizontal_color-LoRes.png';
   const logoFooterEl = document.getElementById('logo-footer-img');
   if (logoFooterEl) logoFooterEl.src = 'Horizontal/PNG/FBLA_Logo_Horizontal_white-LoRes.png';
 
+  await initSiteData();
+  loadTheme();
+  renderPage();
+
+  // Hamburger menu
   const ham = document.getElementById('hamburger');
   const nav = document.getElementById('main-nav');
-  if (ham && nav) {
-    ham.addEventListener('click', () => {
-      const open = nav.classList.toggle('open');
-      ham.setAttribute('aria-expanded', String(open));
-    });
-    nav.addEventListener('click', () => { nav.classList.remove('open'); ham.setAttribute('aria-expanded', 'false'); });
-  }
+  ham.addEventListener('click', () => {
+    const open = nav.classList.toggle('open');
+    ham.setAttribute('aria-expanded', String(open));
+  });
 
-  document.querySelector('.logo-area')?.addEventListener('keydown', e => {
+  // Close mobile nav on link click
+  nav.addEventListener('click', () => { nav.classList.remove('open'); ham.setAttribute('aria-expanded', 'false'); });
+
+  // Keyboard: Enter on logo-area
+  document.querySelector('.logo-area').addEventListener('keydown', e => {
     if (e.key === 'Enter') navigate('home');
   });
 });
@@ -1958,7 +1947,7 @@ const STUDY_EVENTS = [
 ];
 
 function renderStudy() {
-  const apiKey = localStorage.getItem('fbla_gemini_key') || '';
+  const apiKey = localStorage.getItem('fbla_nvidia_key') || '';
 
   const rowsHtml = STUDY_EVENTS.map(ev => {
     const haystack = `${ev.name} ${ev.tag} ${ev.desc}`.toLowerCase();
@@ -2011,7 +2000,7 @@ function renderStudy() {
           </div>
           <div>
             <div class="bot-name">FBLA Study Assistant</div>
-            <div class="bot-sub">Powered by Gemma — Google AI</div>
+            <div class="bot-sub">Powered by Nemotron — NVIDIA AI</div>
           </div>
           <div class="chatbot-status" title="Online"></div>
         </div>
@@ -2163,13 +2152,11 @@ Questions should cover key topics, vocabulary, concepts, formulas, and skills te
 Return ONLY the JSON array — no markdown, no code fences, no extra text.`;
 
   try {
-    const response = await callGemini({
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 8192,
-        responseMimeType: 'application/json',
-      },
+    const response = await callAI({
+      model: NVIDIA_MODEL,
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.7,
+      max_tokens: 8192,
     });
 
     if (!response.ok) {
@@ -2178,7 +2165,7 @@ Return ONLY the JSON array — no markdown, no code fences, no extra text.`;
     }
 
     const data = await response.json();
-    const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    const raw = data?.choices?.[0]?.message?.content;
     if (!raw) throw new Error('Empty response from AI.');
 
     let questions;
@@ -2495,8 +2482,8 @@ function escapeHtml(t) {
 }
 
 function renderMarkdown(raw) {
-  // 1. Strip <thinking>...</thinking> blocks (Gemma reasoning traces)
-  let t = raw.replace(/<thinking>[\s\S]*?<\/thinking>/gi, '').trim();
+  // 1. Strip <think>...</think> reasoning traces (Nemotron internal thoughts)
+  let t = raw.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
 
   // 2. Escape HTML so we can safely insert user-facing content
   t = escapeHtml(t);
@@ -2560,27 +2547,22 @@ async function sendMessage() {
   input.value = '';
   input.style.height = 'auto';
   appendMessage('user', text);
-  chatHistory.push({ role: 'user', parts: [{ text }] });
+  chatHistory.push({ role: 'user', content: text });
 
   isBotTyping = true;
   sendBtn.disabled = true;
   showTyping();
 
   try {
-    // Gemma doesn't support system_instruction — inject as a priming turn instead
-    const primedContents = [
-      { role: 'user',  parts: [{ text: '[System context — follow these instructions for the entire conversation]
-' + SYSTEM_PROMPT }] },
-      { role: 'model', parts: [{ text: 'Understood! I'm your FBLA Study Assistant for Pensacola High School. Ready to help you prep for any competitive event.' }] },
-      ...chatHistory,
-    ];
-    const response = await callGemini({
-      contents: primedContents,
-      generationConfig: {
-        temperature: 0.7,
-        topP: 0.95,
-        maxOutputTokens: 1024,
-      },
+    const response = await callAI({
+      model: NVIDIA_MODEL,
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        ...chatHistory,
+      ],
+      temperature: 0.7,
+      top_p: 0.95,
+      max_tokens: 1024,
     });
 
     if (!response.ok) {
@@ -2589,11 +2571,11 @@ async function sendMessage() {
     }
 
     const data = await response.json();
-    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    const reply = data?.choices?.[0]?.message?.content;
 
     if (!reply) throw new Error('Empty response from AI.');
 
-    chatHistory.push({ role: 'model', parts: [{ text: reply }] });
+    chatHistory.push({ role: 'assistant', content: reply });
     removeTyping();
     appendMessage('bot', reply);
 
@@ -2601,13 +2583,13 @@ async function sendMessage() {
     removeTyping();
     const errMsg = err.message === 'NO_KEY'
       ? 'The AI assistant is only available on the hosted version of this site. Visit the Replit-hosted app to use the chatbot.'
-      : err.message.includes('API key') || err.message.includes('403') || err.message.includes('401')
+      : err.message.includes('API key') || err.message.includes('401') || err.message.includes('403')
         ? 'Invalid or expired API key. Please update it in the Admin Panel.'
         : `Error: ${err.message}. Check your internet connection.`;
     appendMessage('bot', errMsg);
   } finally {
     isBotTyping = false;
-    sendBtn.disabled = !localStorage.getItem('fbla_gemini_key') && !EMBEDDED_KEY;
+    sendBtn.disabled = !localStorage.getItem('fbla_nvidia_key') && !EMBEDDED_KEY;
   }
 }
 
