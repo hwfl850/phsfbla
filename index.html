@@ -432,6 +432,81 @@
       margin-bottom: 2rem;
     }
 
+    /* ── Announcement card (homepage) ── */
+    .announcement-section { padding: 2.5rem 1.5rem 0; }
+    .announcement {
+      position: relative;
+      max-width: 1100px;
+      margin: 0 auto;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--gold);
+      border-radius: 14px;
+      padding: 1.5rem 1.75rem;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 1.25rem;
+      align-items: center;
+    }
+    .announcement-icon {
+      width: 44px; height: 44px;
+      flex: 0 0 44px;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold);
+      box-shadow: 0 6px 14px rgba(10,46,127,.18);
+    }
+    .announcement-body { min-width: 0; }
+    .announcement-badge {
+      display: inline-block;
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: .35rem;
+    }
+    .announcement-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.3;
+      margin-bottom: .3rem;
+      letter-spacing: -0.01em;
+    }
+    .announcement-text {
+      font-size: .92rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+    .announcement-cta {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      padding: .6rem 1.1rem;
+      border-radius: var(--radius-pill);
+      background: var(--navy);
+      color: var(--white);
+      font-weight: 600;
+      font-size: .85rem;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background var(--transition), transform var(--transition);
+    }
+    .announcement-cta:hover { background: var(--blue); transform: translateY(-1px); }
+
+    @media (max-width: 720px) {
+      .announcement {
+        grid-template-columns: auto 1fr;
+        row-gap: 1rem;
+      }
+      .announcement-cta { grid-column: 1 / -1; justify-self: start; }
+    }
+
     /* ── Cards grid ── */
     .cards { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
 
@@ -1484,6 +1559,13 @@ const CONTENT_DEFAULTS = {
   headline:    "Pensacola High Future Business Leaders of America",
   subheadline: "Developing the next generation of business professionals and community leaders.",
   contactEmail: "fbla@pensacolahigh.edu",
+  announcement: {
+    badge: "Latest Update",
+    title: "Next Meeting — Aug 20 · Club Rush Recruitment",
+    body:  "We're recruiting at Club Rush! Bring a friend, grab Krispy Kreme, and pick up your FBLA Connect login. NLC recap to follow.",
+    ctaText: "See Full Calendar",
+    ctaHref: "#section-events",
+  },
   events: [
     { date: "AUG 7",     title: "Officer Meeting",              desc: "Officers plan the upcoming school year. All officers required." },
     { date: "AUG 20",    title: "General Meeting — Club Rush",   desc: "Recruit at Club Rush! Encourage friends to come to the New Member Meeting. NLC recap & FBLA Connect setup. Krispy Kreme." },
@@ -1531,6 +1613,9 @@ function deepMergeContent(defaults, saved) {
   if (typeof saved.headline    === 'string') result.headline    = saved.headline;
   if (typeof saved.subheadline === 'string') result.subheadline = saved.subheadline;
   if (typeof saved.contactEmail === 'string') result.contactEmail = saved.contactEmail;
+  if (saved.announcement && typeof saved.announcement === 'object') {
+    result.announcement = { ...result.announcement, ...saved.announcement };
+  }
   if (Array.isArray(saved.events))   result.events   = saved.events;
   if (Array.isArray(saved.officers)) result.officers = saved.officers;
   return result;
@@ -1552,9 +1637,10 @@ const THEME_DEFAULTS = {
   accent:     '#f4ab19',  // FBLA Gold
   bg:         '#ffffff',
   fontBody:   'Apercu Pro',
-  showEvents:   true,
-  showOfficers: true,
-  showCta:      true,
+  showEvents:        true,
+  showOfficers:      true,
+  showCta:           true,
+  showAnnouncement:  true,
 };
 
 function loadTheme() {
@@ -1721,6 +1807,26 @@ function renderHome() {
         </div>
       </div>
     </div>
+
+    ${t.showAnnouncement && c.announcement && c.announcement.title ? `
+    <section class="announcement-section" id="section-announcement">
+      <div class="announcement" role="region" aria-label="Chapter announcement">
+        <div class="announcement-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3 11v2c0 .55.45 1 1 1h1l3.5 3.5c.63.63 1.71.18 1.71-.71V7.21c0-.89-1.08-1.34-1.71-.71L5 10H4c-.55 0-1 .45-1 1zm13.5 1c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v.5c0 .38.25.71.61.85C17.18 5.6 19 8.09 19 11s-1.82 5.4-4.39 6.42c-.36.14-.61.47-.61.85v.5c0 .63.63 1.07 1.21.85C18.66 18.36 21 14.95 21 11s-2.34-7.36-5.79-8.62c-.58-.22-1.21.22-1.21.85z"/>
+          </svg>
+        </div>
+        <div class="announcement-body">
+          ${c.announcement.badge ? `<div class="announcement-badge">${escHtml(c.announcement.badge)}</div>` : ''}
+          <h3 class="announcement-title">${escHtml(c.announcement.title)}</h3>
+          ${c.announcement.body ? `<p class="announcement-text">${escHtml(c.announcement.body)}</p>` : ''}
+        </div>
+        ${c.announcement.ctaText && c.announcement.ctaHref ? `
+          <a class="announcement-cta" href="${escHtml(c.announcement.ctaHref)}">${escHtml(c.announcement.ctaText)} <span aria-hidden="true">&rarr;</span></a>
+        ` : ''}
+      </div>
+    </section>
+    ` : ''}
 
     ${t.showEvents && c.events.length ? `
     <section class="section" id="section-events">
