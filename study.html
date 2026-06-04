@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Pensacola High School FBLA study resources and AI-powered prep tools." />
+  <meta property="og:title" content="Study Resources — Pensacola High FBLA" />
+  <meta property="og:description" content="Practice quizzes and an AI study assistant for FBLA competitive events." />
+  <meta property="og:type" content="website" />
+  <title>Study Resources — Pensacola High FBLA</title>
+  <link rel="icon" type="image/png" href="FBLA Emblem FINAL RGB (1).png" />
+  <link rel="apple-touch-icon" href="FBLA Emblem FINAL RGB (1).png" />
+  <link rel="stylesheet" href="assets/styles.css" />
+
+  <!--
+  ╔══════════════════════════════════════════════════════════════════╗
+  ║                     SECURITY NOTICE                             ║
+  ║                                                                 ║
+  ║  Password protection on this page is URL-obscurity-based.      ║
+  ║  The study page URL fragment is the SHA-256 hex digest of the  ║
+  ║  access password. SHA-256 is a one-way cryptographic hash —    ║
+  ║  the digest embedded here cannot be reversed to recover the    ║
+  ║  original password without an exhaustive preimage attack.      ║
+  ║                                                                 ║
+  ║  The password is NEVER stored or transmitted — only its hash   ║
+  ║  is compared at runtime in the browser using the Web Crypto    ║
+  ║  API (crypto.subtle). The study page URL is not linked from    ║
+  ║  any navigation element; direct URL knowledge is required.     ║
+  ║                                                                 ║
+  ║  The Groq API key is stored exclusively in the visiting        ║
+  ║  user's own browser localStorage and is never sent anywhere    ║
+  ║  other than Groq's API endpoint.                               ║
+  ╚══════════════════════════════════════════════════════════════════╝
+  -->
+</head>
+<body>
+
+<header>
+  <a class="logo-area" href="index.html" aria-label="Go to homepage">
+    <img id="logo-national-img" class="logo-img" alt="FBLA — Future Business Leaders of America" />
+    <div class="logo-chapter">
+      <span class="chapter-school">Pensacola High</span>
+      <span class="chapter-tag">Florida FBLA Chapter</span>
+    </div>
+  </a>
+
+  <button class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+
+  <nav id="main-nav" role="navigation" aria-label="Main navigation">
+    <a href="index.html"    id="nav-home">Home</a>
+    <a href="about.html"    id="nav-about">About</a>
+    <a href="meetings.html" id="nav-meetings">Meetings</a>
+    <a href="study.html"    id="nav-study" class="nav-accent">Study Resources</a>
+  </nav>
+</header>
+
+<main id="main-content" role="main"></main>
+
+<div id="quiz-overlay" hidden></div>
+
+<footer>
+  <img id="logo-footer-img" class="footer-logo" alt="FBLA — Future Business Leaders of America" />
+  <div style="font-weight:600;color:#fff;font-size:.95rem;">Pensacola High School <span style="opacity:.55;margin:0 .35rem;">·</span> Pensacola, FL</div>
+  <div class="footer-divider" aria-hidden="true"></div>
+  <a class="insta-link" href="https://www.instagram.com/pensacolahigh.fbla" target="_blank" rel="noopener" aria-label="Follow us on Instagram">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+    </svg>
+    @pensacolahigh.fbla
+  </a>
+  <div class="footer-tag"><strong>Service</strong> &nbsp;·&nbsp; <strong>Education</strong> &nbsp;·&nbsp; <strong>Progress</strong></div>
+</footer>
+
+<script src="assets/site.js"></script>
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// SECURITY CONSTANTS
+// Only the SHA-256 hex digest of the study-area password is stored here.
+// The plaintext password is never in this file.
+// ─────────────────────────────────────────────────────────────────────────────
+const STUDY_HASH = 'bbdff5ad5387d076ea4771fdf878d41486d7ea2b192a0581417bf9fe8704969a';
+
+const AI_MODEL = 'llama-3.1-8b-instant';
+const AI_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
+const EMBEDDED_KEY = (() => { const p = 'phsfbla-chapter-2025', b = atob('FxsYOQwAOUILAy0iGSNFHX50dQxDW0M+NSsFVAFbJykCKSBlA31iQiRQCQoJXQJ+VjkkBQMERGw='); return Array.from(b).map((c,i) => String.fromCharCode(c.charCodeAt(0) ^ p.charCodeAt(i % p.length))).join(''); })();
+
+let chatHistory = [];
+let isBotTyping = false;
+
+// ── Page routing within study.html ───────────────────────────────────────────
+const main = document.getElementById('main-content');
+
+function getStudyPage() {
+  const h = location.hash.replace('#', '').trim();
+  if (!h)               return 'login';
+  if (h === STUDY_HASH) return 'study';
+  return 'denied';
+}
+
+function renderStudyPage() {
+  main.innerHTML = '';
+  switch (getStudyPage()) {
+    case 'login':  renderLogin();  break;
+    case 'study':  renderStudy();  break;
+    default:       renderDenied(); break;
+  }
+  main.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+window.addEventListener('hashchange', renderStudyPage);
+
+function onSiteReady() {
+  renderStudyPage();
+}
+
+// ── AI call helper ──────────────────────────────────────────────────────────
+async function callAI(body) {
+  const key = localStorage.getItem('fbla_groq_key') || EMBEDDED_KEY;
+  if (!key) throw new Error('NO_KEY');
+  return fetch(AI_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+    body: JSON.stringify(body),
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PASSWORD / LOGIN PAGE
+// ─────────────────────────────────────────────────────────────────────────────
+function renderLogin() {
+  main.innerHTML = `
+    <div class="password-page">
+      <div class="password-card">
+        <div class="lock-icon" aria-hidden="true">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="${currentTheme().accent}">
+            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+          </svg>
+        </div>
+        <h2>Study Resources</h2>
+        <p>Enter the chapter access password to view study materials and the AI prep assistant.</p>
+
+        <div id="login-error" class="error-msg" role="alert"></div>
+
+        <div class="password-input-wrap">
+          <input type="password" id="pw-input" placeholder="Enter password" autocomplete="current-password"
+            aria-label="Study area password" onkeydown="if(event.key==='Enter')submitPassword()" />
+          <button class="password-toggle" onclick="togglePwVisibility()" aria-label="Toggle password visibility">
+            <svg id="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+            </svg>
+          </button>
+        </div>
+
+        <button class="btn btn-primary btn-full" id="submit-btn" onclick="submitPassword()" aria-label="Submit password">
+          <span id="btn-text">Enter</span>
+        </button>
+      </div>
+    </div>
+  `;
+  document.getElementById('pw-input')?.focus();
+}
+
+function togglePwVisibility() {
+  const input = document.getElementById('pw-input');
+  if (!input) return;
+  input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+async function sha256Hex(text) {
+  const enc = new TextEncoder();
+  const buf = await crypto.subtle.digest('SHA-256', enc.encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function submitPassword() {
+  const input = document.getElementById('pw-input');
+  const btn   = document.getElementById('submit-btn');
+  const txt   = document.getElementById('btn-text');
+  const err   = document.getElementById('login-error');
+  if (!input || !btn) return;
+
+  const pw = input.value;
+  if (!pw) { showError(err, 'Please enter the password.'); return; }
+
+  btn.disabled = true;
+  txt.innerHTML = 'Checking<span class="spinner"></span>';
+  err.classList.remove('show');
+
+  try {
+    const hex = await sha256Hex(pw);
+    if (hex === STUDY_HASH) {
+      location.hash = '#' + hex;
+    } else {
+      btn.disabled = false;
+      txt.textContent = 'Enter';
+      showError(err, 'Incorrect password. Please try again.');
+      input.value = '';
+      input.focus();
+    }
+  } catch (e) {
+    btn.disabled = false;
+    txt.textContent = 'Enter';
+    showError(err, 'An error occurred. Please try again.');
+  }
+}
+
+function showError(el, msg) {
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// STUDY RESOURCES PAGE
+// ─────────────────────────────────────────────────────────────────────────────
+const STUDY_EVENTS = [
+  { tag: 'Written', name: 'Business Calculations', desc: 'Math-heavy exam covering interest, depreciation, financial ratios, and payroll.', url: 'https://www.fbla-pbl.org/competitive-event/business-calculations/' },
+  { tag: 'Written', name: 'Economics', desc: 'Micro and macroeconomic principles, supply/demand, monetary policy, and trade.', url: 'https://www.fbla-pbl.org/competitive-event/economics/' },
+  { tag: 'Written', name: 'Business Law', desc: 'Contract law, business organizations, employment law, and consumer protection.', url: 'https://www.fbla-pbl.org/competitive-event/business-law/' },
+  { tag: 'Written', name: 'Intro to Business Communication', desc: 'Grammar, business writing, memo formatting, and professional correspondence.', url: 'https://www.fbla-pbl.org/competitive-event/introduction-to-business-communication/' },
+  { tag: 'Written', name: 'Accounting I', desc: 'Journal entries, T-accounts, trial balances, and basic financial statements.', url: 'https://www.fbla-pbl.org/competitive-event/accounting-i/' },
+  { tag: 'Written', name: 'Accounting II', desc: 'Advanced accounting: adjusting entries, depreciation, payroll, and partnerships.', url: 'https://www.fbla-pbl.org/competitive-event/accounting-ii/' },
+  { tag: 'Performance', name: 'Public Speaking', desc: 'Deliver a 3-5 minute prepared speech on a business-related topic.', url: 'https://www.fbla-pbl.org/competitive-event/public-speaking-i/' },
+  { tag: 'Performance', name: 'Parliamentary Procedure', desc: 'Team-based demonstration of parliamentary procedures following Robert\'s Rules.', url: 'https://www.fbla-pbl.org/competitive-event/parliamentary-procedure/' },
+  { tag: 'Performance', name: 'Job Interview', desc: 'Prepare a professional résumé and complete a simulated job interview.', url: 'https://www.fbla-pbl.org/competitive-event/job-interview/' },
+  { tag: 'Technology', name: 'Computer Problem Solving', desc: 'Computer concepts, programming logic, and technology problem-solving.', url: 'https://www.fbla-pbl.org/competitive-event/computer-problem-solving/' },
+  { tag: 'Technology', name: 'Spreadsheet Applications', desc: 'Excel functions, formulas, charts, pivot tables, and data analysis.', url: 'https://www.fbla-pbl.org/competitive-event/spreadsheet-applications/' },
+  { tag: 'Technology', name: 'Word Processing', desc: 'Document formatting, speed, and accuracy using word processing software.', url: 'https://www.fbla-pbl.org/competitive-event/word-processing/' },
+  { tag: 'Team', name: 'Business Ethics', desc: 'Analyze ethical dilemmas in business scenarios and present recommendations.', url: 'https://www.fbla-pbl.org/competitive-event/business-ethics/' },
+  { tag: 'Team', name: 'Entrepreneurship', desc: 'Develop a new business concept and present your business plan to judges.', url: 'https://www.fbla-pbl.org/competitive-event/entrepreneurship/' },
+  { tag: 'Team', name: 'Marketing', desc: 'Create and present a marketing campaign for a product, service, or organization.', url: 'https://www.fbla-pbl.org/competitive-event/marketing/' },
+  { tag: 'Written', name: 'Management Decision Making', desc: 'Analyze complex business scenarios and recommend strategic management decisions.', url: 'https://www.fbla-pbl.org/competitive-event/management-decision-making/' },
+];
+
+function renderStudy() {
+  const apiKey = localStorage.getItem('fbla_groq_key') || '';
+
+  const rowsHtml = STUDY_EVENTS.map(ev => {
+    const haystack = `${ev.name} ${ev.tag} ${ev.desc}`.toLowerCase();
+    return `
+    <div class="event-row" data-search="${escapeHtml(haystack)}">
+      <span class="event-card-tag">${ev.tag}</span>
+      <div class="event-row-info">
+        <h4>${ev.name}</h4>
+        <p>${ev.desc}</p>
+      </div>
+      <div class="event-row-actions">
+        <a href="${ev.url}" target="_blank" rel="noopener">Official Resources ↗</a>
+        <button class="quiz-btn" data-event="${escapeHtml(ev.name)}" onclick="startQuiz(this.dataset.event)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+          Quiz Me
+        </button>
+      </div>
+    </div>
+  `;
+  }).join('');
+
+  main.innerHTML = `
+    <div class="study-header">
+      <h1>Study Resources</h1>
+      <p>FBLA Competitive Events — Pensacola High Chapter &nbsp;<span style="opacity:.6">|</span>&nbsp; Access restricted</p>
+    </div>
+
+    <div class="study-content">
+      <h2 class="section-title" style="margin-bottom:.4rem;">Competitive Events</h2>
+      <div class="section-line"></div>
+      <p style="color:var(--text-muted);font-size:.88rem;margin-bottom:1.25rem;">
+        Click <strong>Quiz Me</strong> on any event to launch a timed 25-question practice quiz. Use the AI assistant below for open-ended study help.
+      </p>
+      <div class="events-search-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="search" id="events-search" class="events-search" placeholder="Search events by name, category, or topic..." aria-label="Search competitive events" oninput="filterStudyEvents(this.value)" />
+      </div>
+      <div class="study-events" id="study-events">${rowsHtml}</div>
+      <div class="events-empty" id="study-events-empty" style="display:none;">No events match your search.</div>
+
+      <h2 class="section-title" style="margin-bottom:.4rem;">FBLA Study Assistant <span class="badge">AI</span></h2>
+      <div class="section-line"></div>
+
+      <div class="chatbot-section">
+        <div class="chatbot-header">
+          <div class="chatbot-avatar" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#0a2e7f">
+              <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="bot-name">FBLA Study Assistant</div>
+            <div class="bot-sub">Powered by Llama 3.1 — Groq</div>
+          </div>
+          <div class="chatbot-status" title="Online"></div>
+        </div>
+
+        <div class="chatbot-messages" id="chat-messages" role="log" aria-label="Chat messages" aria-live="polite">
+          <div class="message bot">
+            <div class="msg-name">FBLA Study Assistant</div>
+            <div class="msg-bubble">
+              Hey! I'm your FBLA Study Assistant. I can help you prep for any FBLA competitive event — whether it's Business Calculations, Parliamentary Procedure, Public Speaking, or anything else. What would you like to study today?
+            </div>
+          </div>
+        </div>
+
+        <div class="chatbot-input-area">
+          <textarea id="chat-input" rows="1" placeholder="Ask about any FBLA topic..." aria-label="Chat input"
+            onkeydown="chatKeydown(event)" oninput="autoResize(this)"></textarea>
+          <button class="send-btn" id="send-btn" onclick="sendMessage()" aria-label="Send message" ${(!apiKey && !EMBEDDED_KEY) ? 'disabled' : ''}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div style="margin-top:1.5rem;padding:1rem 1.25rem;background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);">
+        <p style="font-size:.82rem;color:var(--text-muted);line-height:1.6;">
+          <strong style="color:var(--primary);">Study Tips:</strong>
+          Practice with the official FBLA study guides, use the AI assistant to quiz yourself, review Robert's Rules of Order for Parliamentary Procedure events, and practice timed writing for objective tests.
+          Good luck at Districts, States, and Nationals — <strong>Headed to Ohio!</strong>
+        </p>
+      </div>
+
+      ${renderQuizHistoryHtml()}
+    </div>
+  `;
+
+  chatHistory = [];
+}
+
+function filterStudyEvents(query) {
+  const q = (query || '').trim().toLowerCase();
+  const rows = document.querySelectorAll('#study-events .event-row');
+  let visible = 0;
+  rows.forEach(row => {
+    const match = !q || (row.dataset.search || '').includes(q);
+    row.style.display = match ? '' : 'none';
+    if (match) visible++;
+  });
+  const empty = document.getElementById('study-events-empty');
+  if (empty) empty.style.display = visible === 0 ? '' : 'none';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// QUIZ GENERATOR
+// ─────────────────────────────────────────────────────────────────────────────
+let quizState = null;
+
+function loadQuizHistory() {
+  try { return JSON.parse(localStorage.getItem('fbla_quiz_history') || '[]'); }
+  catch { return []; }
+}
+
+function renderQuizHistoryHtml() {
+  const history = loadQuizHistory();
+  if (history.length === 0) return '';
+  const items = history.slice(0, 10).map(h => {
+    const color = h.pct >= 80 ? '#2e7d32' : h.pct >= 60 ? 'var(--primary)' : '#c62828';
+    return `
+      <div class="quiz-history-item">
+        <span class="qhi-event">${escapeHtml(h.event)}</span>
+        <span class="qhi-score" style="color:${color}">${h.pct}%</span>
+        <span class="qhi-meta">${h.score}/${h.total} correct &middot; ${formatQuizTime(h.timeTaken)} &middot; ${escapeHtml(h.date)}</span>
+      </div>`;
+  }).join('');
+  return `
+    <div class="quiz-history-section">
+      <h2 class="section-title" style="margin-bottom:.4rem;">Quiz History <span class="badge">Local</span></h2>
+      <div class="section-line"></div>
+      <p style="color:var(--text-muted);font-size:.82rem;margin-bottom:.5rem;">Your recent quiz results — stored locally in this browser.</p>
+      <div class="quiz-history-list">${items}</div>
+      <button onclick="clearQuizHistory()" style="margin-top:.75rem;background:none;border:none;font-size:.78rem;color:var(--text-muted);cursor:pointer;text-decoration:underline;">Clear history</button>
+    </div>`;
+}
+
+function clearQuizHistory() {
+  if (confirm('Clear all quiz history?')) {
+    localStorage.removeItem('fbla_quiz_history');
+    renderStudy();
+  }
+}
+
+function formatQuizTime(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+function startQuiz(eventName) {
+  showQuizOverlay();
+  renderQuizLoading(eventName);
+  generateQuizQuestions(eventName);
+}
+
+function showQuizOverlay() {
+  const el = document.getElementById('quiz-overlay');
+  el.hidden = false;
+  el.className = 'quiz-overlay';
+  document.body.style.overflow = 'hidden';
+}
+
+function hideQuizOverlay() {
+  const el = document.getElementById('quiz-overlay');
+  el.hidden = true;
+  el.innerHTML = '';
+  document.body.style.overflow = '';
+  if (quizState?.timerInterval) clearInterval(quizState.timerInterval);
+  quizState = null;
+}
+
+function renderQuizLoading(eventName) {
+  document.getElementById('quiz-overlay').innerHTML = `
+    <div class="quiz-box">
+      <div class="quiz-header">
+        <span class="quiz-title">${escapeHtml(eventName)} — Practice Quiz</span>
+        <button onclick="hideQuizOverlay()" style="background:none;border:none;color:rgba(255,255,255,.8);font-size:1.4rem;cursor:pointer;line-height:1;flex-shrink:0;" aria-label="Close quiz">&#x2715;</button>
+      </div>
+      <div class="quiz-loading">
+        <div class="quiz-spinner"></div>
+        <p style="font-weight:600;color:var(--primary);font-size:.95rem;">Generating your quiz&hellip;</p>
+        <p style="font-size:.83rem;color:var(--text-muted);">Creating 25 questions for <strong>${escapeHtml(eventName)}</strong></p>
+      </div>
+    </div>`;
+}
+
+async function generateQuizQuestions(eventName) {
+  const prompt = `Generate exactly 25 multiple-choice practice quiz questions for the FBLA competitive event: "${eventName}".
+
+Return ONLY a valid JSON array with exactly 25 objects. Each object must have:
+- "q": the question text (string)
+- "opts": array of exactly 4 answer choices (strings, no letter labels like "A." or "1.")
+- "ans": 0-based integer index of the correct answer (0, 1, 2, or 3)
+- "exp": brief explanation of why the correct answer is right (1-2 sentences)
+
+Questions should cover key topics, vocabulary, concepts, formulas, and skills tested in the FBLA ${eventName} objective exam. Vary difficulty (easy, medium, hard). Do not repeat questions.
+
+Return ONLY the JSON array — no markdown, no code fences, no extra text.`;
+
+  try {
+    const response = await callAI({
+      model: AI_MODEL,
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.7,
+      max_tokens: 8192,
+    });
+
+    if (!response.ok) {
+      const errJson = await response.json().catch(() => ({}));
+      throw new Error(errJson?.error?.message || `HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    const raw = data?.choices?.[0]?.message?.content;
+    if (!raw) throw new Error('Empty response from AI.');
+
+    let questions;
+    try {
+      questions = JSON.parse(raw);
+    } catch (_) {
+      const match = raw.match(/\[[\s\S]*\]/);
+      if (!match) throw new Error('Could not parse questions from AI response. Try again.');
+      questions = JSON.parse(match[0]);
+    }
+
+    if (!Array.isArray(questions) || questions.length === 0) {
+      throw new Error('No questions returned. Please try again.');
+    }
+
+    questions = questions.map(q => ({
+      q:    String(q.q   || '').trim(),
+      opts: Array.isArray(q.opts) ? q.opts.slice(0, 4).map(String) : [],
+      ans:  Number.isInteger(q.ans) ? Math.max(0, Math.min(3, q.ans)) : 0,
+      exp:  String(q.exp  || '').trim(),
+    })).filter(q => q.q && q.opts.length === 4).slice(0, 25);
+
+    if (questions.length < 25) {
+      throw new Error(`Only ${questions.length} usable questions returned (need 25). Please try again.`);
+    }
+
+    startQuizSession(eventName, questions);
+
+  } catch (err) {
+    const safeEvent = escapeHtml(eventName);
+    document.getElementById('quiz-overlay').innerHTML = `
+      <div class="quiz-box">
+        <div class="quiz-header">
+          <span class="quiz-title">${safeEvent} — Practice Quiz</span>
+          <button onclick="hideQuizOverlay()" style="background:none;border:none;color:rgba(255,255,255,.8);font-size:1.4rem;cursor:pointer;line-height:1;flex-shrink:0;" aria-label="Close">&#x2715;</button>
+        </div>
+        <div class="quiz-loading">
+          <p style="font-size:2.5rem;line-height:1;">&#x26A0;&#xFE0F;</p>
+          <p style="font-weight:700;color:#c62828;">Failed to generate quiz</p>
+          <p style="font-size:.83rem;color:var(--text-muted);max-width:360px;">${escapeHtml(err.message)}</p>
+          <button class="quiz-next-btn" style="max-width:200px;margin-top:.5rem;" data-event="${escapeHtml(eventName)}" onclick="startQuiz(this.dataset.event)">Try Again</button>
+          <button onclick="hideQuizOverlay()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:.82rem;margin-top:.25rem;text-decoration:underline;">Cancel</button>
+        </div>
+      </div>`;
+  }
+}
+
+function startQuizSession(eventName, questions) {
+  quizState = {
+    eventName,
+    questions,
+    current:       0,
+    answers:       new Array(questions.length).fill(null),
+    startTime:     Date.now(),
+    timerInterval: null,
+    timeLimit:     300,
+    timeLeft:      300,
+    finished:      false,
+  };
+
+  renderCurrentQuestion();
+
+  quizState.timerInterval = setInterval(() => {
+    if (!quizState || quizState.finished) return;
+    quizState.timeLeft -= 1;
+    updateTimerDisplay();
+    if (quizState.timeLeft <= 0) {
+      clearInterval(quizState.timerInterval);
+      finishQuiz(true);
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const el = document.getElementById('quiz-timer');
+  if (!el || !quizState) return;
+  el.textContent = formatQuizTime(quizState.timeLeft);
+  if (quizState.timeLeft <= 60) el.classList.add('warning');
+  else el.classList.remove('warning');
+}
+
+function renderCurrentQuestion() {
+  if (!quizState) return;
+  const { questions, current, timeLeft, eventName } = quizState;
+  const q       = questions[current];
+  const total   = questions.length;
+  const progress = (current / total) * 100;
+  const letters  = ['A','B','C','D'];
+
+  document.getElementById('quiz-overlay').innerHTML = `
+    <div class="quiz-box">
+      <div class="quiz-header">
+        <span class="quiz-title">${escapeHtml(eventName)}</span>
+        <div class="quiz-meta">
+          <span style="opacity:.85">${current + 1}&thinsp;/&thinsp;${total}</span>
+          <span class="quiz-timer ${timeLeft <= 60 ? 'warning' : ''}" id="quiz-timer">${formatQuizTime(timeLeft)}</span>
+        </div>
+        <button onclick="confirmQuitQuiz()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:1.3rem;cursor:pointer;line-height:1;padding:0;flex-shrink:0;" aria-label="Quit quiz">&#x2715;</button>
+      </div>
+      <div class="quiz-progress-bar">
+        <div class="quiz-progress-fill" style="width:${progress}%"></div>
+      </div>
+      <div class="quiz-body">
+        <div class="quiz-question-num">Question ${current + 1} of ${total}</div>
+        <div class="quiz-question-text">${escapeHtml(q.q)}</div>
+        <div class="quiz-options" id="quiz-options">
+          ${q.opts.map((opt, i) => `
+            <button class="quiz-option" id="opt-${i}" onclick="selectAnswer(${i})">
+              <span class="opt-letter">${letters[i]}</span>
+              <span>${escapeHtml(opt)}</span>
+            </button>`).join('')}
+        </div>
+        <div id="quiz-feedback"></div>
+      </div>
+    </div>`;
+}
+
+function selectAnswer(chosenIdx) {
+  if (!quizState) return;
+  const { questions, current } = quizState;
+  const q       = questions[current];
+  const letters = ['A','B','C','D'];
+
+  quizState.answers[current] = chosenIdx;
+
+  document.querySelectorAll('.quiz-option').forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.ans)                          btn.classList.add('correct');
+    else if (i === chosenIdx && i !== q.ans)  btn.classList.add('wrong');
+  });
+
+  const isLast    = (current + 1) >= questions.length;
+  const isCorrect = chosenIdx === q.ans;
+  const feedback  = document.getElementById('quiz-feedback');
+
+  feedback.innerHTML = `
+    <div style="margin-top:.9rem;padding:.8rem 1rem;background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);font-size:.82rem;color:var(--text-muted);line-height:1.55;">
+      <strong style="color:${isCorrect ? '#2e7d32' : '#c62828'}">${isCorrect ? '&#x2713; Correct!' : '&#x2717; Incorrect.'}</strong>
+      ${q.exp ? ' ' + escapeHtml(q.exp) : ''}
+    </div>
+    <button class="quiz-next-btn" onclick="${isLast ? 'finishQuiz(false)' : 'nextQuestion()'}">
+      ${isLast ? 'See Results &#x2192;' : 'Next Question &#x2192;'}
+    </button>`;
+}
+
+function nextQuestion() {
+  if (!quizState) return;
+  quizState.current += 1;
+  if (quizState.current >= quizState.questions.length) finishQuiz(false);
+  else renderCurrentQuestion();
+}
+
+function confirmQuitQuiz() {
+  if (confirm('Quit this quiz? Your progress will not be saved.')) hideQuizOverlay();
+}
+
+function finishQuiz(timedOut) {
+  if (!quizState || quizState.finished) return;
+  quizState.finished = true;
+  clearInterval(quizState.timerInterval);
+
+  const elapsed   = Math.round((Date.now() - quizState.startTime) / 1000);
+  const { questions, answers, eventName } = quizState;
+  const total     = questions.length;
+  const correct   = answers.reduce((n, a, i) => n + (a === questions[i].ans ? 1 : 0), 0);
+  const pct       = Math.round((correct / total) * 100);
+  const letters   = ['A','B','C','D'];
+
+  const history = loadQuizHistory();
+  history.unshift({
+    event:     eventName,
+    score:     correct,
+    total,
+    pct,
+    timeTaken: elapsed,
+    date:      new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+  });
+  localStorage.setItem('fbla_quiz_history', JSON.stringify(history.slice(0, 50)));
+
+  const missed = questions
+    .map((q, i) => ({ q, userAns: answers[i] }))
+    .filter(({ q, userAns }) => userAns !== q.ans);
+
+  const missedHtml = missed.length === 0
+    ? '<p style="text-align:center;color:#2e7d32;font-weight:600;padding:1rem 0;">Perfect score — no missed questions! &#x1F389;</p>'
+    : missed.map(({ q, userAns }) => `
+        <div class="review-item">
+          <div class="rq">${escapeHtml(q.q)}</div>
+          <div class="ra">
+            ${userAns !== null
+              ? `Your answer: <span style="color:#c62828">${letters[userAns]}. ${escapeHtml(q.opts[userAns])}</span><br/>`
+              : '<em>Not answered (time ran out)</em><br/>'}
+            Correct: <span style="color:#2e7d32;font-weight:600">${letters[q.ans]}. ${escapeHtml(q.opts[q.ans])}</span><br/>
+            ${q.exp ? `<em style="opacity:.8">${escapeHtml(q.exp)}</em>` : ''}
+          </div>
+        </div>`).join('');
+
+  const circleColor = pct >= 80 ? '#2e7d32' : pct >= 60 ? 'var(--primary)' : '#c62828';
+
+  document.getElementById('quiz-overlay').innerHTML = `
+    <div class="quiz-box">
+      <div class="quiz-header">
+        <span class="quiz-title">${escapeHtml(eventName)} &mdash; Results</span>
+        <button onclick="hideQuizOverlay()" style="background:none;border:none;color:rgba(255,255,255,.8);font-size:1.4rem;cursor:pointer;line-height:1;flex-shrink:0;" aria-label="Close">&#x2715;</button>
+      </div>
+      <div class="quiz-score-screen">
+        ${timedOut ? '<p style="color:#c62828;font-weight:700;margin-bottom:.75rem;">&#x23F1; Time\'s up!</p>' : ''}
+        <div class="quiz-score-circle" style="border-color:${circleColor}">
+          <span class="quiz-score-pct" style="color:${circleColor}">${pct}%</span>
+          <span class="quiz-score-lbl">Score</span>
+        </div>
+        <div class="quiz-score-stats">
+          <div class="quiz-stat">
+            <span class="quiz-stat-val" style="color:#2e7d32">${correct}</span>
+            <span class="quiz-stat-key">Correct</span>
+          </div>
+          <div class="quiz-stat">
+            <span class="quiz-stat-val" style="color:#c62828">${total - correct}</span>
+            <span class="quiz-stat-key">Missed</span>
+          </div>
+          <div class="quiz-stat">
+            <span class="quiz-stat-val">${formatQuizTime(elapsed)}</span>
+            <span class="quiz-stat-key">Time Taken</span>
+          </div>
+        </div>
+        <div class="quiz-review">
+          <h3>&#x1F4DD; Review Missed Questions (${missed.length})</h3>
+          ${missedHtml}
+        </div>
+        <div class="quiz-score-actions">
+          <button class="btn btn-primary" data-event="${escapeHtml(eventName)}" onclick="startQuiz(this.dataset.event)">Retake Quiz</button>
+          <button class="btn" style="background:var(--surface);border:1px solid var(--border);color:var(--text);" onclick="hideQuizOverlay()">Back to Study</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CHATBOT LOGIC
+// ─────────────────────────────────────────────────────────────────────────────
+const SYSTEM_PROMPT = `You are the FBLA Study Assistant for Pensacola High School's Future Business Leaders of America chapter. Your role is to help students prepare for FBLA competitive events at the district, state, and national levels.
+
+You have deep knowledge of:
+- All FBLA competitive events: written objective tests, performance events, and team events
+- Business Calculations (financial math, interest, depreciation, payroll, ratios)
+- Economics (micro/macro, supply/demand, GDP, monetary/fiscal policy, trade)
+- Business Law (contracts, torts, business organizations, employment, consumer protection)
+- Accounting I & II (journal entries, ledgers, trial balances, financial statements, depreciation, payroll)
+- Business Communication (grammar, memo writing, business letters, professional email)
+- Parliamentary Procedure (Robert's Rules of Order, motions, voting, quorum, minutes)
+- Public Speaking (speech structure, delivery, professional presence)
+- Marketing (4 Ps, market research, branding, advertising, consumer behavior)
+- Entrepreneurship (business plans, startup finance, competitive analysis, pitching)
+- Business Ethics (ethical frameworks, case analysis, stakeholder theory)
+- Computer concepts, spreadsheet formulas (Excel/Sheets), and word processing
+- Job interview preparation, résumé writing, professional etiquette
+- FBLA history, mission, and organizational structure
+- Test-taking strategies for timed FBLA objective tests
+- State and National Leadership Conference preparation
+
+Respond in a friendly, encouraging, and knowledgeable tone. When students ask about specific topics, provide clear explanations, practice questions, or key facts they should memorize. Always be accurate. If asked to quiz the student, generate relevant practice questions. Keep answers concise unless the student asks for more detail.`;
+
+function chatKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function autoResize(ta) {
+  ta.style.height = 'auto';
+  ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
+}
+
+function appendMessage(role, text) {
+  const container = document.getElementById('chat-messages');
+  if (!container) return;
+
+  const div = document.createElement('div');
+  div.className = `message ${role}`;
+  const bubbleContent = role === 'bot' ? renderMarkdown(text) : escapeHtml(text).replace(/\n/g, '<br>');
+  div.innerHTML = `
+    <div class="msg-name">${role === 'user' ? 'You' : 'FBLA Study Assistant'}</div>
+    <div class="msg-bubble">${bubbleContent}</div>
+  `;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function showTyping() {
+  const container = document.getElementById('chat-messages');
+  if (!container) return;
+  const div = document.createElement('div');
+  div.className = 'message bot';
+  div.id = 'typing-indicator';
+  div.innerHTML = `
+    <div class="msg-name">FBLA Study Assistant</div>
+    <div class="typing-indicator">
+      <span class="typing-dot"></span>
+      <span class="typing-dot"></span>
+      <span class="typing-dot"></span>
+    </div>
+  `;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function removeTyping() {
+  document.getElementById('typing-indicator')?.remove();
+}
+
+function renderMarkdown(raw) {
+  let t = raw.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+  t = escapeHtml(t);
+  t = t.replace(/```[\w]*\n?([\s\S]*?)```/g, (_, code) =>
+    `<pre style="background:#f4f4f4;border-radius:6px;padding:.6em .9em;overflow-x:auto;font-size:.85em"><code>${code.trim()}</code></pre>`
+  );
+  t = t.replace(/`([^`]+)`/g, '<code style="background:#f0f0f0;border-radius:3px;padding:.1em .35em;font-size:.9em">$1</code>');
+  t = t.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+  t = t.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  t = t.replace(/__(.+?)__/g, '<strong>$1</strong>');
+  t = t.replace(/\*(?!\s)(.+?)(?<!\s)\*/g, '<em>$1</em>');
+  t = t.replace(/^### (.+)$/gm, '<h4 style="margin:.6em 0 .2em;font-size:1em">$1</h4>');
+  t = t.replace(/^## (.+)$/gm,  '<h3 style="margin:.7em 0 .3em;font-size:1.05em">$1</h3>');
+  t = t.replace(/^# (.+)$/gm,   '<h2 style="margin:.8em 0 .3em;font-size:1.1em">$1</h2>');
+  t = t.replace(/((?:^[*\-] .+\n?)+)/gm, (block) => {
+    const items = block.trim().split('\n').map(l =>
+      `<li style="margin:.15em 0">${l.replace(/^[*\-] /, '')}</li>`
+    ).join('');
+    return `<ul style="margin:.4em 0;padding-left:1.4em">${items}</ul>`;
+  });
+  t = t.replace(/((?:^\d+\. .+\n?)+)/gm, (block) => {
+    const items = block.trim().split('\n').map(l =>
+      `<li style="margin:.15em 0">${l.replace(/^\d+\. /, '')}</li>`
+    ).join('');
+    return `<ol style="margin:.4em 0;padding-left:1.4em">${items}</ol>`;
+  });
+  const blockTags = /^<(h[234]|ul|ol|pre|li)/;
+  const paras = t.split(/\n{2,}/);
+  t = paras.map(p => {
+    p = p.trim();
+    if (!p) return '';
+    if (blockTags.test(p)) return p;
+    return '<p style="margin:.4em 0">' + p.replace(/\n/g, '<br>') + '</p>';
+  }).join('');
+  return t;
+}
+
+async function sendMessage() {
+  if (isBotTyping) return;
+  const input   = document.getElementById('chat-input');
+  const sendBtn = document.getElementById('send-btn');
+
+  const text = input?.value?.trim();
+  if (!text) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+  appendMessage('user', text);
+  chatHistory.push({ role: 'user', content: text });
+
+  isBotTyping = true;
+  sendBtn.disabled = true;
+  showTyping();
+
+  try {
+    const response = await callAI({
+      model: AI_MODEL,
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        ...chatHistory,
+      ],
+      temperature: 0.7,
+      top_p: 0.95,
+      max_tokens: 1024,
+    });
+
+    if (!response.ok) {
+      const errJson = await response.json().catch(() => ({}));
+      throw new Error(errJson?.error?.message || `HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    const reply = data?.choices?.[0]?.message?.content;
+
+    if (!reply) throw new Error('Empty response from AI.');
+
+    chatHistory.push({ role: 'assistant', content: reply });
+    removeTyping();
+    appendMessage('bot', reply);
+
+  } catch (err) {
+    removeTyping();
+    const errMsg = err.message === 'NO_KEY'
+      ? 'The AI assistant is only available on the hosted version of this site. Visit the Replit-hosted app to use the chatbot.'
+      : err.message.includes('API key') || err.message.includes('401') || err.message.includes('403')
+        ? 'Invalid or expired API key. Please update it in the Admin Panel.'
+        : `Error: ${err.message}. Check your internet connection.`;
+    appendMessage('bot', errMsg);
+  } finally {
+    isBotTyping = false;
+    sendBtn.disabled = !localStorage.getItem('fbla_groq_key') && !EMBEDDED_KEY;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ACCESS DENIED
+// ─────────────────────────────────────────────────────────────────────────────
+function renderDenied() {
+  main.innerHTML = `
+    <div class="denied">
+      <h2>Access Denied</h2>
+      <p>The URL you requested does not match any known resource. If you're looking for study materials, please enter the correct password.</p>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+        <a class="btn btn-primary" href="index.html">Go Home</a>
+        <a class="btn" style="background:var(--surface);border:1px solid var(--border);color:var(--text);" href="study.html" onclick="location.hash=''">Enter Password</a>
+      </div>
+    </div>
+  `;
+}
+</script>
+</body>
+</html>
