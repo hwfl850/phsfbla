@@ -18,7 +18,7 @@
   "theme": {
     "showEvents": true,
     "showOfficers": true,
-    "showCta": false,
+    "showCta": true,
     "showAnnouncement": true,
     "showCalendar": false,
     "showGoogleForm": false
