@@ -2,11 +2,11 @@
   "content": {
     "headline": "Pensacola High Future Business Leaders of America",
     "subheadline": "Developing the next generation of business professionals and community leaders.",
-    "contactEmail": "fbla@pensacolahigh.edu",
+    "contactEmail": "secretary@phsfbla.com",
     "announcement": {
       "badge": "Latest Update",
-      "title": "Next Meeting — Aug 20 · Club Rush Recruitment",
-      "body": "We're recruiting at Club Rush! Bring a friend, grab Krispy Kreme, and pick up your FBLA Connect login. NLC recap to follow.",
+      "title": "Next Meeting — Aug 20 · Club Rush Recruitment and General Meeting",
+      "body": "We're recruiting at Club Rush! Then at the General Meeting bring a friend, grab Krispy Kreme, and pick up your FBLA Connect login. See the NLC recap also!",
       "ctaText": "See Full Calendar",
       "ctaHref": "#section-events"
     },
@@ -23,7 +23,7 @@
       },
       {
         "date": "AUG 20",
-        "title": "General Meeting — Club Rush",
+        "title": "General Meeting and Club Rush",
         "desc": "Recruit at Club Rush! Encourage friends to come to the New Member Meeting. NLC recap & FBLA Connect setup. Krispy Kreme."
       },
       {
@@ -121,7 +121,7 @@
       {
         "role": "Parliamentarian",
         "name": "Keller Leonard",
-        "photo": "assets/images/officers/keller-leonard-1780616907335.jpeg"
+        "photo": ""
       },
       {
         "role": "Reporter",
