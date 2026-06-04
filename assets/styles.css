@@ -1206,6 +1206,18 @@ footer a.insta-link {
 footer a.insta-link:hover { color: #fff; }
 footer a.insta-link svg { flex-shrink: 0; }
 
+footer a.footer-admin {
+  display: inline-block;
+  margin-top: 1rem;
+  font-size: .7rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.4);
+  text-decoration: none;
+  transition: color .2s;
+}
+footer a.footer-admin:hover { color: var(--gold); }
+
 /* ── Utility ── */
 .badge {
   display: inline-block;

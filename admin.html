@@ -469,9 +469,122 @@
       border-radius: 12px;
       background: var(--surface);
     }
+
+    /* ── Password gate ── */
+    .gate {
+      position: fixed;
+      inset: 0;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      z-index: 100;
+    }
+    .gate-card {
+      width: 100%;
+      max-width: 420px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow-lg);
+      padding: 2rem 1.75rem 1.75rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .gate-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--navy) 0%, var(--blue) 50%, var(--gold) 100%);
+    }
+    .gate-lock {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: rgba(244,171,25,.15);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+    .gate-card h2 {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: .35rem;
+    }
+    .gate-card p {
+      color: var(--text-muted);
+      font-size: .88rem;
+      line-height: 1.55;
+      margin-bottom: 1.25rem;
+    }
+    .gate-error {
+      display: none;
+      background: #fff0f0;
+      border: 1px solid #ffcdd2;
+      color: #c62828;
+      border-radius: 10px;
+      padding: .55rem .8rem;
+      font-size: .82rem;
+      margin-bottom: .85rem;
+      text-align: left;
+    }
+    .gate-error.show { display: block; }
+    .gate-card input[type="password"] {
+      width: 100%;
+      padding: .75rem .95rem;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: .95rem;
+      font-family: var(--font-body);
+      color: var(--text);
+      background: var(--bg);
+      margin-bottom: .85rem;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .gate-card input[type="password"]:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(29,82,188,.15);
+    }
+    .gate-card .btn { width: 100%; }
+    .gate-back {
+      display: inline-block;
+      margin-top: 1rem;
+      font-size: .8rem;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    .gate-back:hover { color: var(--navy); }
+
+    body.locked .topbar,
+    body.locked .admin-page,
+    body.locked .save-bar { display: none !important; }
   </style>
 </head>
-<body>
+<body class="locked">
+  <div id="admin-gate" class="gate" role="dialog" aria-modal="true" aria-labelledby="gate-title">
+    <div class="gate-card">
+      <div class="gate-lock" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="var(--gold)">
+          <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+        </svg>
+      </div>
+      <h2 id="gate-title">Admin Access</h2>
+      <p>Enter the chapter admin password to edit site content.</p>
+      <div id="gate-error" class="gate-error" role="alert"></div>
+      <input type="password" id="gate-input" placeholder="Admin password" autocomplete="current-password" />
+      <button type="button" class="btn btn-primary" id="gate-submit">
+        <span id="gate-submit-text">Unlock</span>
+      </button>
+      <a class="gate-back" href="index.html">&larr; Back to site</a>
+    </div>
+  </div>
+
   <header class="topbar">
     <a class="brand" href="index.html">
       <img src="Media/FBLA Emblem FINAL RGB (1).png" alt="PHS FBLA" />
@@ -491,21 +604,6 @@
     </div>
 
     <div id="alert" class="alert" role="alert"></div>
-
-    <!-- ── Auth ────────────────────────────────────────────────────── -->
-    <section class="card">
-      <div class="card-head">
-        <h2>Admin Password</h2>
-        <span class="hint">Held in memory only</span>
-      </div>
-      <div class="card-body">
-        <div class="field">
-          <label for="password">Worker password</label>
-          <input type="password" id="password" placeholder="Enter admin password" autocomplete="current-password" />
-          <p class="field-help">Verified against <code>autumn-limit-4a38.kellerleonard79.workers.dev</code> on every push.</p>
-        </div>
-      </div>
-    </section>
 
     <!-- ── Hero & Contact ──────────────────────────────────────────── -->
     <section class="card">
@@ -707,12 +805,61 @@
     let state = JSON.parse(JSON.stringify(DEFAULTS));
     let dirty = false;
 
+    // SHA-256 of the admin password (matches the Cloudflare Worker secret).
+    const ADMIN_HASH = 'b1aa8ca7e569e34ac6d2a5662fe302586761e34aba11c0092149b8b6f8a25660';
+    let adminPassword = "";
+
     const $ = (id) => document.getElementById(id);
     const alertBox    = $("alert");
     const statusEl    = $("save-status");
     const saveBtn     = $("save-btn");
     const saveBtnText = $("save-btn-text");
-    const pwInput     = $("password");
+
+    async function sha256Hex(text) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function unlockAdmin(password) {
+      adminPassword = password;
+      document.body.classList.remove('locked');
+      const gate = $("admin-gate");
+      if (gate) gate.remove();
+    }
+
+    async function handleGateSubmit() {
+      const input  = $("gate-input");
+      const errEl  = $("gate-error");
+      const btn    = $("gate-submit");
+      const btnTxt = $("gate-submit-text");
+      const pw = input.value;
+      errEl.classList.remove('show');
+      if (!pw) {
+        errEl.textContent = 'Please enter the password.';
+        errEl.classList.add('show');
+        return;
+      }
+      btn.disabled = true;
+      btnTxt.innerHTML = '<span class="spinner" aria-hidden="true"></span> Checking…';
+      try {
+        const hex = await sha256Hex(pw);
+        if (hex === ADMIN_HASH) {
+          unlockAdmin(pw);
+          loadInitial();
+        } else {
+          input.value = '';
+          input.focus();
+          errEl.textContent = 'Incorrect password. Please try again.';
+          errEl.classList.add('show');
+        }
+      } catch (e) {
+        errEl.textContent = 'An error occurred. Please try again.';
+        errEl.classList.add('show');
+      } finally {
+        btn.disabled = false;
+        btnTxt.textContent = 'Unlock';
+      }
+    }
 
     function showAlert(kind, html) {
       alertBox.className = `alert ${kind} show`;
@@ -744,7 +891,7 @@
     });
 
     async function workerPush(path, base64Content, message) {
-      const password = pwInput.value;
+      const password = adminPassword;
       if (!password) throw new Error("Admin password is required.");
       let res;
       try {
@@ -1035,10 +1182,6 @@
     async function uploadOfficerPhoto(idx, file, row) {
       const off = state.content.officers[idx];
       if (!off) return;
-      if (!pwInput.value) {
-        showAlert('error', 'Enter the admin password first.');
-        return;
-      }
       const statusEl = row.querySelector('[data-status]');
       const setRowStatus = (txt) => { if (statusEl) statusEl.textContent = txt; };
 
@@ -1111,11 +1254,6 @@
 
     async function saveAll() {
       clearAlert();
-      if (!pwInput.value) {
-        showAlert('error', 'Enter the admin password first.');
-        pwInput.focus();
-        return;
-      }
       state.content.officers = state.content.officers.filter(o => (o.role || o.name));
       state.content.events   = state.content.events.filter(e => (e.date || e.title || e.desc));
 
@@ -1147,7 +1285,14 @@
       wireOfficersList();
       wireEventsList();
       saveBtn.addEventListener('click', saveAll);
-      loadInitial();
+
+      const gateInput  = $("gate-input");
+      const gateSubmit = $("gate-submit");
+      gateSubmit.addEventListener('click', handleGateSubmit);
+      gateInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') handleGateSubmit();
+      });
+      gateInput.focus();
     });
   </script>
 </body>
