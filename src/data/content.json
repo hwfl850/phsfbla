@@ -11,7 +11,7 @@
       "ctaHref": "#section-events"
     },
     "calendarEmbed": "",
-    "googleFormEmbed": "",
+    "googleFormEmbed": "<iframe src=\"https://docs.google.com/forms/d/e/1FAIpQLScCAaQxYg9q_e_3zmjSvNQLB4-OrYwxsFWA1Ymr2GYOx2o27Q/viewform?embedded=true\" width=\"640\" height=\"374\" frameborder=\"0\" marginheight=\"0\" marginwidth=\"0\">Loading…</iframe>",
     "meetings": {
       "intro": "Meeting details coming soon. Check back here for the schedule, agendas, and notes."
     },
@@ -171,6 +171,6 @@
     "showCta": false,
     "showAnnouncement": true,
     "showCalendar": false,
-    "showGoogleForm": false
+    "showGoogleForm": true
   }
 }
