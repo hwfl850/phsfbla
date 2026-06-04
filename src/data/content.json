@@ -5,20 +5,51 @@
     "contactEmail": "fbla@pensacolahigh.edu",
     "announcement": {
       "badge": "Latest Update",
-      "title": "",
-      "body": "",
-      "ctaText": "",
-      "ctaHref": ""
+      "title": "Next Meeting — Aug 20 · Club Rush Recruitment",
+      "body": "We're recruiting at Club Rush! Bring a friend, grab Krispy Kreme, and pick up your FBLA Connect login. NLC recap to follow.",
+      "ctaText": "See Full Calendar",
+      "ctaHref": "#section-events"
     },
     "calendarEmbed": "",
     "googleFormEmbed": "",
-    "events": [],
-    "officers": []
+    "events": [
+      { "date": "AUG 7",     "title": "Officer Meeting",                "desc": "Officers plan the upcoming school year. All officers required." },
+      { "date": "AUG 20",    "title": "General Meeting — Club Rush",    "desc": "Recruit at Club Rush! Encourage friends to come to the New Member Meeting. NLC recap & FBLA Connect setup. Krispy Kreme." },
+      { "date": "AUG 27",    "title": "New Member Meeting",             "desc": "Intro to FBLA: events, dress code, and how to succeed. Speed-dating icebreaker. Pizza provided." },
+      { "date": "SEP 17",    "title": "General Meeting — Buddy Pairing", "desc": "Expectations, buddy pairing, event types overview, and Adopt-a-Freshie. Food after the meeting." },
+      { "date": "NOV 13–15", "title": "SFLC",                           "desc": "State Fall Leadership Conference. Selected members compete and represent PHS FBLA." },
+      { "date": "NOV 19",    "title": "Thanksgiving Meeting",           "desc": "Thankful Thanksgiving theme. Make sure members show up to upcoming workshops. Costco acorn cookies." },
+      { "date": "DEC 10",    "title": "General Meeting — DLC Info",     "desc": "Mr. Hill presents DLC details. Gift exchange and Christmas Little Debbie Cakes." },
+      { "date": "DEC 18",    "title": "Study Night Workshop",           "desc": "Prejudged event review session. Study time with officer feedback. Starts at 12:30." },
+      { "date": "JAN 14",    "title": "District Leadership Conference", "desc": "DLC competition day. All competing members must attend." },
+      { "date": "JAN 21",    "title": "SLC Money Due",                  "desc": "Payment deadline for State Leadership Conference. Sandy Sansing speaker. Hot cocoa & Oreos." },
+      { "date": "FEB 8–14",  "title": "FBLA Week!",                     "desc": "Week-long celebration of Future Business Leaders of America across the school." },
+      { "date": "FEB 20",    "title": "Judging Practice Workshop",      "desc": "Practice presentations with judge feedback to prepare for SLC." },
+      { "date": "MAR 11",    "title": "SLC Prep Meeting",               "desc": "Mr. Hill talks SLC strategy. Study time and officer feedback. Chips provided." },
+      { "date": "MAR 17–21", "title": "State Leadership Conference",    "desc": "Compete at the Florida state level in Orlando. Top performers advance to NLC." },
+      { "date": "APR 15",    "title": "Officer Elections",              "desc": "Chapter elections for the 2027–2028 officer team. All members vote." },
+      { "date": "MAY 15",    "title": "End-of-Year Meeting",            "desc": "Celebrate the year's achievements. Tentative date — details to follow." }
+    ],
+    "officers": [
+      { "role": "President",            "name": "Zella Trahan",   "photo": "" },
+      { "role": "Vice President",       "name": "David Knoblock", "photo": "" },
+      { "role": "Secretary",            "name": "Henry White",    "photo": "" },
+      { "role": "Treasurer",            "name": "Lucy Mitchem",   "photo": "" },
+      { "role": "Parliamentarian",      "name": "Keller Leonard", "photo": "" },
+      { "role": "Reporter",             "name": "Clayton White",  "photo": "" },
+      { "role": "Historian",            "name": "Smith Maxey",    "photo": "" },
+      { "role": "District 1 VP",        "name": "Melody Nguyen",  "photo": "" },
+      { "role": "District 1 Treasurer", "name": "Yash Gujral",    "photo": "" },
+      { "role": "Underclassmen Rep",    "name": "Hung Nguyen",    "photo": "" },
+      { "role": "Underclassmen Rep",    "name": "Mahalla Berhan", "photo": "" },
+      { "role": "State Region 1 VP",    "name": "Peyton Chester", "photo": "" },
+      { "role": "Advisor",              "name": "Mr. Jacob Hill", "photo": "" }
+    ]
   },
   "theme": {
     "showEvents": true,
     "showOfficers": true,
-    "showCta": true,
+    "showCta": false,
     "showAnnouncement": true,
     "showCalendar": false,
     "showGoogleForm": false
