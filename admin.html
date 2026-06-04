@@ -1,79 +1,1033 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>PHSFBLA Admin</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>PHS FBLA · Admin</title>
+  <link rel="icon" type="image/png" href="FBLA Emblem FINAL RGB (1).png" />
+  <link rel="apple-touch-icon" href="FBLA Emblem FINAL RGB (1).png" />
+
   <style>
-    body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; }
-    input, textarea { width: 100%; margin: 8px 0 16px; padding: 8px; box-sizing: border-box; }
-    button { padding: 10px 20px; background: #c00; color: white; border: none; cursor: pointer; }
-    #status { margin-top: 16px; font-weight: bold; }
+    @font-face {
+      font-family: 'Apercu Pro';
+      src: url("Apercu Pro/Apercu Pro Light.otf") format('opentype');
+      font-weight: 300; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'Apercu Pro';
+      src: url("Apercu Pro/Apercu Pro Regular.otf") format('opentype');
+      font-weight: 400; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'Apercu Pro';
+      src: url("Apercu Pro/Apercu Pro Medium.otf") format('opentype');
+      font-weight: 500; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'Apercu Pro';
+      src: url("Apercu Pro/Apercu Pro Bold.otf") format('opentype');
+      font-weight: 700; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'Gelasio';
+      src: url("Gelasio/Gelasio-SemiBold.ttf") format('truetype');
+      font-weight: 600; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'Gelasio';
+      src: url("Gelasio/Gelasio-Bold.ttf") format('truetype');
+      font-weight: 700; font-style: normal; font-display: swap;
+    }
+
+    :root {
+      --navy:       #0a2e7f;
+      --blue:       #1d52bc;
+      --cobalt:     #226add;
+      --gold:       #f4ab19;
+      --ink:        #2d2b2b;
+      --white:      #ffffff;
+      --bg:         #ffffff;
+      --surface:    #f5f7fb;
+      --text:       var(--ink);
+      --text-muted: #5f6b86;
+      --border:     #d6deef;
+      --radius:     12px;
+      --radius-pill: 999px;
+      --font-body:    'Apercu Pro', 'Helvetica Neue', Arial, sans-serif;
+      --font-display: 'Gelasio', Georgia, 'Times New Roman', serif;
+      --shadow:     0 8px 24px rgba(10,46,127,0.08);
+      --shadow-lg:  0 16px 40px rgba(10,46,127,0.14);
+      --transition: 0.25s cubic-bezier(.4,0,.2,1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--surface);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      letter-spacing: -0.005em;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .topbar .brand {
+      display: flex; align-items: center; gap: .75rem;
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--navy);
+      font-size: 1.05rem;
+      text-decoration: none;
+    }
+    .topbar .brand img { width: 32px; height: 32px; }
+    .topbar a.back {
+      font-size: .85rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color var(--transition);
+    }
+    .topbar a.back:hover { color: var(--navy); }
+
+    /* ── Layout ── */
+    .admin-page {
+      flex: 1;
+      max-width: 880px;
+      width: 100%;
+      margin: 2.5rem auto 7rem;
+      padding: 0 1.25rem;
+    }
+
+    .page-head {
+      margin-bottom: 1.75rem;
+    }
+    .page-head .eyebrow {
+      display: inline-block;
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: .4rem;
+    }
+    .page-head h1 {
+      font-family: var(--font-display);
+      font-size: clamp(1.65rem, 2.6vw, 2.1rem);
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: -0.015em;
+      line-height: 1.2;
+      margin-bottom: .35rem;
+    }
+    .page-head p {
+      color: var(--text-muted);
+      font-size: .95rem;
+      line-height: 1.55;
+      max-width: 640px;
+    }
+
+    /* ── Cards ── */
+    .card {
+      position: relative;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--navy) 0%, var(--blue) 50%, var(--gold) 100%);
+    }
+    .card-head {
+      padding: 1.25rem 1.5rem .75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .card-head h2 {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: -0.01em;
+    }
+    .card-head .hint {
+      font-size: .78rem;
+      color: var(--text-muted);
+    }
+    .card-body { padding: .25rem 1.5rem 1.5rem; }
+
+    /* ── Form fields ── */
+    .field { margin-bottom: 1rem; }
+    .field label {
+      display: block;
+      font-size: .78rem;
+      font-weight: 600;
+      color: var(--navy);
+      letter-spacing: .02em;
+      margin-bottom: .35rem;
+    }
+    .field input[type="text"],
+    .field input[type="password"],
+    .field input[type="url"],
+    .field textarea {
+      width: 100%;
+      padding: .7rem .9rem;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: .95rem;
+      font-family: var(--font-body);
+      color: var(--text);
+      background: var(--bg);
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .field textarea {
+      resize: vertical;
+      min-height: 88px;
+      line-height: 1.5;
+    }
+    .field input:focus, .field textarea:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(29,82,188,.15);
+    }
+    .field-row {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 560px) { .field-row { grid-template-columns: 1fr; } }
+    .field-help {
+      font-size: .76rem;
+      color: var(--text-muted);
+      margin-top: .35rem;
+      line-height: 1.45;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      padding: .7rem 1.25rem;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: .9rem;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      transition: transform var(--transition), box-shadow var(--transition), background var(--transition), color var(--transition), border-color var(--transition);
+    }
+    .btn:hover:not(:disabled) { transform: translateY(-1px); }
+    .btn:disabled { opacity: .55; cursor: not-allowed; }
+    .btn-primary {
+      background: var(--gold);
+      color: var(--navy);
+      box-shadow: 0 6px 18px rgba(244,171,25,.32);
+    }
+    .btn-primary:hover:not(:disabled) { background: #ffba2e; box-shadow: 0 10px 24px rgba(244,171,25,.4); }
+    .btn-navy {
+      background: var(--navy);
+      color: var(--white);
+    }
+    .btn-navy:hover:not(:disabled) { background: var(--blue); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--navy);
+      border: 1.5px solid var(--border);
+    }
+    .btn-ghost:hover:not(:disabled) { border-color: var(--blue); color: var(--blue); }
+    .btn-danger {
+      background: transparent;
+      color: #c62828;
+      border: 1.5px solid #ffcdd2;
+      padding: .4rem .85rem;
+      font-size: .8rem;
+    }
+    .btn-danger:hover:not(:disabled) { background: #fff0f0; }
+    .btn-sm { padding: .45rem .9rem; font-size: .82rem; }
+
+    /* ── Dynamic rows (officers / events) ── */
+    .row-list { display: flex; flex-direction: column; gap: .85rem; }
+    .row-item {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      background: var(--surface);
+      display: grid;
+      gap: .85rem;
+    }
+    .row-item.officer-row { grid-template-columns: 72px 1fr auto; align-items: start; }
+    .row-item.event-row   { grid-template-columns: 1fr; }
+    @media (max-width: 560px) {
+      .row-item.officer-row { grid-template-columns: 64px 1fr; }
+      .row-item.officer-row .row-actions { grid-column: 1 / -1; justify-self: end; }
+    }
+
+    .officer-thumb {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+      color: var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+      overflow: hidden;
+      flex: 0 0 64px;
+      font-size: 1.1rem;
+    }
+    .officer-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .row-fields { display: grid; gap: .6rem; }
+    .row-fields-2 { grid-template-columns: 1fr 1fr; }
+    .row-fields-3 { grid-template-columns: 110px 1fr 1fr; }
+    @media (max-width: 560px) {
+      .row-fields-2, .row-fields-3 { grid-template-columns: 1fr; }
+    }
+    .row-fields input, .row-fields textarea {
+      padding: .55rem .8rem;
+      font-size: .9rem;
+      border-radius: 8px;
+    }
+    .row-actions { display: flex; flex-direction: column; gap: .35rem; align-items: stretch; }
+    .row-actions label.file-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: .4rem .75rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-pill);
+      font-size: .78rem;
+      color: var(--navy);
+      cursor: pointer;
+      background: var(--bg);
+      transition: border-color var(--transition), color var(--transition);
+      font-weight: 600;
+    }
+    .row-actions label.file-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .row-actions input[type="file"] { display: none; }
+    .row-photo-status { font-size: .7rem; color: var(--text-muted); text-align: center; }
+
+    /* ── Toggle switch ── */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .65rem 0;
+      gap: 1rem;
+    }
+    .toggle-row + .toggle-row { border-top: 1px solid var(--border); }
+    .toggle-row .toggle-label {
+      font-weight: 600;
+      color: var(--navy);
+      font-size: .92rem;
+    }
+    .toggle-row .toggle-label small {
+      display: block;
+      font-weight: 400;
+      font-size: .76rem;
+      color: var(--text-muted);
+      margin-top: .15rem;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+      flex: 0 0 44px;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; cursor: pointer;
+      inset: 0;
+      background: #d6deef;
+      border-radius: 24px;
+      transition: background var(--transition);
+    }
+    .slider::before {
+      content: '';
+      position: absolute;
+      width: 18px; height: 18px;
+      left: 3px; top: 3px;
+      background: var(--white);
+      border-radius: 50%;
+      transition: transform var(--transition);
+      box-shadow: 0 2px 4px rgba(0,0,0,.18);
+    }
+    .switch input:checked + .slider { background: var(--navy); }
+    .switch input:checked + .slider::before { transform: translateX(20px); }
+    .switch input:focus + .slider { box-shadow: 0 0 0 3px rgba(29,82,188,.2); }
+
+    /* ── Alerts ── */
+    .alert {
+      border-radius: 10px;
+      padding: .7rem 1rem;
+      font-size: .88rem;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    .alert.show { display: block; }
+    .alert.error   { background: #fff0f0; border: 1px solid #ffcdd2; color: #c62828; }
+    .alert.success { background: #ecf8ef; border: 1px solid #b6dfbf; color: #1f6f33; }
+    .alert.info    { background: #eef3fc; border: 1px solid #c6d6f3; color: var(--navy); }
+    .alert a { color: inherit; font-weight: 600; }
+
+    /* ── Sticky save bar ── */
+    .save-bar {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: .85rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      box-shadow: 0 -10px 30px rgba(10,46,127,.08);
+      z-index: 40;
+    }
+    .save-bar .status {
+      font-size: .85rem;
+      color: var(--text-muted);
+    }
+    .save-bar .status.dirty { color: #c77a00; font-weight: 600; }
+    .save-bar .status.ok    { color: #1f6f33; font-weight: 600; }
+    .save-bar .status.err   { color: #c62828; font-weight: 600; }
+
+    .spinner {
+      display: inline-block;
+      width: 14px; height: 14px;
+      border: 2.5px solid rgba(10,46,127,.25);
+      border-top-color: var(--navy);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    .btn-primary .spinner { border-color: rgba(10,46,127,.3); border-top-color: var(--navy); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .empty {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: .85rem;
+      padding: 1rem;
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      background: var(--surface);
+    }
   </style>
 </head>
 <body>
-  <h2>PHSFBLA Admin</h2>
+  <header class="topbar">
+    <a class="brand" href="index.html">
+      <img src="FBLA Emblem FINAL RGB (1).png" alt="PHS FBLA" />
+      <span>Officer Admin</span>
+    </a>
+    <a class="back" href="index.html">&larr; Back to site</a>
+  </header>
 
-  <label>Password</label>
-  <input type="password" id="password" placeholder="Admin password">
+  <main class="admin-page">
+    <div class="page-head">
+      <div class="eyebrow">Chapter Dashboard</div>
+      <h1>Site Content Editor</h1>
+      <p>Edit the announcement, officers, events, and embeds. Changes push to GitHub through the chapter Worker and go live in about a minute.</p>
+    </div>
 
-  <hr>
-  <h3>Upload Image</h3>
-  <label>GitHub path (e.g. assets/images/photo.jpg)</label>
-  <input type="text" id="imgPath" placeholder="assets/images/photo.jpg">
-  <input type="file" id="imgFile" accept="image/*">
-  <button onclick="uploadImage()">Upload Image</button>
+    <div id="alert" class="alert" role="alert"></div>
 
-  <hr>
-  <h3>Edit HTML File</h3>
-  <label>GitHub path (e.g. index.html)</label>
-  <input type="text" id="htmlPath" placeholder="index.html">
-  <textarea id="htmlContent" rows="12" placeholder="Paste new file content here"></textarea>
-  <button onclick="updateHTML()">Push HTML</button>
+    <!-- ── Auth ────────────────────────────────────────────────────── -->
+    <section class="card">
+      <div class="card-head">
+        <h2>Admin Password</h2>
+        <span class="hint">Held in memory only</span>
+      </div>
+      <div class="card-body">
+        <div class="field">
+          <label for="password">Worker password</label>
+          <input type="password" id="password" placeholder="Enter admin password" autocomplete="current-password" />
+          <p class="field-help">Verified against <code>autumn-limit-4a38.kellerleonard79.workers.dev</code> on every push.</p>
+        </div>
+      </div>
+    </section>
 
-  <div id="status"></div>
+    <!-- ── Announcement ─────────────────────────────────────────────── -->
+    <section class="card">
+      <div class="card-head">
+        <h2>Announcement Banner</h2>
+        <label class="switch" title="Show on homepage">
+          <input type="checkbox" id="t-showAnnouncement" />
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="card-body">
+        <div class="field">
+          <label for="a-badge">Badge</label>
+          <input type="text" id="a-badge" placeholder="Latest Update" />
+        </div>
+        <div class="field">
+          <label for="a-title">Title</label>
+          <input type="text" id="a-title" placeholder="Next Meeting — Aug 20 · Club Rush Recruitment" />
+        </div>
+        <div class="field">
+          <label for="a-body">Body</label>
+          <textarea id="a-body" placeholder="Short description of the announcement…"></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="a-ctaText">CTA text</label>
+            <input type="text" id="a-ctaText" placeholder="See Full Calendar" />
+          </div>
+          <div class="field">
+            <label for="a-ctaHref">CTA link</label>
+            <input type="text" id="a-ctaHref" placeholder="#section-events" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Officers ─────────────────────────────────────────────────── -->
+    <section class="card">
+      <div class="card-head">
+        <h2>Officers</h2>
+        <label class="switch" title="Show officers section">
+          <input type="checkbox" id="t-showOfficers" />
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="card-body">
+        <div id="officers-list" class="row-list"></div>
+        <div style="margin-top:1rem; display:flex; justify-content:flex-start;">
+          <button type="button" class="btn btn-ghost btn-sm" id="add-officer">+ Add officer</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Events ───────────────────────────────────────────────────── -->
+    <section class="card">
+      <div class="card-head">
+        <h2>Upcoming Events</h2>
+        <label class="switch" title="Show events section">
+          <input type="checkbox" id="t-showEvents" />
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="card-body">
+        <div id="events-list" class="row-list"></div>
+        <div style="margin-top:1rem; display:flex; justify-content:flex-start;">
+          <button type="button" class="btn btn-ghost btn-sm" id="add-event">+ Add event</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Embeds ───────────────────────────────────────────────────── -->
+    <section class="card">
+      <div class="card-head">
+        <h2>Calendars & Forms</h2>
+        <span class="hint">Google-hosted URLs only</span>
+      </div>
+      <div class="card-body">
+        <div class="field">
+          <label for="cal-url">Google Calendar embed URL</label>
+          <input type="url" id="cal-url" placeholder="https://calendar.google.com/calendar/embed?src=…" />
+          <p class="field-help">Calendar → Settings → Integrate calendar → copy <em>Public URL to this calendar</em> (or embed src).</p>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-label">Show calendar on homepage <small>Renders in an iframe under the events list.</small></div>
+          <label class="switch"><input type="checkbox" id="t-showCalendar" /><span class="slider"></span></label>
+        </div>
+
+        <div class="field" style="margin-top:1.25rem;">
+          <label for="form-url">Google Form embed URL</label>
+          <input type="url" id="form-url" placeholder="https://docs.google.com/forms/d/e/…/viewform?embedded=true" />
+          <p class="field-help">In the form, click <em>Send → Embed (&lt; &gt;)</em> and copy the <code>src</code>.</p>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-label">Show Google Form on homepage <small>Renders in an iframe alongside the calendar.</small></div>
+          <label class="switch"><input type="checkbox" id="t-showGoogleForm" /><span class="slider"></span></label>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Section toggles (other) ─────────────────────────────────── -->
+    <section class="card">
+      <div class="card-head">
+        <h2>Other Section Toggles</h2>
+      </div>
+      <div class="card-body">
+        <div class="toggle-row">
+          <div class="toggle-label">CTA banner <small>"Ready to compete at the National Level?" section.</small></div>
+          <label class="switch"><input type="checkbox" id="t-showCta" /><span class="slider"></span></label>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="save-bar">
+    <span class="status" id="save-status">Loaded current content.</span>
+    <button type="button" class="btn btn-primary" id="save-btn">
+      <span id="save-btn-text">Save & Push to GitHub</span>
+    </button>
+  </div>
 
   <script>
-    const WORKER_URL = "https://autumn-limit-4a38.kellerleonard79.workers.dev/";
+    // ── Worker + repo paths ───────────────────────────────────────────
+    const WORKER_URL  = "https://autumn-limit-4a38.kellerleonard79.workers.dev/";
+    const CONTENT_PATH = "src/data/content.json";
+    const OFFICER_DIR  = "assets/images/officers";
+    // raw fetch path for the canonical site (used to prefill on load)
+    const REPO_OWNER   = "hwfl850";
+    const REPO_NAME    = "phsfbla";
+    const REPO_BRANCH  = "main";
+    const RAW_BASE     = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${REPO_BRANCH}`;
 
-    function setStatus(msg, ok = true) {
-      const el = document.getElementById("status");
-      el.textContent = msg;
-      el.style.color = ok ? "green" : "red";
+    // ── Defaults (mirror index.html so first save is non-destructive) ─
+    const DEFAULTS = {
+      content: {
+        headline:    "Pensacola High Future Business Leaders of America",
+        subheadline: "Developing the next generation of business professionals and community leaders.",
+        contactEmail: "fbla@pensacolahigh.edu",
+        announcement: {
+          badge: "Latest Update",
+          title: "",
+          body:  "",
+          ctaText: "",
+          ctaHref: "",
+        },
+        calendarEmbed:   "",
+        googleFormEmbed: "",
+        events:   [],
+        officers: [],
+      },
+      theme: {
+        showEvents:       true,
+        showOfficers:     true,
+        showCta:          true,
+        showAnnouncement: true,
+        showCalendar:     false,
+        showGoogleForm:   false,
+      },
+    };
+
+    // ── State ────────────────────────────────────────────────────────
+    let state = JSON.parse(JSON.stringify(DEFAULTS));
+    let dirty = false;
+
+    // ── DOM refs ─────────────────────────────────────────────────────
+    const $ = (id) => document.getElementById(id);
+    const alertBox    = $("alert");
+    const statusEl    = $("save-status");
+    const saveBtn     = $("save-btn");
+    const saveBtnText = $("save-btn-text");
+    const pwInput     = $("password");
+
+    // ── Alerting ─────────────────────────────────────────────────────
+    function showAlert(kind, html) {
+      alertBox.className = `alert ${kind} show`;
+      alertBox.innerHTML = html;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function clearAlert() { alertBox.className = 'alert'; alertBox.innerHTML = ''; }
+
+    function setStatus(text, cls = '') {
+      statusEl.className = `status ${cls}`;
+      statusEl.textContent = text;
+    }
+    function markDirty() {
+      if (!dirty) { dirty = true; setStatus("Unsaved changes", "dirty"); }
+    }
+    function markClean(text = "Saved.") {
+      dirty = false; setStatus(text, "ok");
     }
 
-    async function push(path, content, message) {
-      const password = document.getElementById("password").value;
+    function setSaving(saving) {
+      saveBtn.disabled = saving;
+      saveBtnText.innerHTML = saving
+        ? '<span class="spinner" aria-hidden="true"></span> Pushing…'
+        : 'Save & Push to GitHub';
+    }
+
+    // Warn before navigating away with unsaved changes
+    window.addEventListener('beforeunload', (e) => {
+      if (dirty) { e.preventDefault(); e.returnValue = ''; }
+    });
+
+    // ── Worker push ──────────────────────────────────────────────────
+    async function workerPush(path, base64Content, message) {
+      const password = pwInput.value;
+      if (!password) throw new Error("Admin password is required.");
       const res = await fetch(WORKER_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password, path, content, message }),
+        body: JSON.stringify({ password, path, content: base64Content, message }),
       });
+      if (!res.ok) {
+        const body = await res.text().catch(() => '');
+        if (res.status === 401 || res.status === 403) {
+          throw new Error(`Worker rejected request (${res.status}). Check the password.`);
+        }
+        throw new Error(`Worker push failed (${res.status}). ${body.slice(0, 200)}`);
+      }
       return res;
     }
 
-    async function uploadImage() {
-      const path = document.getElementById("imgPath").value;
-      const file = document.getElementById("imgFile").files[0];
-      if (!path || !file) return setStatus("Fill in path and select a file.", false);
+    // base64-encode utf-8 text (handles non-ASCII safely)
+    function b64encodeText(str) {
+      const bytes = new TextEncoder().encode(str);
+      let bin = "";
+      for (const b of bytes) bin += String.fromCharCode(b);
+      return btoa(bin);
+    }
 
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const base64 = reader.result.split(",")[1];
-        const res = await push(path, base64, `Upload ${file.name}`);
-        res.ok ? setStatus("Image uploaded!") : setStatus("Failed: " + res.status, false);
+    // ── Load existing content from the repo ──────────────────────────
+    async function loadInitial() {
+      try {
+        const res = await fetch(`${RAW_BASE}/${CONTENT_PATH}?_=${Date.now()}`, { cache: 'no-store' });
+        if (res.ok) {
+          const json = await res.json();
+          // shallow-merge so missing keys fall back to defaults
+          state.content = { ...DEFAULTS.content, ...(json.content || {}) };
+          state.content.announcement = { ...DEFAULTS.content.announcement, ...(json.content?.announcement || {}) };
+          if (!Array.isArray(state.content.events))   state.content.events   = [];
+          if (!Array.isArray(state.content.officers)) state.content.officers = [];
+          state.theme = { ...DEFAULTS.theme, ...(json.theme || {}) };
+          markClean("Loaded current content from GitHub.");
+        } else if (res.status === 404) {
+          setStatus("No content file yet — first save will create it.", "dirty");
+          showAlert("info", `<strong>${CONTENT_PATH}</strong> doesn't exist yet. Defaults are loaded — your first save creates the file.`);
+        } else {
+          throw new Error(`HTTP ${res.status}`);
+        }
+      } catch (err) {
+        console.error(err);
+        showAlert("error", `Failed to load existing content: ${err.message}. Defaults are loaded.`);
+      }
+      renderAll();
+    }
+
+    // ── Render: announcement + toggles + URLs ────────────────────────
+    function renderAnnouncementFields() {
+      const a = state.content.announcement;
+      $("a-badge").value   = a.badge   || "";
+      $("a-title").value   = a.title   || "";
+      $("a-body").value    = a.body    || "";
+      $("a-ctaText").value = a.ctaText || "";
+      $("a-ctaHref").value = a.ctaHref || "";
+    }
+    function renderEmbedFields() {
+      $("cal-url").value  = state.content.calendarEmbed   || "";
+      $("form-url").value = state.content.googleFormEmbed || "";
+    }
+    function renderToggles() {
+      $("t-showAnnouncement").checked = !!state.theme.showAnnouncement;
+      $("t-showOfficers").checked     = !!state.theme.showOfficers;
+      $("t-showEvents").checked       = !!state.theme.showEvents;
+      $("t-showCta").checked          = !!state.theme.showCta;
+      $("t-showCalendar").checked     = !!state.theme.showCalendar;
+      $("t-showGoogleForm").checked   = !!state.theme.showGoogleForm;
+    }
+
+    // ── Officers list ────────────────────────────────────────────────
+    function initialsOf(name) {
+      return (name || '?').trim().split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    }
+    function slug(s) {
+      return (s || 'officer').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'officer';
+    }
+
+    function renderOfficers() {
+      const list = $("officers-list");
+      list.innerHTML = "";
+      if (!state.content.officers.length) {
+        list.innerHTML = `<div class="empty">No officers yet. Click <strong>+ Add officer</strong>.</div>`;
+        return;
+      }
+      state.content.officers.forEach((off, idx) => {
+        const row = document.createElement('div');
+        row.className = 'row-item officer-row';
+        row.dataset.idx = String(idx);
+        const photoHtml = off.photo
+          ? `<img src="${escAttr(off.photo)}" alt="" />`
+          : initialsOf(off.name);
+        row.innerHTML = `
+          <div class="officer-thumb" data-thumb>${photoHtml}</div>
+          <div class="row-fields row-fields-2">
+            <input type="text" data-k="role" placeholder="Role (e.g. President)" value="${escAttr(off.role || '')}" />
+            <input type="text" data-k="name" placeholder="Full name" value="${escAttr(off.name || '')}" />
+          </div>
+          <div class="row-actions">
+            <label class="file-btn">
+              Photo
+              <input type="file" accept="image/*" data-photo />
+            </label>
+            <div class="row-photo-status" data-status>${off.photo ? 'Uploaded' : ''}</div>
+            <button type="button" class="btn btn-danger" data-remove>Remove</button>
+          </div>
+        `;
+        list.appendChild(row);
+      });
+    }
+
+    // ── Events list ─────────────────────────────────────────────────
+    function renderEvents() {
+      const list = $("events-list");
+      list.innerHTML = "";
+      if (!state.content.events.length) {
+        list.innerHTML = `<div class="empty">No events yet. Click <strong>+ Add event</strong>.</div>`;
+        return;
+      }
+      state.content.events.forEach((ev, idx) => {
+        const row = document.createElement('div');
+        row.className = 'row-item event-row';
+        row.dataset.idx = String(idx);
+        row.innerHTML = `
+          <div class="row-fields row-fields-3">
+            <input type="text" data-k="date"  placeholder="AUG 20"            value="${escAttr(ev.date || '')}" />
+            <input type="text" data-k="title" placeholder="Event title"        value="${escAttr(ev.title || '')}" />
+            <input type="text" data-k="desc"  placeholder="Short description" value="${escAttr(ev.desc || '')}" />
+          </div>
+          <div style="display:flex; justify-content:flex-end;">
+            <button type="button" class="btn btn-danger" data-remove>Remove</button>
+          </div>
+        `;
+        list.appendChild(row);
+      });
+    }
+
+    function renderAll() {
+      renderAnnouncementFields();
+      renderEmbedFields();
+      renderToggles();
+      renderOfficers();
+      renderEvents();
+    }
+
+    // ── HTML helpers ─────────────────────────────────────────────────
+    function escAttr(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    // ── Wire input → state ───────────────────────────────────────────
+    function wireAnnouncement() {
+      const map = { 'a-badge':'badge', 'a-title':'title', 'a-body':'body', 'a-ctaText':'ctaText', 'a-ctaHref':'ctaHref' };
+      Object.entries(map).forEach(([id, key]) => {
+        $(id).addEventListener('input', (e) => {
+          state.content.announcement[key] = e.target.value;
+          markDirty();
+        });
+      });
+    }
+    function wireEmbeds() {
+      $("cal-url").addEventListener('input', (e) => {
+        state.content.calendarEmbed = e.target.value.trim();
+        markDirty();
+      });
+      $("form-url").addEventListener('input', (e) => {
+        state.content.googleFormEmbed = e.target.value.trim();
+        markDirty();
+      });
+    }
+    function wireToggles() {
+      const map = {
+        't-showAnnouncement':'showAnnouncement',
+        't-showOfficers':'showOfficers',
+        't-showEvents':'showEvents',
+        't-showCta':'showCta',
+        't-showCalendar':'showCalendar',
+        't-showGoogleForm':'showGoogleForm',
       };
-      reader.readAsDataURL(file);
+      Object.entries(map).forEach(([id, key]) => {
+        $(id).addEventListener('change', (e) => {
+          state.theme[key] = e.target.checked;
+          markDirty();
+        });
+      });
     }
 
-    async function updateHTML() {
-      const path = document.getElementById("htmlPath").value;
-      const content = document.getElementById("htmlContent").value;
-      if (!path || !content) return setStatus("Fill in path and content.", false);
+    // ── Officers row events (delegated) ──────────────────────────────
+    function wireOfficersList() {
+      const list = $("officers-list");
+      list.addEventListener('input', (e) => {
+        const row = e.target.closest('.row-item');
+        if (!row) return;
+        const idx = Number(row.dataset.idx);
+        const key = e.target.dataset.k;
+        if (key && state.content.officers[idx]) {
+          state.content.officers[idx][key] = e.target.value;
+          markDirty();
+          if (key === 'name') {
+            // refresh initials in the thumb if no photo
+            const thumb = row.querySelector('[data-thumb]');
+            if (thumb && !state.content.officers[idx].photo) {
+              thumb.textContent = initialsOf(e.target.value);
+            }
+          }
+        }
+      });
+      list.addEventListener('click', (e) => {
+        if (e.target.matches('[data-remove]')) {
+          const row = e.target.closest('.row-item');
+          const idx = Number(row.dataset.idx);
+          if (confirm(`Remove ${state.content.officers[idx].role || 'this officer'}?`)) {
+            state.content.officers.splice(idx, 1);
+            markDirty();
+            renderOfficers();
+          }
+        }
+      });
+      list.addEventListener('change', async (e) => {
+        if (!e.target.matches('[data-photo]')) return;
+        const row = e.target.closest('.row-item');
+        const idx = Number(row.dataset.idx);
+        const file = e.target.files[0];
+        if (!file) return;
+        await uploadOfficerPhoto(idx, file, row);
+      });
 
-      const base64 = btoa(unescape(encodeURIComponent(content)));
-      const res = await push(path, base64, `Update ${path}`);
-      res.ok ? setStatus("File updated!") : setStatus("Failed: " + res.status, false);
+      $("add-officer").addEventListener('click', () => {
+        state.content.officers.push({ role: "", name: "", photo: "" });
+        markDirty();
+        renderOfficers();
+        // focus the new row's first input
+        const rows = $("officers-list").querySelectorAll('.row-item');
+        rows[rows.length - 1]?.querySelector('input[data-k="role"]')?.focus();
+      });
     }
+
+    // ── Photo upload ─────────────────────────────────────────────────
+    async function uploadOfficerPhoto(idx, file, row) {
+      const off = state.content.officers[idx];
+      if (!off) return;
+      if (!pwInput.value) {
+        showAlert('error', 'Enter the admin password first.');
+        return;
+      }
+      const statusEl = row.querySelector('[data-status]');
+      const setRowStatus = (txt) => { if (statusEl) statusEl.textContent = txt; };
+
+      try {
+        setRowStatus('Uploading…');
+        const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '');
+        const baseSlug = slug(off.name || off.role || 'officer');
+        const filename = `${baseSlug}-${Date.now()}.${ext || 'jpg'}`;
+        const path = `${OFFICER_DIR}/${filename}`;
+
+        const dataUrl = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () => reject(new Error('Could not read file.'));
+          reader.readAsDataURL(file);
+        });
+        const base64 = String(dataUrl).split(',')[1];
+
+        await workerPush(path, base64, `chore(admin): upload officer photo (${baseSlug})`);
+
+        off.photo = path;
+        markDirty();
+        renderOfficers();
+        setStatus(`Photo uploaded to ${path}. Don't forget to Save.`, 'dirty');
+      } catch (err) {
+        console.error(err);
+        setRowStatus('');
+        showAlert('error', `Photo upload failed: ${err.message}`);
+      }
+    }
+
+    // ── Events row events (delegated) ────────────────────────────────
+    function wireEventsList() {
+      const list = $("events-list");
+      list.addEventListener('input', (e) => {
+        const row = e.target.closest('.row-item');
+        if (!row) return;
+        const idx = Number(row.dataset.idx);
+        const key = e.target.dataset.k;
+        if (key && state.content.events[idx]) {
+          state.content.events[idx][key] = e.target.value;
+          markDirty();
+        }
+      });
+      list.addEventListener('click', (e) => {
+        if (e.target.matches('[data-remove]')) {
+          const row = e.target.closest('.row-item');
+          const idx = Number(row.dataset.idx);
+          if (confirm(`Remove "${state.content.events[idx].title || 'this event'}"?`)) {
+            state.content.events.splice(idx, 1);
+            markDirty();
+            renderEvents();
+          }
+        }
+      });
+      $("add-event").addEventListener('click', () => {
+        state.content.events.push({ date: "", title: "", desc: "" });
+        markDirty();
+        renderEvents();
+        const rows = $("events-list").querySelectorAll('.row-item');
+        rows[rows.length - 1]?.querySelector('input[data-k="date"]')?.focus();
+      });
+    }
+
+    // ── Save all → push content.json ─────────────────────────────────
+    async function saveAll() {
+      clearAlert();
+      if (!pwInput.value) {
+        showAlert('error', 'Enter the admin password first.');
+        pwInput.focus();
+        return;
+      }
+      // light validation
+      state.content.officers = state.content.officers.filter(o => (o.role || o.name));
+      state.content.events   = state.content.events.filter(e => (e.date || e.title || e.desc));
+
+      const payload = JSON.stringify({ content: state.content, theme: state.theme }, null, 2) + '\n';
+      const base64  = b64encodeText(payload);
+      const message = `chore(admin): update site content (${new Date().toISOString().slice(0,10)})`;
+
+      setSaving(true);
+      try {
+        await workerPush(CONTENT_PATH, base64, message);
+        markClean('Saved. GitHub Pages will redeploy shortly.');
+        showAlert('success', `Pushed <code>${CONTENT_PATH}</code> to <strong>${REPO_BRANCH}</strong>. The live site should reflect changes in about a minute.`);
+        // re-render lists from the now-cleaned state
+        renderOfficers(); renderEvents();
+      } catch (err) {
+        console.error(err);
+        setStatus('Save failed.', 'err');
+        showAlert('error', `Save failed: ${err.message}`);
+      } finally {
+        setSaving(false);
+      }
+    }
+
+    // ── Boot ─────────────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      wireAnnouncement();
+      wireEmbeds();
+      wireToggles();
+      wireOfficersList();
+      wireEventsList();
+      saveBtn.addEventListener('click', saveAll);
+      loadInitial();
+    });
   </script>
 </body>
 </html>
