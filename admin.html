@@ -5,38 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex, nofollow" />
   <title>PHS FBLA · Admin</title>
-  <link rel="icon" type="image/png" href="Media/favicon-emblem.png" />
-  <link rel="apple-touch-icon" href="Media/favicon-emblem.png" />
+  <link rel="icon" type="image/png" href="Media/FBLA Emblem FINAL RGB (1).png" />
+  <link rel="apple-touch-icon" href="Media/FBLA Emblem FINAL RGB (1).png" />
 
   <style>
     @font-face {
       font-family: 'Apercu Pro';
-      src: url("Fonts/Apercu Pro/Apercu Pro Light.otf") format('opentype');
+      src: url("Apercu Pro/Apercu Pro Light.otf") format('opentype');
       font-weight: 300; font-style: normal; font-display: swap;
     }
     @font-face {
       font-family: 'Apercu Pro';
-      src: url("Fonts/Apercu Pro/Apercu Pro Regular.otf") format('opentype');
+      src: url("Apercu Pro/Apercu Pro Regular.otf") format('opentype');
       font-weight: 400; font-style: normal; font-display: swap;
     }
     @font-face {
       font-family: 'Apercu Pro';
-      src: url("Fonts/Apercu Pro/Apercu Pro Medium.otf") format('opentype');
+      src: url("Apercu Pro/Apercu Pro Medium.otf") format('opentype');
       font-weight: 500; font-style: normal; font-display: swap;
     }
     @font-face {
       font-family: 'Apercu Pro';
-      src: url("Fonts/Apercu Pro/Apercu Pro Bold.otf") format('opentype');
+      src: url("Apercu Pro/Apercu Pro Bold.otf") format('opentype');
       font-weight: 700; font-style: normal; font-display: swap;
     }
     @font-face {
       font-family: 'Gelasio';
-      src: url("Fonts/Gelasio/Gelasio-SemiBold.ttf") format('truetype');
+      src: url("Gelasio/Gelasio-SemiBold.ttf") format('truetype');
       font-weight: 600; font-style: normal; font-display: swap;
     }
     @font-face {
       font-family: 'Gelasio';
-      src: url("Fonts/Gelasio/Gelasio-Bold.ttf") format('truetype');
+      src: url("Gelasio/Gelasio-Bold.ttf") format('truetype');
       font-weight: 700; font-style: normal; font-display: swap;
     }
 
@@ -96,14 +96,17 @@
       text-decoration: none;
     }
     .topbar .brand img { width: 32px; height: 32px; }
-    .topbar a.back {
+    .topbar .top-links { display: flex; gap: 1.25rem; align-items: center; }
+    .topbar a.back,
+    .topbar a.preview {
       font-size: .85rem;
       color: var(--text-muted);
       text-decoration: none;
       font-weight: 500;
       transition: color var(--transition);
     }
-    .topbar a.back:hover { color: var(--navy); }
+    .topbar a.back:hover,
+    .topbar a.preview:hover { color: var(--navy); }
 
     /* ── Layout ── */
     .admin-page {
@@ -190,6 +193,7 @@
       margin-bottom: .35rem;
     }
     .field input[type="text"],
+    .field input[type="email"],
     .field input[type="password"],
     .field input[type="url"],
     .field textarea {
@@ -282,10 +286,12 @@
       gap: .85rem;
     }
     .row-item.officer-row { grid-template-columns: 72px 1fr auto; align-items: start; }
-    .row-item.event-row   { grid-template-columns: 1fr; }
+    .row-item.event-row   { grid-template-columns: 1fr auto; align-items: start; }
     @media (max-width: 560px) {
       .row-item.officer-row { grid-template-columns: 64px 1fr; }
-      .row-item.officer-row .row-actions { grid-column: 1 / -1; justify-self: end; }
+      .row-item.officer-row .row-actions { grid-column: 1 / -1; justify-self: stretch; }
+      .row-item.event-row   { grid-template-columns: 1fr; }
+      .row-item.event-row   .row-actions { grid-column: 1 / -1; justify-self: stretch; }
     }
 
     .officer-thumb {
@@ -311,8 +317,35 @@
       padding: .55rem .8rem;
       font-size: .9rem;
       border-radius: 8px;
+      width: 100%;
+      border: 1.5px solid var(--border);
+      font-family: var(--font-body);
+      color: var(--text);
+      background: var(--bg);
+      transition: border-color var(--transition), box-shadow var(--transition);
     }
-    .row-actions { display: flex; flex-direction: column; gap: .35rem; align-items: stretch; }
+    .row-fields input:focus, .row-fields textarea:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(29,82,188,.15);
+    }
+    .row-actions { display: flex; flex-direction: column; gap: .35rem; align-items: stretch; min-width: 130px; }
+    .row-actions .reorder { display: flex; gap: .3rem; }
+    .row-actions .reorder button {
+      flex: 1;
+      padding: .35rem .5rem;
+      font-size: .9rem;
+      line-height: 1;
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      color: var(--navy);
+      cursor: pointer;
+      transition: border-color var(--transition), color var(--transition);
+      font-family: var(--font-body);
+    }
+    .row-actions .reorder button:hover:not(:disabled) { border-color: var(--blue); color: var(--blue); }
+    .row-actions .reorder button:disabled { opacity: .35; cursor: not-allowed; }
     .row-actions label.file-btn {
       display: inline-flex; align-items: center; justify-content: center;
       padding: .4rem .75rem;
@@ -444,14 +477,17 @@
       <img src="Media/FBLA Emblem FINAL RGB (1).png" alt="PHS FBLA" />
       <span>Officer Admin</span>
     </a>
-    <a class="back" href="index.html">&larr; Back to site</a>
+    <div class="top-links">
+      <a class="preview" href="index.html" target="_blank" rel="noopener">Preview site ↗</a>
+      <a class="back" href="index.html">&larr; Back to site</a>
+    </div>
   </header>
 
   <main class="admin-page">
     <div class="page-head">
       <div class="eyebrow">Chapter Dashboard</div>
       <h1>Site Content Editor</h1>
-      <p>Edit the announcement, officers, events, and embeds. Changes push to GitHub through the chapter Worker and go live in about a minute.</p>
+      <p>Edit the hero, announcement, officers, events, meetings page, and embeds. Changes push to GitHub through the chapter Worker and go live in about a minute.</p>
     </div>
 
     <div id="alert" class="alert" role="alert"></div>
@@ -467,6 +503,29 @@
           <label for="password">Worker password</label>
           <input type="password" id="password" placeholder="Enter admin password" autocomplete="current-password" />
           <p class="field-help">Verified against <code>autumn-limit-4a38.kellerleonard79.workers.dev</code> on every push.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Hero & Contact ──────────────────────────────────────────── -->
+    <section class="card">
+      <div class="card-head">
+        <h2>Hero & Contact</h2>
+        <span class="hint">Homepage headline and chapter email</span>
+      </div>
+      <div class="card-body">
+        <div class="field">
+          <label for="h-headline">Headline</label>
+          <input type="text" id="h-headline" placeholder="Pensacola High Future Business Leaders of America" />
+        </div>
+        <div class="field">
+          <label for="h-subheadline">Subheadline</label>
+          <textarea id="h-subheadline" placeholder="Developing the next generation of business professionals and community leaders."></textarea>
+        </div>
+        <div class="field">
+          <label for="h-contactEmail">Contact email</label>
+          <input type="email" id="h-contactEmail" placeholder="fbla@pensacolahigh.edu" />
+          <p class="field-help">Used by the "Contact Adviser" button in the CTA section.</p>
         </div>
       </div>
     </section>
@@ -540,11 +599,11 @@
       </div>
     </section>
 
-    <!-- ── Embeds ───────────────────────────────────────────────────── -->
+    <!-- ── Calendar Embed ───────────────────────────────────────────── -->
     <section class="card">
       <div class="card-head">
-        <h2>Calendars & Forms</h2>
-        <span class="hint">Google-hosted URLs only</span>
+        <h2>Calendar Embed</h2>
+        <span class="hint">Shows on the homepage</span>
       </div>
       <div class="card-body">
         <div class="field">
@@ -556,14 +615,29 @@
           <div class="toggle-label">Show calendar on homepage <small>Renders in an iframe under the events list.</small></div>
           <label class="switch"><input type="checkbox" id="t-showCalendar" /><span class="slider"></span></label>
         </div>
+      </div>
+    </section>
+
+    <!-- ── Meetings Page ────────────────────────────────────────────── -->
+    <section class="card">
+      <div class="card-head">
+        <h2>Meetings Page</h2>
+        <span class="hint">Lives at <code>/meetings.html</code></span>
+      </div>
+      <div class="card-body">
+        <div class="field">
+          <label for="m-intro">Intro paragraph</label>
+          <textarea id="m-intro" placeholder="What members should know about meetings — when, where, and what to expect."></textarea>
+          <p class="field-help">Plain text. Appears at the top of the Meetings page.</p>
+        </div>
 
         <div class="field" style="margin-top:1.25rem;">
           <label for="form-url">Google Form embed URL</label>
           <input type="url" id="form-url" placeholder="https://docs.google.com/forms/d/e/…/viewform?embedded=true" />
-          <p class="field-help">In the form, click <em>Send → Embed (&lt; &gt;)</em> and copy the <code>src</code>.</p>
+          <p class="field-help">In the form, click <em>Send → Embed (&lt; &gt;)</em> and copy the <code>src</code>. The form is embedded on the Meetings page only.</p>
         </div>
         <div class="toggle-row">
-          <div class="toggle-label">Show Google Form on homepage <small>Renders in an iframe alongside the calendar.</small></div>
+          <div class="toggle-label">Show Google Form on meetings page <small>Renders in an iframe under the intro paragraph.</small></div>
           <label class="switch"><input type="checkbox" id="t-showGoogleForm" /><span class="slider"></span></label>
         </div>
       </div>
@@ -595,13 +669,11 @@
     const WORKER_URL  = "https://autumn-limit-4a38.kellerleonard79.workers.dev/";
     const CONTENT_PATH = "src/data/content.json";
     const OFFICER_DIR  = "assets/images/officers";
-    // raw fetch path for the canonical site (used to prefill on load)
     const REPO_OWNER   = "hwfl850";
     const REPO_NAME    = "phsfbla";
     const REPO_BRANCH  = "main";
     const RAW_BASE     = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${REPO_BRANCH}`;
 
-    // ── Defaults (mirror index.html so first save is non-destructive) ─
     const DEFAULTS = {
       content: {
         headline:    "Pensacola High Future Business Leaders of America",
@@ -616,6 +688,9 @@
         },
         calendarEmbed:   "",
         googleFormEmbed: "",
+        meetings: {
+          intro: "Meeting details coming soon. Check back here for the schedule, agendas, and notes.",
+        },
         events:   [],
         officers: [],
       },
@@ -629,11 +704,9 @@
       },
     };
 
-    // ── State ────────────────────────────────────────────────────────
     let state = JSON.parse(JSON.stringify(DEFAULTS));
     let dirty = false;
 
-    // ── DOM refs ─────────────────────────────────────────────────────
     const $ = (id) => document.getElementById(id);
     const alertBox    = $("alert");
     const statusEl    = $("save-status");
@@ -641,7 +714,6 @@
     const saveBtnText = $("save-btn-text");
     const pwInput     = $("password");
 
-    // ── Alerting ─────────────────────────────────────────────────────
     function showAlert(kind, html) {
       alertBox.className = `alert ${kind} show`;
       alertBox.innerHTML = html;
@@ -667,12 +739,10 @@
         : 'Save & Push to GitHub';
     }
 
-    // Warn before navigating away with unsaved changes
     window.addEventListener('beforeunload', (e) => {
       if (dirty) { e.preventDefault(); e.returnValue = ''; }
     });
 
-    // ── Worker push ──────────────────────────────────────────────────
     async function workerPush(path, base64Content, message) {
       const password = pwInput.value;
       if (!password) throw new Error("Admin password is required.");
@@ -684,7 +754,6 @@
           body: JSON.stringify({ password, path, content: base64Content, message }),
         });
       } catch (netErr) {
-        // TypeError "Failed to fetch" — almost always CORS or the Worker being unreachable
         throw new Error(
           "Could not reach the Worker. This is almost always a CORS issue — " +
           "make sure the Worker handles OPTIONS preflight and returns " +
@@ -702,7 +771,6 @@
       return res;
     }
 
-    // base64-encode utf-8 text (handles non-ASCII safely)
     function b64encodeText(str) {
       const bytes = new TextEncoder().encode(str);
       let bin = "";
@@ -710,15 +778,14 @@
       return btoa(bin);
     }
 
-    // ── Load existing content from the repo ──────────────────────────
     async function loadInitial() {
       try {
         const res = await fetch(`${RAW_BASE}/${CONTENT_PATH}?_=${Date.now()}`, { cache: 'no-store' });
         if (res.ok) {
           const json = await res.json();
-          // shallow-merge so missing keys fall back to defaults
           state.content = { ...DEFAULTS.content, ...(json.content || {}) };
           state.content.announcement = { ...DEFAULTS.content.announcement, ...(json.content?.announcement || {}) };
+          state.content.meetings     = { ...DEFAULTS.content.meetings,     ...(json.content?.meetings     || {}) };
           if (!Array.isArray(state.content.events))   state.content.events   = [];
           if (!Array.isArray(state.content.officers)) state.content.officers = [];
           state.theme = { ...DEFAULTS.theme, ...(json.theme || {}) };
@@ -736,7 +803,11 @@
       renderAll();
     }
 
-    // ── Render: announcement + toggles + URLs ────────────────────────
+    function renderHeroFields() {
+      $("h-headline").value     = state.content.headline     || "";
+      $("h-subheadline").value  = state.content.subheadline  || "";
+      $("h-contactEmail").value = state.content.contactEmail || "";
+    }
     function renderAnnouncementFields() {
       const a = state.content.announcement;
       $("a-badge").value   = a.badge   || "";
@@ -745,9 +816,12 @@
       $("a-ctaText").value = a.ctaText || "";
       $("a-ctaHref").value = a.ctaHref || "";
     }
-    function renderEmbedFields() {
-      $("cal-url").value  = state.content.calendarEmbed   || "";
+    function renderMeetingsFields() {
+      $("m-intro").value  = state.content.meetings.intro || "";
       $("form-url").value = state.content.googleFormEmbed || "";
+    }
+    function renderEmbedFields() {
+      $("cal-url").value = state.content.calendarEmbed || "";
     }
     function renderToggles() {
       $("t-showAnnouncement").checked = !!state.theme.showAnnouncement;
@@ -758,7 +832,6 @@
       $("t-showGoogleForm").checked   = !!state.theme.showGoogleForm;
     }
 
-    // ── Officers list ────────────────────────────────────────────────
     function initialsOf(name) {
       return (name || '?').trim().split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
     }
@@ -773,6 +846,7 @@
         list.innerHTML = `<div class="empty">No officers yet. Click <strong>+ Add officer</strong>.</div>`;
         return;
       }
+      const last = state.content.officers.length - 1;
       state.content.officers.forEach((off, idx) => {
         const row = document.createElement('div');
         row.className = 'row-item officer-row';
@@ -787,6 +861,10 @@
             <input type="text" data-k="name" placeholder="Full name" value="${escAttr(off.name || '')}" />
           </div>
           <div class="row-actions">
+            <div class="reorder">
+              <button type="button" data-move="up"   title="Move up"   ${idx === 0    ? 'disabled' : ''}>↑</button>
+              <button type="button" data-move="down" title="Move down" ${idx === last ? 'disabled' : ''}>↓</button>
+            </div>
             <label class="file-btn">
               Photo
               <input type="file" accept="image/*" data-photo />
@@ -799,7 +877,6 @@
       });
     }
 
-    // ── Events list ─────────────────────────────────────────────────
     function renderEvents() {
       const list = $("events-list");
       list.innerHTML = "";
@@ -807,6 +884,7 @@
         list.innerHTML = `<div class="empty">No events yet. Click <strong>+ Add event</strong>.</div>`;
         return;
       }
+      const last = state.content.events.length - 1;
       state.content.events.forEach((ev, idx) => {
         const row = document.createElement('div');
         row.className = 'row-item event-row';
@@ -817,7 +895,11 @@
             <input type="text" data-k="title" placeholder="Event title"        value="${escAttr(ev.title || '')}" />
             <input type="text" data-k="desc"  placeholder="Short description" value="${escAttr(ev.desc || '')}" />
           </div>
-          <div style="display:flex; justify-content:flex-end;">
+          <div class="row-actions">
+            <div class="reorder">
+              <button type="button" data-move="up"   title="Move up"   ${idx === 0    ? 'disabled' : ''}>↑</button>
+              <button type="button" data-move="down" title="Move down" ${idx === last ? 'disabled' : ''}>↓</button>
+            </div>
             <button type="button" class="btn btn-danger" data-remove>Remove</button>
           </div>
         `;
@@ -826,19 +908,34 @@
     }
 
     function renderAll() {
+      renderHeroFields();
       renderAnnouncementFields();
+      renderMeetingsFields();
       renderEmbedFields();
       renderToggles();
       renderOfficers();
       renderEvents();
     }
 
-    // ── HTML helpers ─────────────────────────────────────────────────
     function escAttr(s) {
       return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
-    // ── Wire input → state ───────────────────────────────────────────
+    function swap(arr, i, j) {
+      if (i < 0 || j < 0 || i >= arr.length || j >= arr.length) return false;
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+      return true;
+    }
+
+    function wireHero() {
+      const map = { 'h-headline':'headline', 'h-subheadline':'subheadline', 'h-contactEmail':'contactEmail' };
+      Object.entries(map).forEach(([id, key]) => {
+        $(id).addEventListener('input', (e) => {
+          state.content[key] = e.target.value;
+          markDirty();
+        });
+      });
+    }
     function wireAnnouncement() {
       const map = { 'a-badge':'badge', 'a-title':'title', 'a-body':'body', 'a-ctaText':'ctaText', 'a-ctaHref':'ctaHref' };
       Object.entries(map).forEach(([id, key]) => {
@@ -848,13 +945,19 @@
         });
       });
     }
-    function wireEmbeds() {
-      $("cal-url").addEventListener('input', (e) => {
-        state.content.calendarEmbed = e.target.value.trim();
+    function wireMeetings() {
+      $("m-intro").addEventListener('input', (e) => {
+        state.content.meetings.intro = e.target.value;
         markDirty();
       });
       $("form-url").addEventListener('input', (e) => {
         state.content.googleFormEmbed = e.target.value.trim();
+        markDirty();
+      });
+    }
+    function wireEmbeds() {
+      $("cal-url").addEventListener('input', (e) => {
+        state.content.calendarEmbed = e.target.value.trim();
         markDirty();
       });
     }
@@ -875,7 +978,6 @@
       });
     }
 
-    // ── Officers row events (delegated) ──────────────────────────────
     function wireOfficersList() {
       const list = $("officers-list");
       list.addEventListener('input', (e) => {
@@ -887,7 +989,6 @@
           state.content.officers[idx][key] = e.target.value;
           markDirty();
           if (key === 'name') {
-            // refresh initials in the thumb if no photo
             const thumb = row.querySelector('[data-thumb]');
             if (thumb && !state.content.officers[idx].photo) {
               thumb.textContent = initialsOf(e.target.value);
@@ -896,11 +997,18 @@
         }
       });
       list.addEventListener('click', (e) => {
+        const row = e.target.closest('.row-item');
+        if (!row) return;
+        const idx = Number(row.dataset.idx);
         if (e.target.matches('[data-remove]')) {
-          const row = e.target.closest('.row-item');
-          const idx = Number(row.dataset.idx);
           if (confirm(`Remove ${state.content.officers[idx].role || 'this officer'}?`)) {
             state.content.officers.splice(idx, 1);
+            markDirty();
+            renderOfficers();
+          }
+        } else if (e.target.matches('[data-move]')) {
+          const dir = e.target.dataset.move === 'up' ? -1 : 1;
+          if (swap(state.content.officers, idx, idx + dir)) {
             markDirty();
             renderOfficers();
           }
@@ -919,13 +1027,11 @@
         state.content.officers.push({ role: "", name: "", photo: "" });
         markDirty();
         renderOfficers();
-        // focus the new row's first input
         const rows = $("officers-list").querySelectorAll('.row-item');
         rows[rows.length - 1]?.querySelector('input[data-k="role"]')?.focus();
       });
     }
 
-    // ── Photo upload ─────────────────────────────────────────────────
     async function uploadOfficerPhoto(idx, file, row) {
       const off = state.content.officers[idx];
       if (!off) return;
@@ -964,7 +1070,6 @@
       }
     }
 
-    // ── Events row events (delegated) ────────────────────────────────
     function wireEventsList() {
       const list = $("events-list");
       list.addEventListener('input', (e) => {
@@ -978,11 +1083,18 @@
         }
       });
       list.addEventListener('click', (e) => {
+        const row = e.target.closest('.row-item');
+        if (!row) return;
+        const idx = Number(row.dataset.idx);
         if (e.target.matches('[data-remove]')) {
-          const row = e.target.closest('.row-item');
-          const idx = Number(row.dataset.idx);
           if (confirm(`Remove "${state.content.events[idx].title || 'this event'}"?`)) {
             state.content.events.splice(idx, 1);
+            markDirty();
+            renderEvents();
+          }
+        } else if (e.target.matches('[data-move]')) {
+          const dir = e.target.dataset.move === 'up' ? -1 : 1;
+          if (swap(state.content.events, idx, idx + dir)) {
             markDirty();
             renderEvents();
           }
@@ -997,7 +1109,6 @@
       });
     }
 
-    // ── Save all → push content.json ─────────────────────────────────
     async function saveAll() {
       clearAlert();
       if (!pwInput.value) {
@@ -1005,7 +1116,6 @@
         pwInput.focus();
         return;
       }
-      // light validation
       state.content.officers = state.content.officers.filter(o => (o.role || o.name));
       state.content.events   = state.content.events.filter(e => (e.date || e.title || e.desc));
 
@@ -1018,7 +1128,6 @@
         await workerPush(CONTENT_PATH, base64, message);
         markClean('Saved. GitHub Pages will redeploy shortly.');
         showAlert('success', `Pushed <code>${CONTENT_PATH}</code> to <strong>${REPO_BRANCH}</strong>. The live site should reflect changes in about a minute.`);
-        // re-render lists from the now-cleaned state
         renderOfficers(); renderEvents();
       } catch (err) {
         console.error(err);
@@ -1029,9 +1138,10 @@
       }
     }
 
-    // ── Boot ─────────────────────────────────────────────────────────
     document.addEventListener('DOMContentLoaded', () => {
+      wireHero();
       wireAnnouncement();
+      wireMeetings();
       wireEmbeds();
       wireToggles();
       wireOfficersList();

@@ -12,6 +12,9 @@
     },
     "calendarEmbed": "",
     "googleFormEmbed": "",
+    "meetings": {
+      "intro": "Meeting details coming soon. Check back here for the schedule, agendas, and notes."
+    },
     "events": [
       { "date": "AUG 7",     "title": "Officer Meeting",                "desc": "Officers plan the upcoming school year. All officers required." },
       { "date": "AUG 20",    "title": "General Meeting — Club Rush",    "desc": "Recruit at Club Rush! Encourage friends to come to the New Member Meeting. NLC recap & FBLA Connect setup. Krispy Kreme." },

@@ -20,6 +20,9 @@ const CONTENT_DEFAULTS = {
   },
   calendarEmbed:   "",
   googleFormEmbed: "",
+  meetings: {
+    intro: "Meeting details coming soon. Check back here for the schedule, agendas, and notes.",
+  },
   events: [
     { date: "AUG 7",     title: "Officer Meeting",              desc: "Officers plan the upcoming school year. All officers required." },
     { date: "AUG 20",    title: "General Meeting — Club Rush",   desc: "Recruit at Club Rush! Encourage friends to come to the New Member Meeting. NLC recap & FBLA Connect setup. Krispy Kreme." },
@@ -72,6 +75,9 @@ function deepMergeContent(defaults, saved) {
   }
   if (typeof saved.calendarEmbed   === 'string') result.calendarEmbed   = saved.calendarEmbed;
   if (typeof saved.googleFormEmbed === 'string') result.googleFormEmbed = saved.googleFormEmbed;
+  if (saved.meetings && typeof saved.meetings === 'object') {
+    result.meetings = { ...result.meetings, ...saved.meetings };
+  }
   if (Array.isArray(saved.events))   result.events   = saved.events;
   if (Array.isArray(saved.officers)) result.officers = saved.officers;
   return result;
