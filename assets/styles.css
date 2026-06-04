@@ -1,57 +1,57 @@
 /* ── Official FBLA brand typefaces, loaded from local files ── */
 @font-face {
   font-family: 'Apercu Pro';
-  src: url("../Apercu Pro/Apercu Pro Light.otf") format('opentype');
+  src: url("../Fonts/Apercu Pro/Apercu Pro Light.otf") format('opentype');
   font-weight: 300; font-style: normal; font-display: swap;
 }
 @font-face {
   font-family: 'Apercu Pro';
-  src: url("../Apercu Pro/Apercu Pro Regular.otf") format('opentype');
+  src: url("../Fonts/Apercu Pro/Apercu Pro Regular.otf") format('opentype');
   font-weight: 400; font-style: normal; font-display: swap;
 }
 @font-face {
   font-family: 'Apercu Pro';
-  src: url("../Apercu Pro/Apercu Pro Italic.otf") format('opentype');
+  src: url("../Fonts/Apercu Pro/Apercu Pro Italic.otf") format('opentype');
   font-weight: 400; font-style: italic; font-display: swap;
 }
 @font-face {
   font-family: 'Apercu Pro';
-  src: url("../Apercu Pro/Apercu Pro Medium.otf") format('opentype');
+  src: url("../Fonts/Apercu Pro/Apercu Pro Medium.otf") format('opentype');
   font-weight: 500; font-style: normal; font-display: swap;
 }
 @font-face {
   font-family: 'Apercu Pro';
-  src: url("../Apercu Pro/Apercu Pro Medium Italic.otf") format('opentype');
+  src: url("../Fonts/Apercu Pro/Apercu Pro Medium Italic.otf") format('opentype');
   font-weight: 500; font-style: italic; font-display: swap;
 }
 @font-face {
   font-family: 'Apercu Pro';
-  src: url("../Apercu Pro/Apercu Pro Bold.otf") format('opentype');
+  src: url("../Fonts/Apercu Pro/Apercu Pro Bold.otf") format('opentype');
   font-weight: 700; font-style: normal; font-display: swap;
 }
 @font-face {
   font-family: 'Apercu Pro';
-  src: url("../Apercu Pro/Apercu Pro Bold Italic.otf") format('opentype');
+  src: url("../Fonts/Apercu Pro/Apercu Pro Bold Italic.otf") format('opentype');
   font-weight: 700; font-style: italic; font-display: swap;
 }
 @font-face {
   font-family: 'Gelasio';
-  src: url("../Gelasio/Gelasio-Regular.ttf") format('truetype');
+  src: url("../Fonts/Gelasio/Gelasio-Regular.ttf") format('truetype');
   font-weight: 400; font-style: normal; font-display: swap;
 }
 @font-face {
   font-family: 'Gelasio';
-  src: url("../Gelasio/Gelasio-MediumItalic.ttf") format('truetype');
+  src: url("../Fonts/Gelasio/Gelasio-MediumItalic.ttf") format('truetype');
   font-weight: 500; font-style: italic; font-display: swap;
 }
 @font-face {
   font-family: 'Gelasio';
-  src: url("../Gelasio/Gelasio-SemiBold.ttf") format('truetype');
+  src: url("../Fonts/Gelasio/Gelasio-SemiBold.ttf") format('truetype');
   font-weight: 600; font-style: normal; font-display: swap;
 }
 @font-face {
   font-family: 'Gelasio';
-  src: url("../Gelasio/Gelasio-Bold.ttf") format('truetype');
+  src: url("../Fonts/Gelasio/Gelasio-Bold.ttf") format('truetype');
   font-weight: 700; font-style: normal; font-display: swap;
 }
 
