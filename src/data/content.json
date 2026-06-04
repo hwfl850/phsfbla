@@ -1,0 +1,26 @@
+{
+  "content": {
+    "headline": "Pensacola High Future Business Leaders of America",
+    "subheadline": "Developing the next generation of business professionals and community leaders.",
+    "contactEmail": "fbla@pensacolahigh.edu",
+    "announcement": {
+      "badge": "Latest Update",
+      "title": "",
+      "body": "",
+      "ctaText": "",
+      "ctaHref": ""
+    },
+    "calendarEmbed": "",
+    "googleFormEmbed": "",
+    "events": [],
+    "officers": []
+  },
+  "theme": {
+    "showEvents": true,
+    "showOfficers": true,
+    "showCta": false,
+    "showAnnouncement": true,
+    "showCalendar": false,
+    "showGoogleForm": false
+  }
+}
