@@ -2,10 +2,10 @@
   "content": {
     "headline": "Pensacola High Future Business Leaders of America",
     "subheadline": "Developing the next generation of business professionals and community leaders.",
-    "contactEmail": "jhill5@ecsdfl.us",
+    "contactEmail": "fbla@pensacolahigh.edu",
     "announcement": {
       "badge": "Latest Update",
-      "title": "Aug 20 · Club Rush Recruitment",
+      "title": "Next Meeting — Aug 20 · Club Rush Recruitment",
       "body": "We're recruiting at Club Rush! Bring a friend, grab Krispy Kreme, and pick up your FBLA Connect login. NLC recap to follow.",
       "ctaText": "See Full Calendar",
       "ctaHref": "#section-events"
@@ -13,7 +13,7 @@
     "calendarEmbed": "",
     "googleFormEmbed": "<iframe src=\"https://docs.google.com/forms/d/e/1FAIpQLScCAaQxYg9q_e_3zmjSvNQLB4-OrYwxsFWA1Ymr2GYOx2o27Q/viewform?embedded=true\" width=\"640\" height=\"374\" frameborder=\"0\" marginheight=\"0\" marginwidth=\"0\">Loading…</iframe>",
     "meetings": {
-      "intro": "Meeting details coming soon. Check back here for the schedule, agendas, and notes."
+      "intro": "Check in for meetings here!"
     },
     "events": [
       {
