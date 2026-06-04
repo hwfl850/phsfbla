@@ -676,11 +676,22 @@
     async function workerPush(path, base64Content, message) {
       const password = pwInput.value;
       if (!password) throw new Error("Admin password is required.");
-      const res = await fetch(WORKER_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password, path, content: base64Content, message }),
-      });
+      let res;
+      try {
+        res = await fetch(WORKER_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password, path, content: base64Content, message }),
+        });
+      } catch (netErr) {
+        // TypeError "Failed to fetch" — almost always CORS or the Worker being unreachable
+        throw new Error(
+          "Could not reach the Worker. This is almost always a CORS issue — " +
+          "make sure the Worker handles OPTIONS preflight and returns " +
+          "Access-Control-Allow-Origin on every response. " +
+          `(${netErr.message})`
+        );
+      }
       if (!res.ok) {
         const body = await res.text().catch(() => '');
         if (res.status === 401 || res.status === 403) {
