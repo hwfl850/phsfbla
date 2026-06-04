@@ -265,7 +265,7 @@ main.fading { opacity: 0; }
   transform: translateY(-50%) rotate(-12deg);
   width: 480px;
   height: 480px;
-  background-image: url("../FBLA Emblem FINAL RGB (1).png");
+  background-image: url("../Media/FBLA Emblem FINAL RGB (1).png");
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
@@ -640,7 +640,7 @@ main.fading { opacity: 0; }
   bottom: -80px;
   width: 280px;
   height: 280px;
-  background-image: url("../FBLA Emblem FINAL RGB (1).png");
+  background-image: url("../Media/FBLA Emblem FINAL RGB (1).png");
   background-repeat: no-repeat;
   background-size: contain;
   opacity: 0.10;
@@ -839,7 +839,7 @@ main.fading { opacity: 0; }
   transform: translateY(-50%) rotate(-12deg);
   width: 260px;
   height: 260px;
-  background-image: url("../FBLA Emblem FINAL RGB (1).png");
+  background-image: url("../Media/FBLA Emblem FINAL RGB (1).png");
   background-repeat: no-repeat;
   background-size: contain;
   opacity: 0.08;

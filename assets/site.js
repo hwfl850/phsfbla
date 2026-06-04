@@ -159,9 +159,9 @@ function highlightActiveNav() {
 
 function initHeaderFooter() {
   const logoNavEl = document.getElementById('logo-national-img');
-  if (logoNavEl) logoNavEl.src = 'Horizontal/PNG/FBLA_Logo_Horizontal_color-LoRes.png';
+  if (logoNavEl) logoNavEl.src = 'Media/Horizontal/PNG/FBLA_Logo_Horizontal_color-LoRes.png';
   const logoFooterEl = document.getElementById('logo-footer-img');
-  if (logoFooterEl) logoFooterEl.src = 'Horizontal/PNG/FBLA_Logo_Horizontal_white-LoRes.png';
+  if (logoFooterEl) logoFooterEl.src = 'Media/Horizontal/PNG/FBLA_Logo_Horizontal_white-LoRes.png';
 
   highlightActiveNav();
 
