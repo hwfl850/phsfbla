@@ -564,7 +564,117 @@
     body.locked .topbar,
     body.locked .admin-page,
     body.locked .save-bar { display: none !important; }
-  </style>
+
+    /* ── Photo cropper modal ── */
+    .cropper-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 46, 127, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 1rem;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+    .cropper-card {
+      background: var(--bg);
+      border-radius: 16px;
+      padding: 1.5rem;
+      max-width: 380px;
+      width: 100%;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+    }
+    .cropper-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--navy) 0%, var(--blue) 50%, var(--gold) 100%);
+    }
+    .cropper-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: .25rem;
+      letter-spacing: -0.01em;
+    }
+    .cropper-card .cropper-hint {
+      font-size: .82rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      line-height: 1.45;
+    }
+    .cropper-stage {
+      position: relative;
+      width: 100%;
+      max-width: 320px;
+      aspect-ratio: 1 / 1;
+      margin: 0 auto 1rem;
+      background: #111418;
+      border-radius: 12px;
+      overflow: hidden;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .cropper-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+    }
+    .cropper-canvas:active { cursor: grabbing; }
+    .cropper-mask {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 50%,
+          rgba(0,0,0,0) 0,
+          rgba(0,0,0,0) calc(50% - 1px),
+          rgba(255,255,255,0.9) calc(50% - 1px),
+          rgba(255,255,255,0.9) 50%,
+          rgba(0,0,0,0.55) calc(50% + 1px),
+          rgba(0,0,0,0.55) 100%);
+    }
+    .cropper-controls {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      margin-bottom: 1.1rem;
+    }
+    .cropper-controls .zoom-label {
+      font-size: .78rem;
+      font-weight: 600;
+      color: var(--navy);
+      letter-spacing: .02em;
+    }
+    .cropper-controls input[type="range"] {
+      flex: 1;
+      accent-color: var(--navy);
+      cursor: pointer;
+    }
+    .cropper-actions {
+      display: flex;
+      gap: .6rem;
+      justify-content: flex-end;
+    }
+    .cropper-loading {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,.8);
+      font-size: .85rem;
+      pointer-events: none;
+    }
+</style>
 </head>
 <body class="locked">
   <div id="admin-gate" class="gate" role="dialog" aria-modal="true" aria-labelledby="gate-title">
@@ -1161,13 +1271,17 @@
           }
         }
       });
-      list.addEventListener('change', async (e) => {
+      list.addEventListener('change', (e) => {
         if (!e.target.matches('[data-photo]')) return;
         const row = e.target.closest('.row-item');
         const idx = Number(row.dataset.idx);
-        const file = e.target.files[0];
+        const input = e.target;
+        const file = input.files[0];
+        input.value = '';
         if (!file) return;
-        await uploadOfficerPhoto(idx, file, row);
+        openCropper(file, async (blob) => {
+          await uploadOfficerPhoto(idx, blob, row, 'png');
+        });
       });
 
       $("add-officer").addEventListener('click', () => {
@@ -1179,7 +1293,7 @@
       });
     }
 
-    async function uploadOfficerPhoto(idx, file, row) {
+    async function uploadOfficerPhoto(idx, fileOrBlob, row, forcedExt) {
       const off = state.content.officers[idx];
       if (!off) return;
       const statusEl = row.querySelector('[data-status]');
@@ -1187,16 +1301,21 @@
 
       try {
         setRowStatus('Uploading…');
-        const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '');
+        let ext = forcedExt;
+        if (!ext) {
+          const name = fileOrBlob.name || '';
+          ext = (name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '');
+        }
+        if (!ext) ext = 'png';
         const baseSlug = slug(off.name || off.role || 'officer');
-        const filename = `${baseSlug}-${Date.now()}.${ext || 'jpg'}`;
+        const filename = `${baseSlug}-${Date.now()}.${ext}`;
         const path = `${OFFICER_DIR}/${filename}`;
 
         const dataUrl = await new Promise((resolve, reject) => {
           const reader = new FileReader();
           reader.onload = () => resolve(reader.result);
           reader.onerror = () => reject(new Error('Could not read file.'));
-          reader.readAsDataURL(file);
+          reader.readAsDataURL(fileOrBlob);
         });
         const base64 = String(dataUrl).split(',')[1];
 
@@ -1211,6 +1330,185 @@
         setRowStatus('');
         showAlert('error', `Photo upload failed: ${err.message}`);
       }
+    }
+
+    function openCropper(file, onComplete) {
+      const overlay = document.createElement('div');
+      overlay.className = 'cropper-overlay';
+      overlay.setAttribute('role', 'dialog');
+      overlay.setAttribute('aria-modal', 'true');
+      overlay.innerHTML = `
+        <div class="cropper-card">
+          <h3>Crop officer photo</h3>
+          <p class="cropper-hint">Drag to reposition. Use the slider or mouse wheel to zoom. The circle is what gets saved.</p>
+          <div class="cropper-stage">
+            <canvas class="cropper-canvas" width="600" height="600"></canvas>
+            <div class="cropper-mask"></div>
+            <div class="cropper-loading" data-loading>Loading photo…</div>
+          </div>
+          <div class="cropper-controls">
+            <span class="zoom-label">Zoom</span>
+            <input type="range" class="cropper-zoom" min="1" max="5" step="0.01" value="1" disabled />
+          </div>
+          <div class="cropper-actions">
+            <button type="button" class="btn btn-ghost btn-sm" data-cancel>Cancel</button>
+            <button type="button" class="btn btn-primary btn-sm" data-apply disabled>Apply & Upload</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+
+      const canvas    = overlay.querySelector('.cropper-canvas');
+      const ctx       = canvas.getContext('2d');
+      const zoomInput = overlay.querySelector('.cropper-zoom');
+      const applyBtn  = overlay.querySelector('[data-apply]');
+      const cancelBtn = overlay.querySelector('[data-cancel]');
+      const loading   = overlay.querySelector('[data-loading]');
+
+      const img = new Image();
+      let objectUrl = null;
+      let minScale = 1, scale = 1;
+      let tx = 0, ty = 0;
+      let ready = false;
+
+      function clampPan() {
+        const w = img.width * scale;
+        const h = img.height * scale;
+        tx = Math.max(canvas.width  - w, Math.min(0, tx));
+        ty = Math.max(canvas.height - h, Math.min(0, ty));
+      }
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (!ready) return;
+        ctx.drawImage(img, tx, ty, img.width * scale, img.height * scale);
+      }
+      function applyZoom(zoomFactor) {
+        const newScale = minScale * zoomFactor;
+        const cx = canvas.width / 2, cy = canvas.height / 2;
+        const imgPxX = (cx - tx) / scale;
+        const imgPxY = (cy - ty) / scale;
+        scale = newScale;
+        tx = cx - imgPxX * scale;
+        ty = cy - imgPxY * scale;
+        clampPan();
+        draw();
+      }
+      function toCanvasCoords(clientX, clientY) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+          x: (clientX - rect.left) * (canvas.width  / rect.width),
+          y: (clientY - rect.top)  * (canvas.height / rect.height),
+        };
+      }
+
+      img.onload = () => {
+        minScale = Math.max(canvas.width / img.width, canvas.height / img.height);
+        scale    = minScale;
+        tx = (canvas.width  - img.width  * scale) / 2;
+        ty = (canvas.height - img.height * scale) / 2;
+        ready = true;
+        zoomInput.disabled = false;
+        applyBtn.disabled  = false;
+        loading.style.display = 'none';
+        draw();
+      };
+      img.onerror = () => {
+        loading.textContent = 'Could not load image.';
+      };
+
+      try {
+        objectUrl = URL.createObjectURL(file);
+        img.src = objectUrl;
+      } catch (e) {
+        loading.textContent = 'Could not load image.';
+      }
+
+      zoomInput.addEventListener('input', () => {
+        if (!ready) return;
+        applyZoom(parseFloat(zoomInput.value));
+      });
+
+      let dragging = false, lastX = 0, lastY = 0, activePointer = null;
+      canvas.addEventListener('pointerdown', (e) => {
+        if (!ready) return;
+        dragging = true;
+        activePointer = e.pointerId;
+        try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+        const p = toCanvasCoords(e.clientX, e.clientY);
+        lastX = p.x; lastY = p.y;
+      });
+      canvas.addEventListener('pointermove', (e) => {
+        if (!dragging || e.pointerId !== activePointer) return;
+        const p = toCanvasCoords(e.clientX, e.clientY);
+        tx += p.x - lastX;
+        ty += p.y - lastY;
+        lastX = p.x; lastY = p.y;
+        clampPan();
+        draw();
+      });
+      const endDrag = (e) => {
+        if (e.pointerId !== activePointer) return;
+        dragging = false;
+        activePointer = null;
+      };
+      canvas.addEventListener('pointerup',     endDrag);
+      canvas.addEventListener('pointercancel', endDrag);
+      canvas.addEventListener('pointerleave',  endDrag);
+
+      canvas.addEventListener('wheel', (e) => {
+        if (!ready) return;
+        e.preventDefault();
+        const factor = e.deltaY < 0 ? 1.08 : 1 / 1.08;
+        const cur = parseFloat(zoomInput.value);
+        const next = Math.max(parseFloat(zoomInput.min), Math.min(parseFloat(zoomInput.max), cur * factor));
+        zoomInput.value = String(next);
+        applyZoom(next);
+      }, { passive: false });
+
+      function cleanup() {
+        if (objectUrl) { try { URL.revokeObjectURL(objectUrl); } catch (_) {} }
+        document.removeEventListener('keydown', onKey);
+        overlay.remove();
+      }
+      function onKey(e) {
+        if (e.key === 'Escape') { e.preventDefault(); cleanup(); }
+      }
+      document.addEventListener('keydown', onKey);
+
+      cancelBtn.addEventListener('click', cleanup);
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) cleanup();
+      });
+
+      applyBtn.addEventListener('click', () => {
+        if (!ready) return;
+        const outSize = 512;
+        const out = document.createElement('canvas');
+        out.width = outSize; out.height = outSize;
+        const octx = out.getContext('2d');
+        octx.save();
+        octx.beginPath();
+        octx.arc(outSize / 2, outSize / 2, outSize / 2, 0, Math.PI * 2);
+        octx.closePath();
+        octx.clip();
+        const k = outSize / canvas.width;
+        octx.drawImage(
+          img,
+          tx * k, ty * k,
+          img.width  * scale * k,
+          img.height * scale * k
+        );
+        octx.restore();
+        out.toBlob((blob) => {
+          if (!blob) {
+            showAlert('error', 'Could not produce cropped image.');
+            cleanup();
+            return;
+          }
+          cleanup();
+          onComplete(blob);
+        }, 'image/png');
+      });
     }
 
     function wireEventsList() {
