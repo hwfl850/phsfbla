@@ -171,6 +171,6 @@
     "showCta": false,
     "showAnnouncement": true,
     "showCalendar": false,
-    "showGoogleForm": false
+    "showGoogleForm": true
   }
 }
