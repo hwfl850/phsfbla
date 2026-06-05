@@ -119,8 +119,10 @@ function applyTheme(t) {
 }
 
 function currentTheme() {
-  try { return { ...THEME_DEFAULTS, ...JSON.parse(localStorage.getItem('fbla_theme') || '{}') }; }
-  catch (_) { return { ...THEME_DEFAULTS }; }
+  try {
+    const base = _serverTheme || JSON.parse(localStorage.getItem('fbla_theme') || '{}');
+    return { ...THEME_DEFAULTS, ...base };
+  } catch (_) { return { ...THEME_DEFAULTS }; }
 }
 
 async function initSiteData() {
