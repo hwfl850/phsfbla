@@ -255,7 +255,7 @@ main.fading { opacity: 0; }
   pointer-events: none;
 }
 
-.hero-content { position: relative; z-index: 1; max-width: 780px; margin: 0 auto; }
+.hero-content { position: relative; z-index: 1; max-width: 880px; margin: 0 auto; }
 
 .hero-eyebrow {
   display: inline-flex;
@@ -280,15 +280,21 @@ main.fading { opacity: 0; }
 
 .hero h1 {
   font-family: var(--font-head);
-  font-size: clamp(2.1rem, 5vw, 3.4rem);
+  font-size: clamp(1.6rem, 4.2vw, 2.7rem);
   font-weight: 700;
-  line-height: 1.12;
+  line-height: 1.15;
   letter-spacing: -0.015em;
   margin-bottom: 0.85rem;
   display: block;
+  white-space: nowrap;
 }
 
 .hero h1 span { color: var(--gold); }
+
+/* Allow the title to wrap on small phones so it never overflows/clips. */
+@media (max-width: 600px) {
+  .hero h1 { white-space: normal; }
+}
 
 .hero p {
   font-size: 1.1rem;
