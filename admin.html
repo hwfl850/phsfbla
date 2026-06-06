@@ -713,6 +713,132 @@
       font-size: .85rem;
       pointer-events: none;
     }
+
+    /* ── Page quick-nav tabs ── */
+    .page-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin-bottom: 1.5rem;
+      position: sticky;
+      top: 70px;
+      z-index: 30;
+      padding: .6rem;
+      background: rgba(245,247,251,.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border);
+    }
+    .page-tab {
+      padding: .5rem 1.05rem;
+      border-radius: var(--radius-pill);
+      border: none;
+      background: transparent;
+      color: var(--navy);
+      font-weight: 600;
+      font-size: .85rem;
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: background var(--transition), color var(--transition);
+      white-space: nowrap;
+    }
+    .page-tab:hover { background: var(--surface); }
+    .page-tab.active { background: var(--navy); color: var(--white); }
+    @media (max-width: 560px) {
+      .page-tabs { flex-wrap: nowrap; overflow-x: auto; border-radius: 14px; }
+      .page-tab { font-size: .8rem; padding: .45rem .85rem; }
+    }
+
+    /* ── Collapsible page panels ── */
+    .page-accordion { display: flex; flex-direction: column; gap: 1.1rem; }
+    .page-panel {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      scroll-margin-top: 140px;
+      transition: box-shadow var(--transition);
+    }
+    .page-panel.open { box-shadow: var(--shadow-lg); }
+    .page-panel-head {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.15rem 1.4rem;
+      background: var(--bg);
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      font-family: var(--font-display);
+      transition: background var(--transition);
+    }
+    .page-panel-head:hover { background: var(--surface); }
+    .page-panel-icon {
+      width: 42px; height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+      color: var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      flex: 0 0 42px;
+    }
+    .page-panel-titles { flex: 1; min-width: 0; }
+    .page-panel-titles h2 {
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+    .page-panel-titles p {
+      font-size: .8rem;
+      color: var(--text-muted);
+      margin-top: .15rem;
+      font-family: var(--font-body);
+      font-weight: 400;
+    }
+    .page-panel-chevron {
+      flex: 0 0 auto;
+      color: var(--text-muted);
+      transition: transform var(--transition);
+    }
+    .page-panel.open .page-panel-chevron { transform: rotate(180deg); }
+    .page-panel-body { display: none; padding: 0 1.4rem 1.5rem; }
+    .page-panel.open .page-panel-body { display: block; }
+
+    /* ── Sub-cards inside a panel ── */
+    .subcard {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.15rem 1.2rem;
+      margin-top: 1.1rem;
+      background: var(--surface);
+    }
+    .subcard:first-child { margin-top: 1.3rem; }
+    .subcard-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .subcard-head h3 {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: -0.01em;
+    }
+    .subcard-head .hint { font-size: .74rem; color: var(--text-muted); }
+    .subcard .field:last-child { margin-bottom: 0; }
+    .subcard-note {
+      font-size: .76rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
 </style>
 </head>
 <body class="locked">
@@ -749,211 +875,424 @@
     <div class="page-head">
       <div class="eyebrow">Chapter Dashboard</div>
       <h1>Site Content Editor</h1>
-      <p>Edit the hero, announcement, officers, events, meetings page, and embeds. Changes push to GitHub through the chapter Worker and go live in about a minute.</p>
+      <p>Pick a page below to edit its content, sections, and visibility. Changes push to GitHub through the chapter Worker and go live in about a minute.</p>
     </div>
 
     <div id="alert" class="alert" role="alert"></div>
 
-    <!-- ── Hero & Contact ──────────────────────────────────────────── -->
-    <section class="card">
-      <div class="card-head">
-        <h2>Hero & Contact</h2>
-        <span class="hint">Homepage headline and chapter email</span>
-      </div>
-      <div class="card-body">
-        <div class="field">
-          <label for="h-headline">Headline</label>
-          <input type="text" id="h-headline" placeholder="Pensacola High Future Business Leaders of America" />
-        </div>
-        <div class="field">
-          <label for="h-subheadline">Subheadline</label>
-          <textarea id="h-subheadline" placeholder="Developing the next generation of business professionals and community leaders."></textarea>
-        </div>
-        <div class="field">
-          <label for="h-contactEmail">Contact email</label>
-          <input type="email" id="h-contactEmail" placeholder="fbla@pensacolahigh.edu" />
-          <p class="field-help">Used by the "Contact Adviser" button in the CTA section.</p>
-        </div>
-      </div>
-    </section>
+    <!-- ── Page quick-nav ─────────────────────────────────────────────── -->
+    <nav class="page-tabs" id="page-tabs" aria-label="Jump to page editor">
+      <button type="button" class="page-tab active" data-tab="panel-home">Edit Homepage</button>
+      <button type="button" class="page-tab" data-tab="panel-about">Edit About Page</button>
+      <button type="button" class="page-tab" data-tab="panel-meetings">Edit Meetings Page</button>
+      <button type="button" class="page-tab" data-tab="panel-study">Edit Study Resources</button>
+      <button type="button" class="page-tab" data-tab="panel-site">Site-wide</button>
+    </nav>
 
-    <!-- ── Announcement ─────────────────────────────────────────────── -->
-    <section class="card">
-      <div class="card-head">
-        <h2>Announcement Banner</h2>
-        <label class="switch" title="Show on homepage">
-          <input type="checkbox" id="t-showAnnouncement" />
-          <span class="slider"></span>
-        </label>
-      </div>
-      <div class="card-body">
-        <div class="field">
-          <label for="a-badge">Badge</label>
-          <input type="text" id="a-badge" placeholder="Latest Update" />
-        </div>
-        <div class="field">
-          <label for="a-title">Title</label>
-          <input type="text" id="a-title" placeholder="Next Meeting — Aug 20 · Club Rush Recruitment" />
-        </div>
-        <div class="field">
-          <label for="a-body">Body</label>
-          <textarea id="a-body" placeholder="Short description of the announcement…"></textarea>
-        </div>
-        <div class="field-row">
-          <div class="field">
-            <label for="a-ctaText">CTA text</label>
-            <input type="text" id="a-ctaText" placeholder="See Full Calendar" />
+    <div class="page-accordion" id="page-accordion">
+
+      <!-- ════════════════ EDIT HOMEPAGE ════════════════ -->
+      <section class="page-panel open" id="panel-home">
+        <button type="button" class="page-panel-head" aria-expanded="true" aria-controls="panel-home-body">
+          <span class="page-panel-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+          </span>
+          <span class="page-panel-titles">
+            <h2>Edit Homepage</h2>
+            <p>Hero, announcement, events, calendar &amp; call-to-action — <code>index.html</code></p>
+          </span>
+          <svg class="page-panel-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="page-panel-body" id="panel-home-body">
+
+          <div class="subcard">
+            <div class="subcard-head"><h3>Hero</h3><span class="hint">Top of the homepage</span></div>
+            <div class="field-row">
+              <div class="field">
+                <label for="hero-line1">Title — line 1</label>
+                <input type="text" id="hero-line1" placeholder="Pensacola High School" />
+              </div>
+              <div class="field">
+                <label for="hero-line2">Title — line 2</label>
+                <input type="text" id="hero-line2" placeholder="Future Business Leaders of America" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="hero-tagline">Tagline pills</label>
+              <input type="text" id="hero-tagline" placeholder="Service · Education · Progress" />
+              <p class="field-help">Separate each pill with a <code>·</code> (middle dot) or <code>|</code>.</p>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="hero-primaryText">Primary button — text</label>
+                <input type="text" id="hero-primaryText" placeholder="Study Resources" />
+              </div>
+              <div class="field">
+                <label for="hero-primaryHref">Primary button — link</label>
+                <input type="text" id="hero-primaryHref" placeholder="study.html" />
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="hero-secondaryText">Secondary button — text</label>
+                <input type="text" id="hero-secondaryText" placeholder="Learn About FBLA ↗" />
+              </div>
+              <div class="field">
+                <label for="hero-secondaryHref">Secondary button — link</label>
+                <input type="text" id="hero-secondaryHref" placeholder="https://www.fbla-pbl.org/fbla/" />
+              </div>
+            </div>
           </div>
-          <div class="field">
-            <label for="a-ctaHref">CTA link</label>
-            <input type="text" id="a-ctaHref" placeholder="#section-events" />
+
+          <div class="subcard">
+            <div class="subcard-head">
+              <h3>Announcement Banner</h3>
+              <label class="switch" title="Show announcement"><input type="checkbox" id="t-showAnnouncement" /><span class="slider"></span></label>
+            </div>
+            <div class="field">
+              <label for="a-badge">Badge</label>
+              <input type="text" id="a-badge" placeholder="Latest Update" />
+            </div>
+            <div class="field">
+              <label for="a-title">Title</label>
+              <input type="text" id="a-title" placeholder="Next Meeting — Aug 20 · Club Rush Recruitment" />
+            </div>
+            <div class="field">
+              <label for="a-body">Body</label>
+              <textarea id="a-body" placeholder="Short description of the announcement…"></textarea>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="a-ctaText">CTA text</label>
+                <input type="text" id="a-ctaText" placeholder="See Full Calendar" />
+              </div>
+              <div class="field">
+                <label for="a-ctaHref">CTA link</label>
+                <input type="text" id="a-ctaHref" placeholder="#section-events" />
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- ── Officers ─────────────────────────────────────────────────── -->
-    <section class="card">
-      <div class="card-head">
-        <h2>Officers</h2>
-        <label class="switch" title="Show officers section">
-          <input type="checkbox" id="t-showOfficers" />
-          <span class="slider"></span>
-        </label>
-      </div>
-      <div class="card-body">
-        <div id="officers-list" class="row-list"></div>
-        <div style="margin-top:1rem; display:flex; justify-content:flex-start;">
-          <button type="button" class="btn btn-ghost btn-sm" id="add-officer">+ Add officer</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── Events ───────────────────────────────────────────────────── -->
-    <section class="card">
-      <div class="card-head">
-        <h2>Upcoming Events</h2>
-        <label class="switch" title="Show events section">
-          <input type="checkbox" id="t-showEvents" />
-          <span class="slider"></span>
-        </label>
-      </div>
-      <div class="card-body">
-        <div id="events-list" class="row-list"></div>
-        <div style="margin-top:1rem; display:flex; justify-content:flex-start;">
-          <button type="button" class="btn btn-ghost btn-sm" id="add-event">+ Add event</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── Calendar Embed ───────────────────────────────────────────── -->
-    <section class="card">
-      <div class="card-head">
-        <h2>Calendar Embed</h2>
-        <span class="hint">Shows on the homepage</span>
-      </div>
-      <div class="card-body">
-        <div class="field">
-          <label for="cal-url">Google Calendar embed URL</label>
-          <input type="url" id="cal-url" placeholder="https://calendar.google.com/calendar/embed?src=…" />
-          <p class="field-help">Calendar → Settings → Integrate calendar → copy <em>Public URL to this calendar</em> (or embed src).</p>
-        </div>
-        <div class="toggle-row">
-          <div class="toggle-label">Show calendar on homepage <small>Renders in an iframe under the events list.</small></div>
-          <label class="switch"><input type="checkbox" id="t-showCalendar" /><span class="slider"></span></label>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── Meetings Page ────────────────────────────────────────────── -->
-    <section class="card">
-      <div class="card-head">
-        <h2>Meetings Page</h2>
-        <span class="hint">Lives at <code>/meetings.html</code></span>
-      </div>
-      <div class="card-body">
-        <div class="field">
-          <label for="m-intro">Intro paragraph</label>
-          <textarea id="m-intro" placeholder="What members should know about meetings — when, where, and what to expect."></textarea>
-          <p class="field-help">Plain text. Appears at the top of the Meetings page.</p>
-        </div>
-
-        <div class="field" style="margin-top:1.25rem;">
-          <label for="form-url">Google Form embed URL</label>
-          <input type="url" id="form-url" placeholder="https://docs.google.com/forms/d/e/…/viewform?embedded=true" />
-          <p class="field-help">In the form, click <em>Send → Embed (&lt; &gt;)</em> and copy the <code>src</code>. The form is embedded on the Meetings page only.</p>
-        </div>
-        <div class="toggle-row">
-          <div class="toggle-label">Show Google Form on meetings page <small>Renders in an iframe under the intro paragraph.</small></div>
-          <label class="switch"><input type="checkbox" id="t-showGoogleForm" /><span class="slider"></span></label>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── Meeting Archive ──────────────────────────────────────────── -->
-    <section class="card">
-      <div class="card-head">
-        <h2>Meeting Archive</h2>
-        <label class="switch" title="Show archive on meetings page">
-          <input type="checkbox" id="t-showMeetingArchive" />
-          <span class="slider"></span>
-        </label>
-      </div>
-      <div class="card-body">
-        <p class="field-help" style="margin-bottom:1rem;">
-          Add a meeting record with a date and a link (slides, notes, agenda) — or upload a file and we'll
-          generate the link for you. Both the date and link stay editable. The archive renders as a
-          searchable table on the Meetings page.
-        </p>
-        <div id="archive-list" class="row-list"></div>
-        <div style="margin-top:1rem; display:flex; justify-content:flex-start;">
-          <button type="button" class="btn btn-ghost btn-sm" id="add-archive">+ Add archive entry</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── Study Resources ─────────────────────────────────────────── -->
-    <section class="card">
-      <div class="card-head">
-        <h2>Study Resources</h2>
-      </div>
-      <div class="card-body">
-        <p class="field-help" style="margin-bottom:1rem;">
-          Build the three dropdown sections on the Study Resources page. Each <strong>block</strong> has a blue
-          header, any number of description paragraphs, and any number of links or uploaded files.
-        </p>
-        <div id="study-resources">
-          <div class="sr-group">
-            <h3 class="sr-group-title">Objective Tests</h3>
-            <div class="row-list" data-cat-list="objective"></div>
-            <div style="margin-top:.85rem;"><button type="button" class="btn btn-ghost btn-sm" data-add-block="objective">+ Add block</button></div>
+          <div class="subcard">
+            <div class="subcard-head">
+              <h3>Upcoming Events</h3>
+              <label class="switch" title="Show events section"><input type="checkbox" id="t-showEvents" /><span class="slider"></span></label>
+            </div>
+            <div id="events-list" class="row-list"></div>
+            <div style="margin-top:1rem;"><button type="button" class="btn btn-ghost btn-sm" id="add-event">+ Add event</button></div>
           </div>
-          <div class="sr-group">
-            <h3 class="sr-group-title">Roleplay</h3>
-            <div class="row-list" data-cat-list="roleplay"></div>
-            <div style="margin-top:.85rem;"><button type="button" class="btn btn-ghost btn-sm" data-add-block="roleplay">+ Add block</button></div>
-          </div>
-          <div class="sr-group">
-            <h3 class="sr-group-title">Presentations</h3>
-            <div class="row-list" data-cat-list="presentations"></div>
-            <div style="margin-top:.85rem;"><button type="button" class="btn btn-ghost btn-sm" data-add-block="presentations">+ Add block</button></div>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- ── Section toggles (other) ─────────────────────────────────── -->
-    <section class="card">
-      <div class="card-head">
-        <h2>Other Section Toggles</h2>
-      </div>
-      <div class="card-body">
-        <div class="toggle-row">
-          <div class="toggle-label">CTA banner <small>"Ready to compete at the National Level?" section.</small></div>
-          <label class="switch"><input type="checkbox" id="t-showCta" /><span class="slider"></span></label>
+          <div class="subcard">
+            <div class="subcard-head">
+              <h3>Calendar Embed</h3>
+              <label class="switch" title="Show calendar"><input type="checkbox" id="t-showCalendar" /><span class="slider"></span></label>
+            </div>
+            <div class="field">
+              <label for="cal-url">Google Calendar embed URL</label>
+              <input type="url" id="cal-url" placeholder="https://calendar.google.com/calendar/embed?src=…" />
+              <p class="field-help">Calendar → Settings → Integrate calendar → copy <em>Public URL to this calendar</em>. Renders in an iframe under the events list.</p>
+            </div>
+          </div>
+
+          <div class="subcard">
+            <div class="subcard-head">
+              <h3>Call-to-Action Banner</h3>
+              <label class="switch" title="Show CTA banner"><input type="checkbox" id="t-showCta" /><span class="slider"></span></label>
+            </div>
+            <div class="field">
+              <label for="cta-title">Heading</label>
+              <input type="text" id="cta-title" placeholder="Ready to Compete at the National Level?" />
+            </div>
+            <div class="field">
+              <label for="cta-body">Body</label>
+              <textarea id="cta-body" placeholder="Join Pensacola High FBLA and start your journey…"></textarea>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="cta-primaryText">Primary button — text</label>
+                <input type="text" id="cta-primaryText" placeholder="Start Studying" />
+              </div>
+              <div class="field">
+                <label for="cta-primaryHref">Primary button — link</label>
+                <input type="text" id="cta-primaryHref" placeholder="study.html" />
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="cta-secondaryText">Secondary button — text</label>
+                <input type="text" id="cta-secondaryText" placeholder="Contact Adviser" />
+              </div>
+              <div class="field">
+                <label for="h-contactEmail">Contact email</label>
+                <input type="email" id="h-contactEmail" placeholder="fbla@pensacolahigh.edu" />
+                <p class="field-help">The secondary button opens a <code>mailto:</code> to this address.</p>
+              </div>
+            </div>
+          </div>
+
         </div>
-      </div>
-    </section>
+      </section>
+
+      <!-- ════════════════ EDIT ABOUT PAGE ════════════════ -->
+      <section class="page-panel" id="panel-about">
+        <button type="button" class="page-panel-head" aria-expanded="false" aria-controls="panel-about-body">
+          <span class="page-panel-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+          </span>
+          <span class="page-panel-titles">
+            <h2>Edit About Page</h2>
+            <p>Intro text &amp; chapter officers — <code>about.html</code></p>
+          </span>
+          <svg class="page-panel-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="page-panel-body" id="panel-about-body">
+
+          <div class="subcard">
+            <div class="subcard-head"><h3>Intro Section</h3></div>
+            <div class="field-row">
+              <div class="field">
+                <label for="about-eyebrow">Eyebrow</label>
+                <input type="text" id="about-eyebrow" placeholder="About Us" />
+              </div>
+              <div class="field">
+                <label for="about-title">Heading</label>
+                <input type="text" id="about-title" placeholder="Pensacola High FBLA" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="about-body">Body paragraph</label>
+              <textarea id="about-body" placeholder="Developing the next generation of business professionals and community leaders."></textarea>
+            </div>
+          </div>
+
+          <div class="subcard">
+            <div class="subcard-head">
+              <h3>Chapter Officers</h3>
+              <label class="switch" title="Show officers section"><input type="checkbox" id="t-showOfficers" /><span class="slider"></span></label>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="about-officersEyebrow">Section eyebrow</label>
+                <input type="text" id="about-officersEyebrow" placeholder="2026 – 2027 Leadership" />
+              </div>
+              <div class="field">
+                <label for="about-officersTitle">Section heading</label>
+                <input type="text" id="about-officersTitle" placeholder="Chapter Officers" />
+              </div>
+            </div>
+            <div id="officers-list" class="row-list"></div>
+            <div style="margin-top:1rem;"><button type="button" class="btn btn-ghost btn-sm" id="add-officer">+ Add officer</button></div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ════════════════ EDIT MEETINGS PAGE ════════════════ -->
+      <section class="page-panel" id="panel-meetings">
+        <button type="button" class="page-panel-head" aria-expanded="false" aria-controls="panel-meetings-body">
+          <span class="page-panel-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H5V8h14v13z"/></svg>
+          </span>
+          <span class="page-panel-titles">
+            <h2>Edit Meetings Page</h2>
+            <p>Intro, sign-in form &amp; meeting archive — <code>meetings.html</code></p>
+          </span>
+          <svg class="page-panel-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="page-panel-body" id="panel-meetings-body">
+
+          <div class="subcard">
+            <div class="subcard-head">
+              <h3>Intro Section</h3>
+              <label class="switch" title="Show intro section"><input type="checkbox" id="t-showMeetingsIntro" /><span class="slider"></span></label>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="meet-eyebrow">Eyebrow</label>
+                <input type="text" id="meet-eyebrow" placeholder="Get Involved" />
+              </div>
+              <div class="field">
+                <label for="meet-title">Heading</label>
+                <input type="text" id="meet-title" placeholder="Chapter Meetings" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="m-intro">Intro paragraph(s)</label>
+              <textarea id="m-intro" placeholder="What members should know about meetings — when, where, and what to expect."></textarea>
+              <p class="field-help">Plain text. Leave a blank line between paragraphs.</p>
+            </div>
+          </div>
+
+          <div class="subcard">
+            <div class="subcard-head">
+              <h3>Google Form</h3>
+              <label class="switch" title="Show Google Form"><input type="checkbox" id="t-showGoogleForm" /><span class="slider"></span></label>
+            </div>
+            <div class="field">
+              <label for="form-url">Google Form embed URL</label>
+              <input type="url" id="form-url" placeholder="https://docs.google.com/forms/d/e/…/viewform?embedded=true" />
+              <p class="field-help">In the form, click <em>Send → Embed (&lt; &gt;)</em> and copy the <code>src</code>.</p>
+            </div>
+          </div>
+
+          <div class="subcard">
+            <div class="subcard-head">
+              <h3>Meeting Archive</h3>
+              <label class="switch" title="Show archive"><input type="checkbox" id="t-showMeetingArchive" /><span class="slider"></span></label>
+            </div>
+            <p class="subcard-note">
+              Add a meeting record with a date and a link (slides, notes, agenda) — or upload a file and we'll
+              generate the link for you. The archive renders as a searchable table on the Meetings page.
+            </p>
+            <div id="archive-list" class="row-list"></div>
+            <div style="margin-top:1rem;"><button type="button" class="btn btn-ghost btn-sm" id="add-archive">+ Add archive entry</button></div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ════════════════ EDIT STUDY RESOURCES ════════════════ -->
+      <section class="page-panel" id="panel-study">
+        <button type="button" class="page-panel-head" aria-expanded="false" aria-controls="panel-study-body">
+          <span class="page-panel-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+          </span>
+          <span class="page-panel-titles">
+            <h2>Edit Study Resources</h2>
+            <p>Event-picker callout &amp; the three resource sections — <code>study.html</code></p>
+          </span>
+          <svg class="page-panel-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="page-panel-body" id="panel-study-body">
+
+          <div class="subcard">
+            <div class="subcard-head">
+              <h3>"Choose Your Event" Callout</h3>
+              <label class="switch" title="Show callout"><input type="checkbox" id="t-showStudyCta" /><span class="slider"></span></label>
+            </div>
+            <div class="field">
+              <label for="study-ctaTitle">Heading</label>
+              <input type="text" id="study-ctaTitle" placeholder="Choose Your Competitive Event" />
+            </div>
+            <div class="field">
+              <label for="study-ctaDesc">Description</label>
+              <textarea id="study-ctaDesc" placeholder="Not sure which event to compete in yet?…"></textarea>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="study-ctaLinkText">Link text</label>
+                <input type="text" id="study-ctaLinkText" placeholder="View FBLA Competitive Events" />
+              </div>
+              <div class="field">
+                <label for="study-ctaLinkHref">Link URL</label>
+                <input type="text" id="study-ctaLinkHref" placeholder="https://www.fbla.org/high-school/competitive-events/" />
+              </div>
+            </div>
+          </div>
+
+          <div class="subcard">
+            <div class="subcard-head"><h3>Section Headings</h3><span class="hint">The three collapsible sections</span></div>
+            <div class="field-row">
+              <div class="field">
+                <label for="study-labelObjective">Section 1 heading</label>
+                <input type="text" id="study-labelObjective" placeholder="Objective Tests" />
+              </div>
+              <div class="field">
+                <label for="study-labelRoleplay">Section 2 heading</label>
+                <input type="text" id="study-labelRoleplay" placeholder="Roleplay" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="study-labelPresentations">Section 3 heading</label>
+              <input type="text" id="study-labelPresentations" placeholder="Presentations" />
+            </div>
+          </div>
+
+          <div class="subcard">
+            <div class="subcard-head"><h3>Resource Blocks</h3></div>
+            <p class="subcard-note">
+              Each <strong>block</strong> has a blue header, any number of description paragraphs, and any number
+              of links or uploaded files.
+            </p>
+            <div id="study-resources">
+              <div class="sr-group">
+                <h3 class="sr-group-title" data-sr-title="objective">Objective Tests</h3>
+                <div class="row-list" data-cat-list="objective"></div>
+                <div style="margin-top:.85rem;"><button type="button" class="btn btn-ghost btn-sm" data-add-block="objective">+ Add block</button></div>
+              </div>
+              <div class="sr-group">
+                <h3 class="sr-group-title" data-sr-title="roleplay">Roleplay</h3>
+                <div class="row-list" data-cat-list="roleplay"></div>
+                <div style="margin-top:.85rem;"><button type="button" class="btn btn-ghost btn-sm" data-add-block="roleplay">+ Add block</button></div>
+              </div>
+              <div class="sr-group">
+                <h3 class="sr-group-title" data-sr-title="presentations">Presentations</h3>
+                <div class="row-list" data-cat-list="presentations"></div>
+                <div style="margin-top:.85rem;"><button type="button" class="btn btn-ghost btn-sm" data-add-block="presentations">+ Add block</button></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ════════════════ SITE-WIDE ════════════════ -->
+      <section class="page-panel" id="panel-site">
+        <button type="button" class="page-panel-head" aria-expanded="false" aria-controls="panel-site-body">
+          <span class="page-panel-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93C7.05 19.44 4 16.08 4 12c0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41C17.92 5.77 20 8.65 20 12c0 2.08-.81 3.98-2.1 5.39z"/></svg>
+          </span>
+          <span class="page-panel-titles">
+            <h2>Site-wide</h2>
+            <p>Header chapter name, footer &amp; social links — every page</p>
+          </span>
+          <svg class="page-panel-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="page-panel-body" id="panel-site-body">
+
+          <div class="subcard">
+            <div class="subcard-head"><h3>Header</h3><span class="hint">Next to the logo</span></div>
+            <div class="field-row">
+              <div class="field">
+                <label for="s-schoolName">School / chapter name</label>
+                <input type="text" id="s-schoolName" placeholder="Pensacola High" />
+              </div>
+              <div class="field">
+                <label for="s-chapterTag">Sub-tag</label>
+                <input type="text" id="s-chapterTag" placeholder="Florida FBLA Chapter" />
+              </div>
+            </div>
+          </div>
+
+          <div class="subcard">
+            <div class="subcard-head"><h3>Footer</h3></div>
+            <div class="field-row">
+              <div class="field">
+                <label for="s-footerLocation">Location line</label>
+                <input type="text" id="s-footerLocation" placeholder="Pensacola, FL" />
+              </div>
+              <div class="field">
+                <label for="s-footerTagline">Tagline pills</label>
+                <input type="text" id="s-footerTagline" placeholder="Service · Education · Progress" />
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="s-instaHandle">Instagram handle</label>
+                <input type="text" id="s-instaHandle" placeholder="@pensacolahigh.fbla" />
+              </div>
+              <div class="field">
+                <label for="s-instaUrl">Instagram URL</label>
+                <input type="url" id="s-instaUrl" placeholder="https://www.instagram.com/pensacolahigh.fbla" />
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+
   </main>
 
   <div class="save-bar">
@@ -978,9 +1317,26 @@
 
     const DEFAULTS = {
       content: {
-        headline:    "Pensacola High Future Business Leaders of America",
-        subheadline: "Developing the next generation of business professionals and community leaders.",
+        headline:     "Pensacola High Future Business Leaders of America",
+        subheadline:  "Developing the next generation of business professionals and community leaders.",
         contactEmail: "fbla@pensacolahigh.edu",
+        site: {
+          schoolName:      "Pensacola High",
+          chapterTag:      "Florida FBLA Chapter",
+          footerLocation:  "Pensacola, FL",
+          instagramHandle: "@pensacolahigh.fbla",
+          instagramUrl:    "https://www.instagram.com/pensacolahigh.fbla",
+          footerTagline:   "Service · Education · Progress",
+        },
+        hero: {
+          titleLine1:    "Pensacola High School",
+          titleLine2:    "Future Business Leaders of America",
+          tagline:       "Service · Education · Progress",
+          primaryText:   "Study Resources",
+          primaryHref:   "study.html",
+          secondaryText: "Learn About FBLA ↗",
+          secondaryHref: "https://www.fbla-pbl.org/fbla/",
+        },
         announcement: {
           badge: "Latest Update",
           title: "",
@@ -989,9 +1345,34 @@
           ctaHref: "",
         },
         calendarEmbed:   "",
+        cta: {
+          title:         "Ready to Compete at the National Level?",
+          body:          "Join Pensacola High FBLA and start your journey to the National Leadership Conference. Past members have earned scholarships and launched careers.",
+          primaryText:   "Start Studying",
+          primaryHref:   "study.html",
+          secondaryText: "Contact Adviser",
+        },
+        about: {
+          eyebrow:         "About Us",
+          title:           "Pensacola High FBLA",
+          body:            "Developing the next generation of business professionals and community leaders.",
+          officersEyebrow: "2026 – 2027 Leadership",
+          officersTitle:   "Chapter Officers",
+        },
         googleFormEmbed: "",
         meetings: {
-          intro: "Meeting details coming soon. Check back here for the schedule, agendas, and notes.",
+          eyebrow: "Get Involved",
+          title:   "Chapter Meetings",
+          intro:   "Meeting details coming soon. Check back here for the schedule, agendas, and notes.",
+        },
+        study: {
+          ctaTitle:    "Choose Your Competitive Event",
+          ctaDesc:     "Not sure which event to compete in yet? Browse the full list of FBLA high school competitive events to find the one that fits your interests and strengths, then dive into the study resources below.",
+          ctaLinkText: "View FBLA Competitive Events",
+          ctaLinkHref: "https://www.fbla.org/high-school/competitive-events/",
+          labelObjective:     "Objective Tests",
+          labelRoleplay:      "Roleplay",
+          labelPresentations: "Presentations",
         },
         events:   [],
         officers: [],
@@ -999,13 +1380,15 @@
         studyResources: { objective: [], roleplay: [], presentations: [] },
       },
       theme: {
-        showEvents:        true,
-        showOfficers:      true,
-        showCta:           true,
-        showAnnouncement:  true,
-        showCalendar:      false,
-        showGoogleForm:    false,
+        showEvents:         true,
+        showOfficers:       true,
+        showCta:            true,
+        showAnnouncement:   true,
+        showCalendar:       false,
+        showGoogleForm:     false,
         showMeetingArchive: true,
+        showMeetingsIntro:  true,
+        showStudyCta:       true,
       },
     };
 
@@ -1137,9 +1520,16 @@
         const res = await fetch(`${RAW_BASE}/${CONTENT_PATH}?_=${Date.now()}`, { cache: 'no-store' });
         if (res.ok) {
           const json = await res.json();
-          state.content = { ...DEFAULTS.content, ...(json.content || {}) };
-          state.content.announcement = { ...DEFAULTS.content.announcement, ...(json.content?.announcement || {}) };
-          state.content.meetings     = { ...DEFAULTS.content.meetings,     ...(json.content?.meetings     || {}) };
+          const jc = json.content || {};
+          state.content = { ...DEFAULTS.content, ...jc };
+          // Shallow-merge each known nested object over its defaults.
+          ['site', 'hero', 'announcement', 'cta', 'about', 'meetings', 'study'].forEach(key => {
+            state.content[key] = { ...DEFAULTS.content[key], ...(jc[key] || {}) };
+          });
+          // Back-compat: older files kept the About body in `subheadline`.
+          if (typeof jc.subheadline === 'string' && !(jc.about && jc.about.body)) {
+            state.content.about.body = jc.subheadline;
+          }
           if (!Array.isArray(state.content.events))         state.content.events         = [];
           if (!Array.isArray(state.content.officers))       state.content.officers       = [];
           if (!Array.isArray(state.content.meetingArchive)) state.content.meetingArchive = [];
@@ -1159,34 +1549,98 @@
       renderAll();
     }
 
+    // Set a field's value only if the element exists.
+    function setVal(id, val) { const el = $(id); if (el) el.value = val || ""; }
+
     function renderHeroFields() {
-      $("h-headline").value     = state.content.headline     || "";
-      $("h-subheadline").value  = state.content.subheadline  || "";
-      $("h-contactEmail").value = state.content.contactEmail || "";
+      const h = state.content.hero;
+      setVal("hero-line1", h.titleLine1);
+      setVal("hero-line2", h.titleLine2);
+      setVal("hero-tagline", h.tagline);
+      setVal("hero-primaryText", h.primaryText);
+      setVal("hero-primaryHref", h.primaryHref);
+      setVal("hero-secondaryText", h.secondaryText);
+      setVal("hero-secondaryHref", h.secondaryHref);
     }
     function renderAnnouncementFields() {
       const a = state.content.announcement;
-      $("a-badge").value   = a.badge   || "";
-      $("a-title").value   = a.title   || "";
-      $("a-body").value    = a.body    || "";
-      $("a-ctaText").value = a.ctaText || "";
-      $("a-ctaHref").value = a.ctaHref || "";
+      setVal("a-badge", a.badge);
+      setVal("a-title", a.title);
+      setVal("a-body", a.body);
+      setVal("a-ctaText", a.ctaText);
+      setVal("a-ctaHref", a.ctaHref);
+    }
+    function renderCtaFields() {
+      const c = state.content.cta;
+      setVal("cta-title", c.title);
+      setVal("cta-body", c.body);
+      setVal("cta-primaryText", c.primaryText);
+      setVal("cta-primaryHref", c.primaryHref);
+      setVal("cta-secondaryText", c.secondaryText);
+      setVal("h-contactEmail", state.content.contactEmail);
+    }
+    function renderAboutFields() {
+      const a = state.content.about;
+      setVal("about-eyebrow", a.eyebrow);
+      setVal("about-title", a.title);
+      setVal("about-body", a.body);
+      setVal("about-officersEyebrow", a.officersEyebrow);
+      setVal("about-officersTitle", a.officersTitle);
     }
     function renderMeetingsFields() {
-      $("m-intro").value  = state.content.meetings.intro || "";
-      $("form-url").value = state.content.googleFormEmbed || "";
+      const m = state.content.meetings;
+      setVal("meet-eyebrow", m.eyebrow);
+      setVal("meet-title", m.title);
+      setVal("m-intro", m.intro);
+      setVal("form-url", state.content.googleFormEmbed);
     }
     function renderEmbedFields() {
-      $("cal-url").value = state.content.calendarEmbed || "";
+      setVal("cal-url", state.content.calendarEmbed);
+    }
+    function renderStudyMetaFields() {
+      const s = state.content.study;
+      setVal("study-ctaTitle", s.ctaTitle);
+      setVal("study-ctaDesc", s.ctaDesc);
+      setVal("study-ctaLinkText", s.ctaLinkText);
+      setVal("study-ctaLinkHref", s.ctaLinkHref);
+      setVal("study-labelObjective", s.labelObjective);
+      setVal("study-labelRoleplay", s.labelRoleplay);
+      setVal("study-labelPresentations", s.labelPresentations);
+      syncStudyGroupTitles();
+    }
+    function renderSiteFields() {
+      const s = state.content.site;
+      setVal("s-schoolName", s.schoolName);
+      setVal("s-chapterTag", s.chapterTag);
+      setVal("s-footerLocation", s.footerLocation);
+      setVal("s-footerTagline", s.footerTagline);
+      setVal("s-instaHandle", s.instagramHandle);
+      setVal("s-instaUrl", s.instagramUrl);
+    }
+    // Mirror the editable section headings onto the resource-block group titles.
+    function syncStudyGroupTitles() {
+      const s = state.content.study;
+      const map = {
+        objective:     s.labelObjective     || 'Objective Tests',
+        roleplay:      s.labelRoleplay       || 'Roleplay',
+        presentations: s.labelPresentations  || 'Presentations',
+      };
+      document.querySelectorAll('[data-sr-title]').forEach(el => {
+        const cat = el.dataset.srTitle;
+        if (map[cat]) el.textContent = map[cat];
+      });
     }
     function renderToggles() {
-      $("t-showAnnouncement").checked   = !!state.theme.showAnnouncement;
-      $("t-showOfficers").checked       = !!state.theme.showOfficers;
-      $("t-showEvents").checked         = !!state.theme.showEvents;
-      $("t-showCta").checked            = !!state.theme.showCta;
-      $("t-showCalendar").checked       = !!state.theme.showCalendar;
-      $("t-showGoogleForm").checked     = !!state.theme.showGoogleForm;
-      $("t-showMeetingArchive").checked = !!state.theme.showMeetingArchive;
+      const setChk = (id, v) => { const el = $(id); if (el) el.checked = !!v; };
+      setChk("t-showAnnouncement",   state.theme.showAnnouncement);
+      setChk("t-showOfficers",       state.theme.showOfficers);
+      setChk("t-showEvents",         state.theme.showEvents);
+      setChk("t-showCta",            state.theme.showCta);
+      setChk("t-showCalendar",       state.theme.showCalendar);
+      setChk("t-showGoogleForm",     state.theme.showGoogleForm);
+      setChk("t-showMeetingArchive", state.theme.showMeetingArchive);
+      setChk("t-showMeetingsIntro",  state.theme.showMeetingsIntro);
+      setChk("t-showStudyCta",       state.theme.showStudyCta);
     }
 
     function initialsOf(name) {
@@ -1267,8 +1721,12 @@
     function renderAll() {
       renderHeroFields();
       renderAnnouncementFields();
+      renderCtaFields();
+      renderAboutFields();
       renderMeetingsFields();
       renderEmbedFields();
+      renderStudyMetaFields();
+      renderSiteFields();
       renderToggles();
       renderOfficers();
       renderEvents();
@@ -1321,36 +1779,76 @@
       return true;
     }
 
-    function wireHero() {
-      const map = { 'h-headline':'headline', 'h-subheadline':'subheadline', 'h-contactEmail':'contactEmail' };
+    // Bind a set of inputs to keys on a target object. `trimKeys` are stored trimmed.
+    function bindFields(map, target, opts = {}) {
+      const trimKeys = new Set(opts.trim || []);
+      const onInput  = opts.onInput;
       Object.entries(map).forEach(([id, key]) => {
-        $(id).addEventListener('input', (e) => {
-          state.content[key] = e.target.value;
+        const el = $(id);
+        if (!el) return;
+        el.addEventListener('input', (e) => {
+          target[key] = trimKeys.has(key) ? e.target.value.trim() : e.target.value;
           markDirty();
+          if (onInput) onInput(key, e);
         });
       });
+    }
+
+    function wireHero() {
+      bindFields({
+        'hero-line1':'titleLine1', 'hero-line2':'titleLine2', 'hero-tagline':'tagline',
+        'hero-primaryText':'primaryText', 'hero-primaryHref':'primaryHref',
+        'hero-secondaryText':'secondaryText', 'hero-secondaryHref':'secondaryHref',
+      }, state.content.hero);
     }
     function wireAnnouncement() {
-      const map = { 'a-badge':'badge', 'a-title':'title', 'a-body':'body', 'a-ctaText':'ctaText', 'a-ctaHref':'ctaHref' };
-      Object.entries(map).forEach(([id, key]) => {
-        $(id).addEventListener('input', (e) => {
-          state.content.announcement[key] = e.target.value;
-          markDirty();
-        });
-      });
+      bindFields({
+        'a-badge':'badge', 'a-title':'title', 'a-body':'body', 'a-ctaText':'ctaText', 'a-ctaHref':'ctaHref',
+      }, state.content.announcement);
     }
-    function wireMeetings() {
-      $("m-intro").addEventListener('input', (e) => {
-        state.content.meetings.intro = e.target.value;
+    function wireCta() {
+      bindFields({
+        'cta-title':'title', 'cta-body':'body', 'cta-primaryText':'primaryText',
+        'cta-primaryHref':'primaryHref', 'cta-secondaryText':'secondaryText',
+      }, state.content.cta);
+      const email = $("h-contactEmail");
+      if (email) email.addEventListener('input', (e) => {
+        state.content.contactEmail = e.target.value.trim();
         markDirty();
       });
-      $("form-url").addEventListener('input', (e) => {
+    }
+    function wireAbout() {
+      bindFields({
+        'about-eyebrow':'eyebrow', 'about-title':'title', 'about-body':'body',
+        'about-officersEyebrow':'officersEyebrow', 'about-officersTitle':'officersTitle',
+      }, state.content.about);
+    }
+    function wireMeetings() {
+      bindFields({ 'meet-eyebrow':'eyebrow', 'meet-title':'title', 'm-intro':'intro' }, state.content.meetings);
+      const form = $("form-url");
+      if (form) form.addEventListener('input', (e) => {
         state.content.googleFormEmbed = e.target.value.trim();
         markDirty();
       });
     }
+    function wireStudyMeta() {
+      bindFields({
+        'study-ctaTitle':'ctaTitle', 'study-ctaDesc':'ctaDesc',
+        'study-ctaLinkText':'ctaLinkText', 'study-ctaLinkHref':'ctaLinkHref',
+        'study-labelObjective':'labelObjective', 'study-labelRoleplay':'labelRoleplay',
+        'study-labelPresentations':'labelPresentations',
+      }, state.content.study, { onInput: (key) => { if (key.startsWith('label')) syncStudyGroupTitles(); } });
+    }
+    function wireSite() {
+      bindFields({
+        's-schoolName':'schoolName', 's-chapterTag':'chapterTag',
+        's-footerLocation':'footerLocation', 's-footerTagline':'footerTagline',
+        's-instaHandle':'instagramHandle', 's-instaUrl':'instagramUrl',
+      }, state.content.site, { trim: ['instagramUrl'] });
+    }
     function wireEmbeds() {
-      $("cal-url").addEventListener('input', (e) => {
+      const cal = $("cal-url");
+      if (cal) cal.addEventListener('input', (e) => {
         state.content.calendarEmbed = e.target.value.trim();
         markDirty();
       });
@@ -1364,9 +1862,13 @@
         't-showCalendar':'showCalendar',
         't-showGoogleForm':'showGoogleForm',
         't-showMeetingArchive':'showMeetingArchive',
+        't-showMeetingsIntro':'showMeetingsIntro',
+        't-showStudyCta':'showStudyCta',
       };
       Object.entries(map).forEach(([id, key]) => {
-        $(id).addEventListener('change', (e) => {
+        const el = $(id);
+        if (!el) return;
+        el.addEventListener('change', (e) => {
           state.theme[key] = e.target.checked;
           markDirty();
         });
@@ -2006,6 +2508,9 @@
           .filter(b => b.header || b.descriptions.length || b.links.length);
       });
 
+      // Keep the legacy flat fields in sync so older consumers still work.
+      state.content.subheadline = state.content.about.body || state.content.subheadline || '';
+
       const payload = JSON.stringify({ content: state.content, theme: state.theme }, null, 2) + '\n';
       const base64  = b64encodeText(payload);
       const message = `chore(admin): update site content (${new Date().toISOString().slice(0,10)})`;
@@ -2025,16 +2530,58 @@
       }
     }
 
+    // ── Page panel (dropdown) + quick-nav tabs ───────────────────────
+    function setActiveTab(panelId) {
+      document.querySelectorAll('.page-tab').forEach(t =>
+        t.classList.toggle('active', t.dataset.tab === panelId));
+    }
+    function openPanel(panel, { scroll = false } = {}) {
+      if (!panel) return;
+      document.querySelectorAll('.page-panel').forEach(p => {
+        const isTarget = p === panel;
+        p.classList.toggle('open', isTarget);
+        const head = p.querySelector('.page-panel-head');
+        if (head) head.setAttribute('aria-expanded', String(isTarget));
+      });
+      setActiveTab(panel.id);
+      if (scroll) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    function wirePagePanels() {
+      // Accordion: clicking a header toggles that panel (and collapses others).
+      document.querySelectorAll('.page-panel-head').forEach(head => {
+        head.addEventListener('click', () => {
+          const panel = head.closest('.page-panel');
+          if (panel.classList.contains('open')) {
+            panel.classList.remove('open');
+            head.setAttribute('aria-expanded', 'false');
+          } else {
+            openPanel(panel);
+          }
+        });
+      });
+      // Quick-nav tabs jump to + open the matching panel.
+      document.querySelectorAll('.page-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          openPanel($(tab.dataset.tab), { scroll: true });
+        });
+      });
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       wireHero();
       wireAnnouncement();
+      wireCta();
+      wireAbout();
       wireMeetings();
       wireEmbeds();
+      wireStudyMeta();
+      wireSite();
       wireToggles();
       wireOfficersList();
       wireEventsList();
       wireArchiveList();
       wireStudyResources();
+      wirePagePanels();
       saveBtn.addEventListener('click', saveAll);
 
       const gateInput  = $("gate-input");

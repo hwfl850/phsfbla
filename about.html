@@ -73,14 +73,16 @@ function renderAbout() {
       </div>`;
   }).join('');
 
+  const about = c.about || {};
+
   main.innerHTML = `
     <section class="section">
       <div class="section-inner">
-        <div class="section-eyebrow">About Us</div>
-        <h2 class="section-title">Pensacola High FBLA</h2>
+        ${about.eyebrow ? `<div class="section-eyebrow">${escHtml(about.eyebrow)}</div>` : ''}
+        ${about.title ? `<h2 class="section-title">${escHtml(about.title)}</h2>` : ''}
         <div class="section-line"></div>
         <p style="color:var(--text-muted);font-size:1rem;line-height:1.7;max-width:780px;">
-          ${escHtml(c.subheadline)}
+          ${escHtml(about.body || c.subheadline)}
         </p>
       </div>
     </section>
@@ -88,8 +90,8 @@ function renderAbout() {
     ${t.showOfficers && c.officers.length ? `
     <section class="section section-alt" id="section-officers">
       <div class="section-inner">
-        <div class="section-eyebrow">2026 – 2027 Leadership</div>
-        <h2 class="section-title">Chapter Officers</h2>
+        ${about.officersEyebrow ? `<div class="section-eyebrow">${escHtml(about.officersEyebrow)}</div>` : ''}
+        ${about.officersTitle ? `<h2 class="section-title">${escHtml(about.officersTitle)}</h2>` : ''}
         <div class="section-line"></div>
         <div class="officers">${officersHtml}</div>
       </div>

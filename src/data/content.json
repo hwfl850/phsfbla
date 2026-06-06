@@ -3,6 +3,23 @@
     "headline": "Pensacola High Future Business Leaders of America",
     "subheadline": "Developing the next generation of business professionals and community leaders.",
     "contactEmail": "secretary@phsfbla.com",
+    "site": {
+      "schoolName": "Pensacola High",
+      "chapterTag": "Florida FBLA Chapter",
+      "footerLocation": "Pensacola, FL",
+      "instagramHandle": "@pensacolahigh.fbla",
+      "instagramUrl": "https://www.instagram.com/pensacolahigh.fbla",
+      "footerTagline": "Service · Education · Progress"
+    },
+    "hero": {
+      "titleLine1": "Pensacola High School",
+      "titleLine2": "Future Business Leaders of America",
+      "tagline": "Service · Education · Progress",
+      "primaryText": "Study Resources",
+      "primaryHref": "study.html",
+      "secondaryText": "Learn About FBLA ↗",
+      "secondaryHref": "https://www.fbla-pbl.org/fbla/"
+    },
     "announcement": {
       "badge": "Latest Update",
       "title": "Next Meeting — Aug 20 · Club Rush Recruitment and General Meeting",
@@ -11,9 +28,34 @@
       "ctaHref": "#section-events"
     },
     "calendarEmbed": "",
+    "cta": {
+      "title": "Ready to Compete at the National Level?",
+      "body": "Join Pensacola High FBLA and start your journey to the National Leadership Conference. Past members have earned scholarships and launched careers.",
+      "primaryText": "Start Studying",
+      "primaryHref": "study.html",
+      "secondaryText": "Contact Adviser"
+    },
+    "about": {
+      "eyebrow": "About Us",
+      "title": "Pensacola High FBLA",
+      "body": "Developing the next generation of business professionals and community leaders.",
+      "officersEyebrow": "2026 – 2027 Leadership",
+      "officersTitle": "Chapter Officers"
+    },
     "googleFormEmbed": "https://docs.google.com/forms/d/e/1FAIpQLScCAaQxYg9q_e_3zmjSvNQLB4-OrYwxsFWA1Ymr2GYOx2o27Q/viewform?embedded=true",
     "meetings": {
+      "eyebrow": "Get Involved",
+      "title": "Chapter Meetings",
       "intro": "Check in for meetings here!"
+    },
+    "study": {
+      "ctaTitle": "Choose Your Competitive Event",
+      "ctaDesc": "Not sure which event to compete in yet? Browse the full list of FBLA high school competitive events to find the one that fits your interests and strengths, then dive into the study resources below.",
+      "ctaLinkText": "View FBLA Competitive Events",
+      "ctaLinkHref": "https://www.fbla.org/high-school/competitive-events/",
+      "labelObjective": "Objective Tests",
+      "labelRoleplay": "Roleplay",
+      "labelPresentations": "Presentations"
     },
     "events": [
       {
@@ -223,6 +265,8 @@
     "showAnnouncement": true,
     "showCalendar": false,
     "showGoogleForm": true,
-    "showMeetingArchive": true
+    "showMeetingArchive": true,
+    "showMeetingsIntro": true,
+    "showStudyCta": true
   }
 }

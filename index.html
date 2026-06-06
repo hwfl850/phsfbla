@@ -79,6 +79,22 @@ function renderHome() {
   const calendarSrc = t.showCalendar ? safeEmbed(c.calendarEmbed) : null;
   const showEmbeds  = Boolean(calendarSrc);
 
+  const hero = c.hero || {};
+  const cta  = c.cta  || {};
+
+  // Tagline pills, split on · or | from the editable string.
+  const pills = String(hero.tagline || '').split(/[·|]/).map(s => s.trim()).filter(Boolean);
+  const pillsHtml = pills
+    .map(p => `<span>${escHtml(p)}</span>`)
+    .join('<span style="opacity:.55;">·</span>');
+
+  const heroTitle = [hero.titleLine1, hero.titleLine2]
+    .filter(Boolean).map(escHtml).join('<br>');
+
+  // Only render an external-looking link as a new tab.
+  const isExternal = (href) => /^https?:\/\//i.test(href || '');
+  const linkAttrs  = (href) => isExternal(href) ? ' target="_blank" rel="noopener"' : '';
+
   main.innerHTML = `
     <div class="hero">
       <div class="hero-content">
@@ -87,17 +103,14 @@ function renderHome() {
             alt="FBLA — Future Business Leaders of America"
             style="height:72px;width:auto;display:inline-block;" />
         </div>
-        <h1 class="anim anim-1">Pensacola High School<br>Future Business Leaders of America</h1>
+        <h1 class="anim anim-1">${heroTitle}</h1>
+        ${pillsHtml ? `
         <p class="anim anim-2" style="display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);">
-          <span>Service</span>
-          <span style="opacity:.55;">·</span>
-          <span>Education</span>
-          <span style="opacity:.55;">·</span>
-          <span>Progress</span>
-        </p>
+          ${pillsHtml}
+        </p>` : ''}
         <div class="hero-actions anim anim-3">
-          <a class="btn btn-primary" href="study.html" aria-label="Go to study resources">Study Resources</a>
-          <a class="btn btn-outline" href="https://www.fbla-pbl.org/fbla/" target="_blank" rel="noopener">Learn About FBLA ↗</a>
+          ${hero.primaryText ? `<a class="btn btn-primary" href="${escHtml(hero.primaryHref || '#')}"${linkAttrs(hero.primaryHref)}>${escHtml(hero.primaryText)}</a>` : ''}
+          ${hero.secondaryText ? `<a class="btn btn-outline" href="${escHtml(hero.secondaryHref || '#')}"${linkAttrs(hero.secondaryHref)}>${escHtml(hero.secondaryText)}</a>` : ''}
         </div>
       </div>
     </div>
@@ -159,11 +172,11 @@ function renderHome() {
     <section class="section section-alt" id="section-cta">
       <div class="section-inner">
         <div class="cta-banner">
-          <h2>Ready to Compete at the National Level?</h2>
-          <p>Join Pensacola High FBLA and start your journey to the National Leadership Conference. Past members have earned scholarships and launched careers.</p>
+          ${cta.title ? `<h2>${escHtml(cta.title)}</h2>` : ''}
+          ${cta.body ? `<p>${escHtml(cta.body)}</p>` : ''}
           <div class="hero-actions">
-            <a class="btn btn-primary" href="study.html">Start Studying</a>
-            <a class="btn btn-outline" href="mailto:${escHtml(c.contactEmail)}">Contact Adviser</a>
+            ${cta.primaryText ? `<a class="btn btn-primary" href="${escHtml(cta.primaryHref || '#')}"${linkAttrs(cta.primaryHref)}>${escHtml(cta.primaryText)}</a>` : ''}
+            ${cta.secondaryText ? `<a class="btn btn-outline" href="mailto:${escHtml(c.contactEmail)}">${escHtml(cta.secondaryText)}</a>` : ''}
           </div>
         </div>
       </div>

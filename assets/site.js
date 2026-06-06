@@ -8,9 +8,31 @@ let _serverTheme   = null;
 
 // ── CONTENT — events, officers, page text (editable via admin panel) ────────
 const CONTENT_DEFAULTS = {
+  // Legacy flat fields — kept as fallbacks for older content.json files
   headline:    "Pensacola High Future Business Leaders of America",
   subheadline: "Developing the next generation of business professionals and community leaders.",
   contactEmail: "fbla@pensacolahigh.edu",
+
+  // ── Site-wide chrome (header + footer) ──────────────────────────────
+  site: {
+    schoolName:      "Pensacola High",
+    chapterTag:      "Florida FBLA Chapter",
+    footerLocation:  "Pensacola, FL",
+    instagramHandle: "@pensacolahigh.fbla",
+    instagramUrl:    "https://www.instagram.com/pensacolahigh.fbla",
+    footerTagline:   "Service · Education · Progress",
+  },
+
+  // ── Homepage ────────────────────────────────────────────────────────
+  hero: {
+    titleLine1:    "Pensacola High School",
+    titleLine2:    "Future Business Leaders of America",
+    tagline:       "Service · Education · Progress",
+    primaryText:   "Study Resources",
+    primaryHref:   "study.html",
+    secondaryText: "Learn About FBLA ↗",
+    secondaryHref: "https://www.fbla-pbl.org/fbla/",
+  },
   announcement: {
     badge: "Latest Update",
     title: "Next Meeting — Aug 20 · Club Rush Recruitment",
@@ -19,11 +41,42 @@ const CONTENT_DEFAULTS = {
     ctaHref: "#section-events",
   },
   calendarEmbed:   "",
+  cta: {
+    title:         "Ready to Compete at the National Level?",
+    body:          "Join Pensacola High FBLA and start your journey to the National Leadership Conference. Past members have earned scholarships and launched careers.",
+    primaryText:   "Start Studying",
+    primaryHref:   "study.html",
+    secondaryText: "Contact Adviser",
+  },
+
+  // ── About page ──────────────────────────────────────────────────────
+  about: {
+    eyebrow:         "About Us",
+    title:           "Pensacola High FBLA",
+    body:            "Developing the next generation of business professionals and community leaders.",
+    officersEyebrow: "2026 – 2027 Leadership",
+    officersTitle:   "Chapter Officers",
+  },
+
+  // ── Meetings page ───────────────────────────────────────────────────
   googleFormEmbed: "",
   meetings: {
-    intro: "Meeting details coming soon. Check back here for the schedule, agendas, and notes.",
+    eyebrow: "Get Involved",
+    title:   "Chapter Meetings",
+    intro:   "Meeting details coming soon. Check back here for the schedule, agendas, and notes.",
   },
   meetingArchive: [],
+
+  // ── Study Resources page ────────────────────────────────────────────
+  study: {
+    ctaTitle:    "Choose Your Competitive Event",
+    ctaDesc:     "Not sure which event to compete in yet? Browse the full list of FBLA high school competitive events to find the one that fits your interests and strengths, then dive into the study resources below.",
+    ctaLinkText: "View FBLA Competitive Events",
+    ctaLinkHref: "https://www.fbla.org/high-school/competitive-events/",
+    labelObjective:     "Objective Tests",
+    labelRoleplay:      "Roleplay",
+    labelPresentations: "Presentations",
+  },
   studyResources: {
     objective:     [],
     roleplay:      [],
@@ -73,17 +126,28 @@ function loadContent() {
 
 function deepMergeContent(defaults, saved) {
   const result = JSON.parse(JSON.stringify(defaults));
-  if (typeof saved.headline    === 'string') result.headline    = saved.headline;
-  if (typeof saved.subheadline === 'string') result.subheadline = saved.subheadline;
+  saved = saved && typeof saved === 'object' ? saved : {};
+
+  // Merge a nested object key shallowly over its defaults.
+  const mergeObj = (key) => {
+    if (saved[key] && typeof saved[key] === 'object' && !Array.isArray(saved[key])) {
+      result[key] = { ...result[key], ...saved[key] };
+    }
+  };
+
+  if (typeof saved.headline     === 'string') result.headline     = saved.headline;
+  if (typeof saved.subheadline  === 'string') result.subheadline  = saved.subheadline;
   if (typeof saved.contactEmail === 'string') result.contactEmail = saved.contactEmail;
-  if (saved.announcement && typeof saved.announcement === 'object') {
-    result.announcement = { ...result.announcement, ...saved.announcement };
-  }
   if (typeof saved.calendarEmbed   === 'string') result.calendarEmbed   = saved.calendarEmbed;
   if (typeof saved.googleFormEmbed === 'string') result.googleFormEmbed = saved.googleFormEmbed;
-  if (saved.meetings && typeof saved.meetings === 'object') {
-    result.meetings = { ...result.meetings, ...saved.meetings };
+
+  ['site', 'hero', 'announcement', 'cta', 'about', 'meetings', 'study'].forEach(mergeObj);
+
+  // Back-compat: older files stored the about body in `subheadline`.
+  if (typeof saved.subheadline === 'string' && !(saved.about && saved.about.body)) {
+    result.about.body = saved.subheadline;
   }
+
   if (saved.studyResources && typeof saved.studyResources === 'object') {
     result.studyResources = {
       objective:     Array.isArray(saved.studyResources.objective)     ? saved.studyResources.objective     : [],
@@ -107,12 +171,15 @@ const THEME_DEFAULTS = {
   accent:     '#f4ab19',
   bg:         '#ffffff',
   fontBody:   'Apercu Pro',
-  showEvents:        true,
-  showOfficers:      true,
-  showCta:           true,
-  showAnnouncement:  true,
-  showCalendar:      false,
-  showGoogleForm:    false,
+  showEvents:         true,
+  showOfficers:       true,
+  showCta:            true,
+  showAnnouncement:   true,
+  showCalendar:       false,
+  showGoogleForm:     false,
+  showMeetingArchive: true,
+  showMeetingsIntro:  true,
+  showStudyCta:       true,
 };
 
 function loadTheme() {
@@ -179,12 +246,63 @@ function highlightActiveNav() {
   if (activeId) document.getElementById(activeId)?.classList.add('active');
 }
 
+// Apply admin-editable header/footer text (chapter name, Instagram, footer).
+function applySiteChrome() {
+  const s = (currentContent().site) || {};
+
+  const schoolEl = document.querySelector('.chapter-school');
+  if (schoolEl && s.schoolName) schoolEl.textContent = s.schoolName;
+  const tagEl = document.querySelector('.chapter-tag');
+  if (tagEl && s.chapterTag) tagEl.textContent = s.chapterTag;
+
+  // Footer location line (sibling right after the footer logo).
+  const footerLogo = document.querySelector('footer .footer-logo');
+  const locEl = footerLogo ? footerLogo.nextElementSibling : null;
+  if (locEl && (s.schoolName || s.footerLocation)) {
+    locEl.innerHTML =
+      `${escHtml(s.schoolName || 'Pensacola High School')} ` +
+      `<span style="opacity:.55;margin:0 .35rem;">·</span> ` +
+      `${escHtml(s.footerLocation || 'Pensacola, FL')}`;
+  }
+
+  // Instagram link (href + trailing handle text, keeping the inline SVG).
+  const insta = document.querySelector('.insta-link');
+  if (insta) {
+    if (s.instagramUrl)    insta.setAttribute('href', s.instagramUrl);
+    if (s.instagramHandle) {
+      const handle = insta.querySelector('.insta-handle');
+      if (handle) {
+        handle.textContent = s.instagramHandle;
+      } else {
+        // Replace the last (text) node with a wrapped span we can target later.
+        const last = insta.lastChild;
+        if (last && last.nodeType === Node.TEXT_NODE) insta.removeChild(last);
+        const span = document.createElement('span');
+        span.className = 'insta-handle';
+        span.textContent = s.instagramHandle;
+        insta.appendChild(span);
+      }
+      insta.setAttribute('aria-label', `Follow us on Instagram: ${s.instagramHandle}`);
+    }
+  }
+
+  // Footer tagline pills (split on · or |).
+  const footerTag = document.querySelector('.footer-tag');
+  if (footerTag && s.footerTagline) {
+    const parts = String(s.footerTagline).split(/[·|]/).map(p => p.trim()).filter(Boolean);
+    footerTag.innerHTML = parts
+      .map(p => `<strong>${escHtml(p)}</strong>`)
+      .join(' &nbsp;·&nbsp; ');
+  }
+}
+
 function initHeaderFooter() {
   const logoNavEl = document.getElementById('logo-national-img');
   if (logoNavEl) logoNavEl.src = 'Media/Horizontal/PNG/FBLA_Logo_Horizontal_color-LoRes.png';
   const logoFooterEl = document.getElementById('logo-footer-img');
   if (logoFooterEl) logoFooterEl.src = 'Media/Horizontal/PNG/FBLA_Logo_Horizontal_white-LoRes.png';
 
+  applySiteChrome();
   highlightActiveNav();
 
   const ham = document.getElementById('hamburger');

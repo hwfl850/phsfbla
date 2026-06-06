@@ -258,7 +258,22 @@ function renderStudyResHtml(blocks) {
 
 function renderStudy() {
   const apiKey = localStorage.getItem('fbla_groq_key') || '';
-  const sr = currentContent().studyResources || { objective: [], roleplay: [], presentations: [] };
+  const c  = currentContent();
+  const t  = currentTheme();
+  const sr = c.studyResources || { objective: [], roleplay: [], presentations: [] };
+  const sm = c.study || {};
+
+  const chevron = '<svg class="study-section-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+  const studySection = (label, blocks) => `
+        <details class="study-section">
+          <summary>
+            <span>${escapeHtml(label)}</span>
+            ${chevron}
+          </summary>
+          <div class="study-section-body">${renderStudyResHtml(blocks)}</div>
+        </details>`;
+
+  const showStudyCta = t.showStudyCta !== false && (sm.ctaTitle || sm.ctaDesc || sm.ctaLinkText);
 
   main.innerHTML = `
     <div class="study-content">
@@ -269,38 +284,20 @@ function renderStudy() {
         <span><strong>Confidential:</strong> All study materials on this page are for PHS FBLA members only. Do not share, distribute, or discuss them with anyone outside of PHS.</span>
       </div>
 
+      ${showStudyCta ? `
       <div class="study-events-cta">
-        <h2 class="study-events-cta-title">Choose Your Competitive Event</h2>
-        <p class="study-events-cta-desc">Not sure which event to compete in yet? Browse the full list of FBLA high school competitive events to find the one that fits your interests and strengths, then dive into the study resources below.</p>
-        <a class="study-events-cta-link" href="https://www.fbla.org/high-school/competitive-events/" target="_blank" rel="noopener">
-          ${SR_LINK_ICON}<span>View FBLA Competitive Events</span>
-        </a>
-      </div>
+        ${sm.ctaTitle ? `<h2 class="study-events-cta-title">${escapeHtml(sm.ctaTitle)}</h2>` : ''}
+        ${sm.ctaDesc ? `<p class="study-events-cta-desc">${escapeHtml(sm.ctaDesc)}</p>` : ''}
+        ${sm.ctaLinkText && sm.ctaLinkHref ? `
+        <a class="study-events-cta-link" href="${escapeHtml(sm.ctaLinkHref)}" target="_blank" rel="noopener">
+          ${SR_LINK_ICON}<span>${escapeHtml(sm.ctaLinkText)}</span>
+        </a>` : ''}
+      </div>` : ''}
 
       <div class="study-accordion">
-        <details class="study-section">
-          <summary>
-            <span>Objective Tests</span>
-            <svg class="study-section-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
-          </summary>
-          <div class="study-section-body">${renderStudyResHtml(sr.objective)}</div>
-        </details>
-
-        <details class="study-section">
-          <summary>
-            <span>Roleplay</span>
-            <svg class="study-section-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
-          </summary>
-          <div class="study-section-body">${renderStudyResHtml(sr.roleplay)}</div>
-        </details>
-
-        <details class="study-section">
-          <summary>
-            <span>Presentations</span>
-            <svg class="study-section-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
-          </summary>
-          <div class="study-section-body">${renderStudyResHtml(sr.presentations)}</div>
-        </details>
+        ${studySection(sm.labelObjective     || 'Objective Tests', sr.objective)}
+        ${studySection(sm.labelRoleplay       || 'Roleplay',        sr.roleplay)}
+        ${studySection(sm.labelPresentations  || 'Presentations',   sr.presentations)}
       </div>
     </div>
 

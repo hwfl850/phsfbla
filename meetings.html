@@ -263,7 +263,25 @@ function renderMeetings() {
   const showArchive = t.showMeetingArchive !== false && archiveEntries.length > 0;
   const archiveRows = showArchive ? buildArchiveRows(archiveEntries) : [];
 
+  const m = c.meetings || {};
+  const showIntro = t.showMeetingsIntro !== false && intro.trim();
+  const introHtml = intro.trim()
+    .split(/\n{2,}/)
+    .map(p => `<p style="color:var(--text-muted);font-size:1rem;line-height:1.7;max-width:780px;margin:0 auto .9rem;">${escHtml(p.trim())}</p>`)
+    .join('');
+
   main.innerHTML = `
+    ${showIntro ? `
+    <section class="section" id="section-meetings-intro">
+      <div class="section-inner">
+        ${m.eyebrow ? `<div class="section-eyebrow">${escHtml(m.eyebrow)}</div>` : ''}
+        ${m.title ? `<h2 class="section-title">${escHtml(m.title)}</h2>` : ''}
+        <div class="section-line"></div>
+        ${introHtml}
+      </div>
+    </section>
+    ` : ''}
+
     ${showArchive ? `
     <section class="section" id="section-archive">
       <div class="section-inner">
