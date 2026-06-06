@@ -15,7 +15,6 @@
     "meetings": {
       "intro": "Check in for meetings here!"
     },
-    "meetingArchive": [],
     "events": [
       {
         "date": "AUG 7",
@@ -164,6 +163,13 @@
         "name": "Mr. Jacob Hill",
         "photo": ""
       }
+    ],
+    "meetingArchive": [
+      {
+        "date": "2026-05-26",
+        "title": "Officer POW Meeting",
+        "url": "assets/meetings/20260606-fbla-program-of-work-2026-2027-1780778600062.pdf"
+      }
     ]
   },
   "theme": {
@@ -172,6 +178,7 @@
     "showCta": false,
     "showAnnouncement": true,
     "showCalendar": false,
-    "showGoogleForm": true
+    "showGoogleForm": true,
+    "showMeetingArchive": true
   }
 }
