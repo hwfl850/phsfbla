@@ -234,99 +234,145 @@ const STUDY_EVENTS = [
   { tag: 'Written', name: 'Management Decision Making', desc: 'Analyze complex business scenarios and recommend strategic management decisions.', url: 'https://www.fbla-pbl.org/competitive-event/management-decision-making/' },
 ];
 
+const SR_LINK_ICON = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>';
+const SR_FILE_ICON = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>';
+
+function renderStudyResHtml(blocks) {
+  if (!Array.isArray(blocks) || blocks.length === 0) {
+    return '<p class="study-section-empty">Content coming soon.</p>';
+  }
+  return blocks.map(b => {
+    const header = b.header ? `<h3 class="study-block-header">${escapeHtml(b.header)}</h3>` : '';
+    const descs = (Array.isArray(b.descriptions) ? b.descriptions : [])
+      .filter(d => d && d.trim())
+      .map(d => `<p class="study-block-desc">${escapeHtml(d)}</p>`).join('');
+    const validLinks = (Array.isArray(b.links) ? b.links : []).filter(l => l && l.url);
+    const linksHtml = validLinks.length
+      ? `<div class="study-block-links">${validLinks.map(l =>
+          `<a href="${escapeHtml(l.url)}" target="_blank" rel="noopener">${l.file ? SR_FILE_ICON : SR_LINK_ICON}<span>${escapeHtml(l.label || l.url)}</span></a>`
+        ).join('')}</div>`
+      : '';
+    return `<div class="study-block">${header}${descs}${linksHtml}</div>`;
+  }).join('');
+}
+
 function renderStudy() {
   const apiKey = localStorage.getItem('fbla_groq_key') || '';
-
-  const rowsHtml = STUDY_EVENTS.map(ev => {
-    const haystack = `${ev.name} ${ev.tag} ${ev.desc}`.toLowerCase();
-    return `
-    <div class="event-row" data-search="${escapeHtml(haystack)}">
-      <span class="event-card-tag">${ev.tag}</span>
-      <div class="event-row-info">
-        <h4>${ev.name}</h4>
-        <p>${ev.desc}</p>
-      </div>
-      <div class="event-row-actions">
-        <a href="${ev.url}" target="_blank" rel="noopener">Official Resources ↗</a>
-        <button class="quiz-btn" data-event="${escapeHtml(ev.name)}" onclick="startQuiz(this.dataset.event)">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
-          Quiz Me
-        </button>
-      </div>
-    </div>
-  `;
-  }).join('');
+  const sr = currentContent().studyResources || { objective: [], roleplay: [], presentations: [] };
 
   main.innerHTML = `
-    <div class="study-header">
-      <h1>Study Resources</h1>
-      <p>FBLA Competitive Events — Pensacola High Chapter &nbsp;<span style="opacity:.6">|</span>&nbsp; Access restricted</p>
-    </div>
-
     <div class="study-content">
-      <h2 class="section-title" style="margin-bottom:.4rem;">Competitive Events</h2>
-      <div class="section-line"></div>
-      <p style="color:var(--text-muted);font-size:.88rem;margin-bottom:1.25rem;">
-        Click <strong>Quiz Me</strong> on any event to launch a timed 25-question practice quiz. Use the AI assistant below for open-ended study help.
-      </p>
-      <div class="events-search-wrap">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        <input type="search" id="events-search" class="events-search" placeholder="Search events by name, category, or topic..." aria-label="Search competitive events" oninput="filterStudyEvents(this.value)" />
-      </div>
-      <div class="study-events" id="study-events">${rowsHtml}</div>
-      <div class="events-empty" id="study-events-empty" style="display:none;">No events match your search.</div>
-
-      <h2 class="section-title" style="margin-bottom:.4rem;">FBLA Study Assistant <span class="badge">AI</span></h2>
-      <div class="section-line"></div>
-
-      <div class="chatbot-section">
-        <div class="chatbot-header">
-          <div class="chatbot-avatar" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="#0a2e7f">
-              <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
-            </svg>
-          </div>
-          <div>
-            <div class="bot-name">FBLA Study Assistant</div>
-            <div class="bot-sub">Powered by Llama 3.1 — Groq</div>
-          </div>
-          <div class="chatbot-status" title="Online"></div>
-        </div>
-
-        <div class="chatbot-messages" id="chat-messages" role="log" aria-label="Chat messages" aria-live="polite">
-          <div class="message bot">
-            <div class="msg-name">FBLA Study Assistant</div>
-            <div class="msg-bubble">
-              Hey! I'm your FBLA Study Assistant. I can help you prep for any FBLA competitive event — whether it's Business Calculations, Parliamentary Procedure, Public Speaking, or anything else. What would you like to study today?
-            </div>
-          </div>
-        </div>
-
-        <div class="chatbot-input-area">
-          <textarea id="chat-input" rows="1" placeholder="Ask about any FBLA topic..." aria-label="Chat input"
-            onkeydown="chatKeydown(event)" oninput="autoResize(this)"></textarea>
-          <button class="send-btn" id="send-btn" onclick="sendMessage()" aria-label="Send message" ${(!apiKey && !EMBEDDED_KEY) ? 'disabled' : ''}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-            </svg>
-          </button>
-        </div>
+      <div class="study-warning" role="alert">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+        </svg>
+        <span><strong>Confidential:</strong> All study materials on this page are for PHS FBLA members only. Do not share, distribute, or discuss them with anyone outside of PHS.</span>
       </div>
 
-      <div style="margin-top:1.5rem;padding:1rem 1.25rem;background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);">
-        <p style="font-size:.82rem;color:var(--text-muted);line-height:1.6;">
-          <strong style="color:var(--primary);">Study Tips:</strong>
-          Practice with the official FBLA study guides, use the AI assistant to quiz yourself, review Robert's Rules of Order for Parliamentary Procedure events, and practice timed writing for objective tests.
-          Good luck at Districts, States, and Nationals — <strong>Headed to Ohio!</strong>
-        </p>
-      </div>
+      <div class="study-accordion">
+        <details class="study-section">
+          <summary>
+            <span>Objective Tests</span>
+            <svg class="study-section-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </summary>
+          <div class="study-section-body">${renderStudyResHtml(sr.objective)}</div>
+        </details>
 
-      ${renderQuizHistoryHtml()}
+        <details class="study-section">
+          <summary>
+            <span>Roleplay</span>
+            <svg class="study-section-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </summary>
+          <div class="study-section-body">${renderStudyResHtml(sr.roleplay)}</div>
+        </details>
+
+        <details class="study-section">
+          <summary>
+            <span>Presentations</span>
+            <svg class="study-section-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </summary>
+          <div class="study-section-body">${renderStudyResHtml(sr.presentations)}</div>
+        </details>
+      </div>
     </div>
+
+    <!-- Floating chat launcher -->
+    <button class="chat-fab" id="chat-fab" onclick="openChat()" aria-label="Open FBLA Study Assistant">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+      </svg>
+      <span class="chat-fab-label">Study Assistant</span>
+    </button>
+
+    <!-- Chat sidebar overlay + panel -->
+    <div class="chat-overlay" id="chat-overlay" onclick="closeChat()"></div>
+    <aside class="chat-sidebar" id="chat-sidebar" role="dialog" aria-modal="true" aria-label="FBLA Study Assistant" aria-hidden="true">
+      <div class="chatbot-header">
+        <div class="chatbot-avatar" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="#0a2e7f">
+            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="bot-name">FBLA Study Assistant</div>
+          <div class="bot-sub">Powered by Llama 3.1 — Groq</div>
+        </div>
+        <div class="chatbot-status" title="Online"></div>
+        <button class="chat-close" onclick="closeChat()" aria-label="Close chat">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div class="chatbot-messages" id="chat-messages" role="log" aria-label="Chat messages" aria-live="polite">
+        <div class="message bot">
+          <div class="msg-name">FBLA Study Assistant</div>
+          <div class="msg-bubble">
+            Hey! I'm your FBLA Study Assistant. I can help you prep for any FBLA competitive event — whether it's Business Calculations, Parliamentary Procedure, Public Speaking, or anything else. What would you like to study today?
+          </div>
+        </div>
+      </div>
+
+      <div class="chatbot-input-area">
+        <textarea id="chat-input" rows="1" placeholder="Ask about any FBLA topic..." aria-label="Chat input"
+          onkeydown="chatKeydown(event)" oninput="autoResize(this)"></textarea>
+        <button class="send-btn" id="send-btn" onclick="sendMessage()" aria-label="Send message" ${(!apiKey && !EMBEDDED_KEY) ? 'disabled' : ''}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+          </svg>
+        </button>
+      </div>
+    </aside>
   `;
 
   chatHistory = [];
 }
+
+function openChat() {
+  const sidebar = document.getElementById('chat-sidebar');
+  const overlay = document.getElementById('chat-overlay');
+  const fab     = document.getElementById('chat-fab');
+  if (!sidebar) return;
+  sidebar.classList.add('open');
+  sidebar.setAttribute('aria-hidden', 'false');
+  overlay?.classList.add('show');
+  fab?.classList.add('hidden');
+  setTimeout(() => document.getElementById('chat-input')?.focus(), 280);
+}
+
+function closeChat() {
+  const sidebar = document.getElementById('chat-sidebar');
+  const overlay = document.getElementById('chat-overlay');
+  const fab     = document.getElementById('chat-fab');
+  if (!sidebar) return;
+  sidebar.classList.remove('open');
+  sidebar.setAttribute('aria-hidden', 'true');
+  overlay?.classList.remove('show');
+  fab?.classList.remove('hidden');
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeChat();
+});
 
 function filterStudyEvents(query) {
   const q = (query || '').trim().toLowerCase();

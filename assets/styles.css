@@ -179,13 +179,12 @@ nav a.active {
 }
 
 nav a.nav-accent {
-  background: var(--gold);
+  background: var(--white);
   color: var(--navy);
   font-weight: 700;
-  margin-left: .5rem;
 }
 
-nav a.nav-accent:hover { background: #ffba2e; color: var(--navy); }
+nav a.nav-accent:hover { background: var(--surface); color: var(--navy); }
 
 .hamburger {
   display: none;
@@ -851,7 +850,120 @@ main.fading { opacity: 0; }
 
 .study-content { max-width: 1100px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
 
-.study-events { display: flex; flex-direction: column; gap: .65rem; margin-bottom: 3rem; }
+.study-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: .65rem;
+  padding: .75rem 1rem;
+  margin-bottom: 1.75rem;
+  background: rgba(214, 158, 46, .12);
+  border: 1px solid rgba(214, 158, 46, .4);
+  border-left: 3px solid var(--gold);
+  border-radius: 8px;
+  font-size: .82rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+.study-warning svg {
+  flex-shrink: 0;
+  margin-top: .1rem;
+  color: var(--gold);
+}
+
+.study-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+.study-section {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.study-section summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy);
+  transition: background var(--transition);
+}
+.study-section summary::-webkit-details-marker { display: none; }
+.study-section summary:hover { background: var(--surface); }
+.study-section-chevron {
+  flex-shrink: 0;
+  color: var(--text-muted);
+  transition: transform var(--transition);
+}
+.study-section[open] .study-section-chevron { transform: rotate(180deg); }
+.study-section-body {
+  padding: 0 1.25rem 1.25rem;
+  font-size: .88rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+.study-section-empty { font-style: italic; color: var(--text-muted); }
+.study-block { margin-bottom: 1.5rem; }
+.study-block:last-child { margin-bottom: 0; }
+.study-block-header {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--blue);
+  letter-spacing: -0.01em;
+  margin-bottom: .5rem;
+}
+.study-block-desc {
+  font-size: .88rem;
+  color: var(--text);
+  line-height: 1.65;
+  margin-bottom: .5rem;
+}
+.study-block-desc:last-child { margin-bottom: 0; }
+.study-block-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .45rem;
+  margin-top: .65rem;
+}
+.study-block-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--blue);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+.study-block-links a:hover { color: var(--navy); text-decoration: underline; }
+.study-block-links svg { flex-shrink: 0; }
+
+.study-events {
+  display: flex;
+  flex-direction: column;
+  gap: .65rem;
+  margin-bottom: 3rem;
+  max-height: 155px;
+  overflow-y: auto;
+  padding-right: .4rem;
+  -webkit-mask-image: linear-gradient(to bottom, #000 66%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 66%, transparent 100%);
+  transition: -webkit-mask-image var(--transition), mask-image var(--transition);
+}
+.study-events.at-bottom {
+  -webkit-mask-image: none;
+  mask-image: none;
+}
 
 .events-search-wrap {
   position: relative;
@@ -1000,7 +1112,8 @@ main.fading { opacity: 0; }
 }
 
 .chatbot-messages {
-  height: 380px;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding: 1.25rem;
   display: flex;
@@ -1121,6 +1234,83 @@ main.fading { opacity: 0; }
 .send-btn:hover { background: #ffba2e; transform: scale(1.06); box-shadow: 0 8px 18px rgba(244,171,25,.4); }
 .send-btn:active { background: #d99007; transform: scale(.97); }
 .send-btn:disabled { background: #d9d9d9; color: #999; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* ── Chat sidebar / launcher ── */
+.chat-fab {
+  position: fixed;
+  bottom: 1.6rem;
+  right: 1.6rem;
+  height: 56px;
+  padding: 0 1.4rem 0 1.15rem;
+  border-radius: var(--radius-pill);
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+  color: var(--white);
+  display: flex; align-items: center; justify-content: center; gap: .55rem;
+  box-shadow: 0 10px 26px rgba(10,46,127,.4);
+  z-index: 1200;
+  transition: transform var(--transition), box-shadow var(--transition), opacity .2s ease;
+}
+.chat-fab-label {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: .9rem;
+  white-space: nowrap;
+}
+.chat-fab:hover { transform: scale(1.05); box-shadow: 0 14px 32px rgba(10,46,127,.5); }
+.chat-fab:active { transform: scale(.96); }
+.chat-fab.hidden { opacity: 0; pointer-events: none; transform: scale(.6); }
+
+.chat-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10,20,45,.45);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .28s ease;
+  z-index: 1250;
+}
+.chat-overlay.show { opacity: 1; pointer-events: auto; }
+
+.chat-sidebar {
+  position: fixed;
+  top: 0; right: 0;
+  height: 100%;
+  width: 400px;
+  max-width: 92vw;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  box-shadow: -8px 0 32px rgba(0,0,0,.22);
+  transform: translateX(100%);
+  transition: transform .3s cubic-bezier(.4,0,.2,1);
+  z-index: 1300;
+}
+.chat-sidebar.open { transform: translateX(0); }
+
+.chat-sidebar .chatbot-header { border-radius: 0; flex-shrink: 0; }
+
+.chat-close {
+  background: rgba(255,255,255,.15);
+  border: none;
+  color: var(--white);
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  margin-left: .5rem;
+  flex-shrink: 0;
+  transition: background var(--transition);
+}
+.chat-close:hover { background: rgba(255,255,255,.28); }
+
+.chat-sidebar .chatbot-input-area { flex-shrink: 0; }
+
+@media (max-width: 480px) {
+  .chat-fab { bottom: 1.1rem; right: 1.1rem; height: 50px; padding: 0 1.2rem 0 1rem; }
+}
 
 /* ── Access denied ── */
 .denied {

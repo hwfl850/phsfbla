@@ -478,6 +478,38 @@
       background: var(--surface);
     }
 
+    /* ── Study Resources editor ── */
+    .sr-group { margin-bottom: 1.75rem; }
+    .sr-group:last-child { margin-bottom: 0; }
+    .sr-group-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--blue);
+      margin-bottom: .75rem;
+      padding-bottom: .4rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .row-item.sr-block { grid-template-columns: 1fr auto; align-items: start; }
+    .sr-block-main { display: flex; flex-direction: column; gap: .5rem; min-width: 0; }
+    .sr-header-input { font-weight: 700; }
+    .sr-sub {
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: .35rem;
+    }
+    .sr-descs, .sr-links { display: flex; flex-direction: column; gap: .5rem; }
+    .sr-desc-row { display: grid; grid-template-columns: 1fr auto; gap: .5rem; align-items: start; }
+    .sr-link-row { display: grid; grid-template-columns: 1fr 1.4fr auto auto auto; gap: .5rem; align-items: center; }
+    .sr-link-row .row-photo-status { min-width: 0; }
+    @media (max-width: 640px) {
+      .row-item.sr-block { grid-template-columns: 1fr; }
+      .row-item.sr-block .row-actions { grid-column: 1 / -1; justify-self: stretch; }
+      .sr-link-row { grid-template-columns: 1fr; }
+    }
+
     /* ── Password gate ── */
     .gate {
       position: fixed;
@@ -880,6 +912,36 @@
       </div>
     </section>
 
+    <!-- ── Study Resources ─────────────────────────────────────────── -->
+    <section class="card">
+      <div class="card-head">
+        <h2>Study Resources</h2>
+      </div>
+      <div class="card-body">
+        <p class="field-help" style="margin-bottom:1rem;">
+          Build the three dropdown sections on the Study Resources page. Each <strong>block</strong> has a blue
+          header, any number of description paragraphs, and any number of links or uploaded files.
+        </p>
+        <div id="study-resources">
+          <div class="sr-group">
+            <h3 class="sr-group-title">Objective Tests</h3>
+            <div class="row-list" data-cat-list="objective"></div>
+            <div style="margin-top:.85rem;"><button type="button" class="btn btn-ghost btn-sm" data-add-block="objective">+ Add block</button></div>
+          </div>
+          <div class="sr-group">
+            <h3 class="sr-group-title">Roleplay</h3>
+            <div class="row-list" data-cat-list="roleplay"></div>
+            <div style="margin-top:.85rem;"><button type="button" class="btn btn-ghost btn-sm" data-add-block="roleplay">+ Add block</button></div>
+          </div>
+          <div class="sr-group">
+            <h3 class="sr-group-title">Presentations</h3>
+            <div class="row-list" data-cat-list="presentations"></div>
+            <div style="margin-top:.85rem;"><button type="button" class="btn btn-ghost btn-sm" data-add-block="presentations">+ Add block</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ── Section toggles (other) ─────────────────────────────────── -->
     <section class="card">
       <div class="card-head">
@@ -907,6 +969,8 @@
     const CONTENT_PATH = "src/data/content.json";
     const OFFICER_DIR  = "assets/images/officers";
     const ARCHIVE_DIR  = "assets/meetings";
+    const STUDY_DIR    = "assets/study";
+    const STUDY_CATS   = ["objective", "roleplay", "presentations"];
     const REPO_OWNER   = "hwfl850";
     const REPO_NAME    = "phsfbla";
     const REPO_BRANCH  = "main";
@@ -932,6 +996,7 @@
         events:   [],
         officers: [],
         meetingArchive: [],
+        studyResources: { objective: [], roleplay: [], presentations: [] },
       },
       theme: {
         showEvents:        true,
@@ -1078,6 +1143,7 @@
           if (!Array.isArray(state.content.events))         state.content.events         = [];
           if (!Array.isArray(state.content.officers))       state.content.officers       = [];
           if (!Array.isArray(state.content.meetingArchive)) state.content.meetingArchive = [];
+          normalizeStudyResources();
           state.theme = { ...DEFAULTS.theme, ...(json.theme || {}) };
           markClean("Loaded current content from GitHub.");
         } else if (res.status === 404) {
@@ -1207,6 +1273,7 @@
       renderOfficers();
       renderEvents();
       renderArchive();
+      renderStudyResources();
     }
 
     function renderArchive() {
@@ -1716,11 +1783,228 @@
       }
     }
 
+    // ── Study Resources editor ───────────────────────────────────────
+    function normalizeStudyResources() {
+      const sr = state.content.studyResources || {};
+      state.content.studyResources = {};
+      STUDY_CATS.forEach(cat => {
+        const arr = Array.isArray(sr[cat]) ? sr[cat] : [];
+        state.content.studyResources[cat] = arr.map(b => ({
+          header:       typeof b.header === 'string' ? b.header : '',
+          descriptions: Array.isArray(b.descriptions) ? b.descriptions.map(String) : [],
+          links:        Array.isArray(b.links)
+            ? b.links.map(l => ({ label: l.label || '', url: l.url || '', file: !!l.file }))
+            : [],
+        }));
+      });
+    }
+
+    function renderStudyResources() {
+      normalizeStudyResources();
+      STUDY_CATS.forEach(renderStudyCat);
+    }
+
+    function renderStudyCat(cat) {
+      const list = document.querySelector(`[data-cat-list="${cat}"]`);
+      if (!list) return;
+      const blocks = state.content.studyResources[cat];
+      list.innerHTML = "";
+      if (!blocks.length) {
+        list.innerHTML = `<div class="empty">No blocks yet. Click <strong>+ Add block</strong>.</div>`;
+        return;
+      }
+      const last = blocks.length - 1;
+      blocks.forEach((block, bidx) => {
+        const descHtml = block.descriptions.map((d, di) => `
+          <div class="sr-desc-row">
+            <textarea data-desc data-didx="${di}" rows="2" placeholder="Description paragraph">${escAttr(d)}</textarea>
+            <button type="button" class="btn btn-danger btn-sm" data-desc-remove data-didx="${di}" title="Remove description">✕</button>
+          </div>`).join('');
+        const linkHtml = block.links.map((l, li) => `
+          <div class="sr-link-row">
+            <input type="text" data-link data-lidx="${li}" data-lk="label" placeholder="Link label" value="${escAttr(l.label || '')}" />
+            <input type="text" data-link data-lidx="${li}" data-lk="url" placeholder="https://… or upload →" value="${escAttr(l.url || '')}" />
+            <label class="file-btn">Upload<input type="file" data-linkfile data-lidx="${li}" /></label>
+            <span class="row-photo-status" data-lstatus data-lidx="${li}">${l.url ? (l.file ? 'File' : 'Linked') : ''}</span>
+            <button type="button" class="btn btn-danger btn-sm" data-link-remove data-lidx="${li}" title="Remove link">✕</button>
+          </div>`).join('');
+        const row = document.createElement('div');
+        row.className = 'row-item sr-block';
+        row.dataset.bidx = String(bidx);
+        row.innerHTML = `
+          <div class="sr-block-main">
+            <input type="text" class="sr-header-input" data-k="header" placeholder="Header (blue heading)" value="${escAttr(block.header || '')}" />
+            <div class="sr-sub">Descriptions</div>
+            <div class="sr-descs">${descHtml}</div>
+            <button type="button" class="btn btn-ghost btn-sm" data-add-desc>+ Add description</button>
+            <div class="sr-sub">Links &amp; Files</div>
+            <div class="sr-links">${linkHtml}</div>
+            <button type="button" class="btn btn-ghost btn-sm" data-add-link>+ Add link / file</button>
+          </div>
+          <div class="row-actions">
+            <div class="reorder">
+              <button type="button" data-move="up"   title="Move up"   ${bidx === 0    ? 'disabled' : ''}>↑</button>
+              <button type="button" data-move="down" title="Move down" ${bidx === last ? 'disabled' : ''}>↓</button>
+            </div>
+            <button type="button" class="btn btn-danger" data-block-remove>Remove block</button>
+          </div>
+        `;
+        list.appendChild(row);
+      });
+    }
+
+    function catOf(el) {
+      const list = el.closest('[data-cat-list]');
+      return list ? list.dataset.catList : null;
+    }
+
+    function wireStudyResources() {
+      const root = $("study-resources");
+      if (!root) return;
+
+      root.addEventListener('input', (e) => {
+        const cat = catOf(e.target);
+        if (!cat) return;
+        const blockEl = e.target.closest('.sr-block');
+        if (!blockEl) return;
+        const block = state.content.studyResources[cat][Number(blockEl.dataset.bidx)];
+        if (!block) return;
+        if (e.target.matches('[data-k="header"]')) {
+          block.header = e.target.value;
+          markDirty();
+        } else if (e.target.matches('[data-desc]')) {
+          block.descriptions[Number(e.target.dataset.didx)] = e.target.value;
+          markDirty();
+        } else if (e.target.matches('[data-link]')) {
+          const li = Number(e.target.dataset.lidx);
+          const link = block.links[li];
+          if (!link) return;
+          link[e.target.dataset.lk] = e.target.value;
+          if (e.target.dataset.lk === 'url') {
+            link.file = false;
+            const st = blockEl.querySelector(`[data-lstatus][data-lidx="${li}"]`);
+            if (st) st.textContent = e.target.value.trim() ? 'Linked' : '';
+          }
+          markDirty();
+        }
+      });
+
+      root.addEventListener('click', (e) => {
+        const addBlockBtn = e.target.closest('[data-add-block]');
+        if (addBlockBtn) {
+          const c = addBlockBtn.dataset.addBlock;
+          state.content.studyResources[c].push({ header: '', descriptions: [''], links: [] });
+          markDirty();
+          renderStudyCat(c);
+          return;
+        }
+        const cat = catOf(e.target);
+        if (!cat) return;
+        const blockEl = e.target.closest('.sr-block');
+        if (!blockEl) return;
+        const bidx = Number(blockEl.dataset.bidx);
+        const block = state.content.studyResources[cat][bidx];
+        if (!block) return;
+
+        if (e.target.closest('[data-block-remove]')) {
+          if (confirm('Remove this block?')) {
+            state.content.studyResources[cat].splice(bidx, 1);
+            markDirty();
+            renderStudyCat(cat);
+          }
+        } else if (e.target.closest('[data-move]')) {
+          const dir = e.target.closest('[data-move]').dataset.move === 'up' ? -1 : 1;
+          if (swap(state.content.studyResources[cat], bidx, bidx + dir)) {
+            markDirty();
+            renderStudyCat(cat);
+          }
+        } else if (e.target.closest('[data-add-desc]')) {
+          block.descriptions.push('');
+          markDirty();
+          renderStudyCat(cat);
+        } else if (e.target.closest('[data-desc-remove]')) {
+          block.descriptions.splice(Number(e.target.closest('[data-desc-remove]').dataset.didx), 1);
+          markDirty();
+          renderStudyCat(cat);
+        } else if (e.target.closest('[data-add-link]')) {
+          block.links.push({ label: '', url: '', file: false });
+          markDirty();
+          renderStudyCat(cat);
+        } else if (e.target.closest('[data-link-remove]')) {
+          block.links.splice(Number(e.target.closest('[data-link-remove]').dataset.lidx), 1);
+          markDirty();
+          renderStudyCat(cat);
+        }
+      });
+
+      root.addEventListener('change', (e) => {
+        if (!e.target.matches('[data-linkfile]')) return;
+        const cat = catOf(e.target);
+        const blockEl = e.target.closest('.sr-block');
+        if (!cat || !blockEl) return;
+        const bidx = Number(blockEl.dataset.bidx);
+        const li = Number(e.target.dataset.lidx);
+        const file = e.target.files[0];
+        e.target.value = '';
+        if (file) uploadStudyFile(cat, bidx, li, file, blockEl);
+      });
+    }
+
+    async function uploadStudyFile(cat, bidx, li, file, blockEl) {
+      const block = state.content.studyResources[cat]?.[bidx];
+      const link = block?.links?.[li];
+      if (!link) return;
+      const statusEl = blockEl.querySelector(`[data-lstatus][data-lidx="${li}"]`);
+      const setRowStatus = (txt) => { if (statusEl) statusEl.textContent = txt; };
+
+      try {
+        setRowStatus('Uploading…');
+        const name = file.name || 'file';
+        const dotIdx = name.lastIndexOf('.');
+        const baseName = dotIdx > 0 ? name.slice(0, dotIdx) : name;
+        let ext = dotIdx > 0 ? name.slice(dotIdx + 1).toLowerCase().replace(/[^a-z0-9]/g, '') : '';
+        if (!ext) ext = 'pdf';
+        const baseSlug = slug(link.label || baseName || 'file');
+        const filename = `${cat}-${baseSlug}-${Date.now()}.${ext}`;
+        const path = `${STUDY_DIR}/${filename}`;
+
+        const dataUrl = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () => reject(new Error('Could not read file.'));
+          reader.readAsDataURL(file);
+        });
+        const base64 = String(dataUrl).split(',')[1];
+
+        await workerPush(path, base64, `chore(admin): upload study file (${baseSlug})`);
+
+        link.url = path;
+        link.file = true;
+        if (!link.label) link.label = baseName;
+        markDirty();
+        renderStudyCat(cat);
+        setStatus(`File uploaded to ${path}. Don't forget to Save.`, 'dirty');
+      } catch (err) {
+        console.error(err);
+        setRowStatus('');
+        showAlert('error', `Upload failed: ${err.message}`);
+      }
+    }
+
     async function saveAll() {
       clearAlert();
       state.content.officers       = state.content.officers.filter(o => (o.role || o.name));
       state.content.events         = state.content.events.filter(e => (e.date || e.title || e.desc));
       state.content.meetingArchive = state.content.meetingArchive.filter(a => (a.date || a.title || a.url));
+      STUDY_CATS.forEach(cat => {
+        state.content.studyResources[cat] = (state.content.studyResources[cat] || [])
+          .map(b => ({
+            header:       b.header || '',
+            descriptions: (b.descriptions || []).filter(d => d && d.trim()),
+            links:        (b.links || []).filter(l => l && (l.url || l.label)),
+          }))
+          .filter(b => b.header || b.descriptions.length || b.links.length);
+      });
 
       const payload = JSON.stringify({ content: state.content, theme: state.theme }, null, 2) + '\n';
       const base64  = b64encodeText(payload);
@@ -1731,7 +2015,7 @@
         await workerPush(CONTENT_PATH, base64, message);
         markClean('Saved. GitHub Pages will redeploy shortly.');
         showAlert('success', `Pushed <code>${CONTENT_PATH}</code> to <strong>${REPO_BRANCH}</strong>. The live site should reflect changes in about a minute.`);
-        renderOfficers(); renderEvents(); renderArchive();
+        renderOfficers(); renderEvents(); renderArchive(); renderStudyResources();
       } catch (err) {
         console.error(err);
         setStatus('Save failed.', 'err');
@@ -1750,6 +2034,7 @@
       wireOfficersList();
       wireEventsList();
       wireArchiveList();
+      wireStudyResources();
       saveBtn.addEventListener('click', saveAll);
 
       const gateInput  = $("gate-input");
