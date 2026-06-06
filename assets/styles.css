@@ -870,6 +870,42 @@ main.fading { opacity: 0; }
   color: var(--gold);
 }
 
+.study-events-cta {
+  padding: 1.25rem 1.4rem;
+  margin-bottom: 1.75rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--blue);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.study-events-cta-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--navy);
+  letter-spacing: -0.01em;
+  margin-bottom: .4rem;
+}
+.study-events-cta-desc {
+  font-size: .88rem;
+  color: var(--text);
+  line-height: 1.65;
+  margin-bottom: .85rem;
+}
+.study-events-cta-link {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  font-size: .88rem;
+  font-weight: 700;
+  color: var(--blue);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+.study-events-cta-link:hover { color: var(--navy); text-decoration: underline; }
+.study-events-cta-link svg { flex-shrink: 0; }
+
 .study-accordion {
   display: flex;
   flex-direction: column;
