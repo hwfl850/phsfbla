@@ -287,11 +287,14 @@
     }
     .row-item.officer-row { grid-template-columns: 72px 1fr auto; align-items: start; }
     .row-item.event-row   { grid-template-columns: 1fr auto; align-items: start; }
+    .row-item.archive-row { grid-template-columns: 1fr auto; align-items: start; }
     @media (max-width: 560px) {
       .row-item.officer-row { grid-template-columns: 64px 1fr; }
       .row-item.officer-row .row-actions { grid-column: 1 / -1; justify-self: stretch; }
       .row-item.event-row   { grid-template-columns: 1fr; }
       .row-item.event-row   .row-actions { grid-column: 1 / -1; justify-self: stretch; }
+      .row-item.archive-row { grid-template-columns: 1fr; }
+      .row-item.archive-row .row-actions { grid-column: 1 / -1; justify-self: stretch; }
     }
 
     .officer-thumb {
@@ -310,9 +313,14 @@
     .row-fields { display: grid; gap: .6rem; }
     .row-fields-2 { grid-template-columns: 1fr 1fr; }
     .row-fields-3 { grid-template-columns: 110px 1fr 1fr; }
+    .row-fields-archive { grid-template-columns: 150px 1fr 1.4fr; }
+    @media (max-width: 720px) {
+      .row-fields-archive { grid-template-columns: 1fr; }
+    }
     @media (max-width: 560px) {
       .row-fields-2, .row-fields-3 { grid-template-columns: 1fr; }
     }
+    .row-fields input[type="date"] { font-family: var(--font-body); }
     .row-fields input, .row-fields textarea {
       padding: .55rem .8rem;
       font-size: .9rem;
@@ -850,6 +858,28 @@
       </div>
     </section>
 
+    <!-- ── Meeting Archive ──────────────────────────────────────────── -->
+    <section class="card">
+      <div class="card-head">
+        <h2>Meeting Archive</h2>
+        <label class="switch" title="Show archive on meetings page">
+          <input type="checkbox" id="t-showMeetingArchive" />
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="card-body">
+        <p class="field-help" style="margin-bottom:1rem;">
+          Add a meeting record with a date and a link (slides, notes, agenda) — or upload a file and we'll
+          generate the link for you. Both the date and link stay editable. The archive renders as a
+          searchable table on the Meetings page.
+        </p>
+        <div id="archive-list" class="row-list"></div>
+        <div style="margin-top:1rem; display:flex; justify-content:flex-start;">
+          <button type="button" class="btn btn-ghost btn-sm" id="add-archive">+ Add archive entry</button>
+        </div>
+      </div>
+    </section>
+
     <!-- ── Section toggles (other) ─────────────────────────────────── -->
     <section class="card">
       <div class="card-head">
@@ -876,6 +906,7 @@
     const WORKER_URL  = "https://autumn-limit-4a38.kellerleonard79.workers.dev/";
     const CONTENT_PATH = "src/data/content.json";
     const OFFICER_DIR  = "assets/images/officers";
+    const ARCHIVE_DIR  = "assets/meetings";
     const REPO_OWNER   = "hwfl850";
     const REPO_NAME    = "phsfbla";
     const REPO_BRANCH  = "main";
@@ -900,14 +931,16 @@
         },
         events:   [],
         officers: [],
+        meetingArchive: [],
       },
       theme: {
-        showEvents:       true,
-        showOfficers:     true,
-        showCta:          true,
-        showAnnouncement: true,
-        showCalendar:     false,
-        showGoogleForm:   false,
+        showEvents:        true,
+        showOfficers:      true,
+        showCta:           true,
+        showAnnouncement:  true,
+        showCalendar:      false,
+        showGoogleForm:    false,
+        showMeetingArchive: true,
       },
     };
 
@@ -1042,8 +1075,9 @@
           state.content = { ...DEFAULTS.content, ...(json.content || {}) };
           state.content.announcement = { ...DEFAULTS.content.announcement, ...(json.content?.announcement || {}) };
           state.content.meetings     = { ...DEFAULTS.content.meetings,     ...(json.content?.meetings     || {}) };
-          if (!Array.isArray(state.content.events))   state.content.events   = [];
-          if (!Array.isArray(state.content.officers)) state.content.officers = [];
+          if (!Array.isArray(state.content.events))         state.content.events         = [];
+          if (!Array.isArray(state.content.officers))       state.content.officers       = [];
+          if (!Array.isArray(state.content.meetingArchive)) state.content.meetingArchive = [];
           state.theme = { ...DEFAULTS.theme, ...(json.theme || {}) };
           markClean("Loaded current content from GitHub.");
         } else if (res.status === 404) {
@@ -1080,12 +1114,13 @@
       $("cal-url").value = state.content.calendarEmbed || "";
     }
     function renderToggles() {
-      $("t-showAnnouncement").checked = !!state.theme.showAnnouncement;
-      $("t-showOfficers").checked     = !!state.theme.showOfficers;
-      $("t-showEvents").checked       = !!state.theme.showEvents;
-      $("t-showCta").checked          = !!state.theme.showCta;
-      $("t-showCalendar").checked     = !!state.theme.showCalendar;
-      $("t-showGoogleForm").checked   = !!state.theme.showGoogleForm;
+      $("t-showAnnouncement").checked   = !!state.theme.showAnnouncement;
+      $("t-showOfficers").checked       = !!state.theme.showOfficers;
+      $("t-showEvents").checked         = !!state.theme.showEvents;
+      $("t-showCta").checked            = !!state.theme.showCta;
+      $("t-showCalendar").checked       = !!state.theme.showCalendar;
+      $("t-showGoogleForm").checked     = !!state.theme.showGoogleForm;
+      $("t-showMeetingArchive").checked = !!state.theme.showMeetingArchive;
     }
 
     function initialsOf(name) {
@@ -1171,6 +1206,42 @@
       renderToggles();
       renderOfficers();
       renderEvents();
+      renderArchive();
+    }
+
+    function renderArchive() {
+      const list = $("archive-list");
+      list.innerHTML = "";
+      if (!state.content.meetingArchive.length) {
+        list.innerHTML = `<div class="empty">No archive entries yet. Click <strong>+ Add archive entry</strong>.</div>`;
+        return;
+      }
+      const last = state.content.meetingArchive.length - 1;
+      state.content.meetingArchive.forEach((entry, idx) => {
+        const row = document.createElement('div');
+        row.className = 'row-item archive-row';
+        row.dataset.idx = String(idx);
+        row.innerHTML = `
+          <div class="row-fields row-fields-archive">
+            <input type="date" data-k="date"  value="${escAttr(entry.date || '')}" />
+            <input type="text" data-k="title" placeholder="Title (e.g. Officer Meeting Notes)" value="${escAttr(entry.title || '')}" />
+            <input type="text" data-k="url"   placeholder="https://… or upload a file →"        value="${escAttr(entry.url || '')}" />
+          </div>
+          <div class="row-actions">
+            <div class="reorder">
+              <button type="button" data-move="up"   title="Move up"   ${idx === 0    ? 'disabled' : ''}>↑</button>
+              <button type="button" data-move="down" title="Move down" ${idx === last ? 'disabled' : ''}>↓</button>
+            </div>
+            <label class="file-btn">
+              Upload file
+              <input type="file" data-file />
+            </label>
+            <div class="row-photo-status" data-status>${entry.url ? 'Linked' : ''}</div>
+            <button type="button" class="btn btn-danger" data-remove>Remove</button>
+          </div>
+        `;
+        list.appendChild(row);
+      });
     }
 
     function escAttr(s) {
@@ -1225,6 +1296,7 @@
         't-showCta':'showCta',
         't-showCalendar':'showCalendar',
         't-showGoogleForm':'showGoogleForm',
+        't-showMeetingArchive':'showMeetingArchive',
       };
       Object.entries(map).forEach(([id, key]) => {
         $(id).addEventListener('change', (e) => {
@@ -1549,10 +1621,106 @@
       });
     }
 
+    function wireArchiveList() {
+      const list = $("archive-list");
+      list.addEventListener('input', (e) => {
+        const row = e.target.closest('.row-item');
+        if (!row) return;
+        const idx = Number(row.dataset.idx);
+        const key = e.target.dataset.k;
+        if (key && state.content.meetingArchive[idx]) {
+          state.content.meetingArchive[idx][key] = e.target.value;
+          markDirty();
+          if (key === 'url') {
+            const statusEl = row.querySelector('[data-status]');
+            if (statusEl) statusEl.textContent = e.target.value.trim() ? 'Linked' : '';
+          }
+        }
+      });
+      list.addEventListener('click', (e) => {
+        const row = e.target.closest('.row-item');
+        if (!row) return;
+        const idx = Number(row.dataset.idx);
+        if (e.target.matches('[data-remove]')) {
+          const entry = state.content.meetingArchive[idx];
+          if (confirm(`Remove "${entry.title || entry.date || 'this archive entry'}"?`)) {
+            state.content.meetingArchive.splice(idx, 1);
+            markDirty();
+            renderArchive();
+          }
+        } else if (e.target.matches('[data-move]')) {
+          const dir = e.target.dataset.move === 'up' ? -1 : 1;
+          if (swap(state.content.meetingArchive, idx, idx + dir)) {
+            markDirty();
+            renderArchive();
+          }
+        }
+      });
+      list.addEventListener('change', (e) => {
+        if (!e.target.matches('[data-file]')) return;
+        const row = e.target.closest('.row-item');
+        const idx = Number(row.dataset.idx);
+        const input = e.target;
+        const file = input.files[0];
+        input.value = '';
+        if (!file) return;
+        uploadArchiveFile(idx, file, row);
+      });
+
+      $("add-archive").addEventListener('click', () => {
+        const today = new Date().toISOString().slice(0, 10);
+        state.content.meetingArchive.push({ date: today, title: "", url: "" });
+        markDirty();
+        renderArchive();
+        const rows = $("archive-list").querySelectorAll('.row-item');
+        rows[rows.length - 1]?.querySelector('input[data-k="title"]')?.focus();
+      });
+    }
+
+    async function uploadArchiveFile(idx, file, row) {
+      const entry = state.content.meetingArchive[idx];
+      if (!entry) return;
+      const statusEl = row.querySelector('[data-status]');
+      const setRowStatus = (txt) => { if (statusEl) statusEl.textContent = txt; };
+
+      try {
+        setRowStatus('Uploading…');
+        const name = file.name || 'meeting';
+        const dotIdx = name.lastIndexOf('.');
+        const baseName = dotIdx > 0 ? name.slice(0, dotIdx) : name;
+        let ext = dotIdx > 0 ? name.slice(dotIdx + 1).toLowerCase().replace(/[^a-z0-9]/g, '') : '';
+        if (!ext) ext = 'pdf';
+        const datePrefix = (entry.date || new Date().toISOString().slice(0, 10)).replace(/-/g, '');
+        const baseSlug = slug(entry.title || baseName || 'meeting');
+        const filename = `${datePrefix}-${baseSlug}-${Date.now()}.${ext}`;
+        const path = `${ARCHIVE_DIR}/${filename}`;
+
+        const dataUrl = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () => reject(new Error('Could not read file.'));
+          reader.readAsDataURL(file);
+        });
+        const base64 = String(dataUrl).split(',')[1];
+
+        await workerPush(path, base64, `chore(admin): upload meeting archive file (${baseSlug})`);
+
+        entry.url = path;
+        markDirty();
+        renderArchive();
+        setStatus(`File uploaded to ${path}. Don't forget to Save.`, 'dirty');
+      } catch (err) {
+        console.error(err);
+        setRowStatus('');
+        showAlert('error', `Upload failed: ${err.message}`);
+      }
+    }
+
     async function saveAll() {
       clearAlert();
-      state.content.officers = state.content.officers.filter(o => (o.role || o.name));
-      state.content.events   = state.content.events.filter(e => (e.date || e.title || e.desc));
+      state.content.officers       = state.content.officers.filter(o => (o.role || o.name));
+      state.content.events         = state.content.events.filter(e => (e.date || e.title || e.desc));
+      state.content.meetingArchive = state.content.meetingArchive.filter(a => (a.date || a.title || a.url));
 
       const payload = JSON.stringify({ content: state.content, theme: state.theme }, null, 2) + '\n';
       const base64  = b64encodeText(payload);
@@ -1563,7 +1731,7 @@
         await workerPush(CONTENT_PATH, base64, message);
         markClean('Saved. GitHub Pages will redeploy shortly.');
         showAlert('success', `Pushed <code>${CONTENT_PATH}</code> to <strong>${REPO_BRANCH}</strong>. The live site should reflect changes in about a minute.`);
-        renderOfficers(); renderEvents();
+        renderOfficers(); renderEvents(); renderArchive();
       } catch (err) {
         console.error(err);
         setStatus('Save failed.', 'err');
@@ -1581,6 +1749,7 @@
       wireToggles();
       wireOfficersList();
       wireEventsList();
+      wireArchiveList();
       saveBtn.addEventListener('click', saveAll);
 
       const gateInput  = $("gate-input");

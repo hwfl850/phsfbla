@@ -15,6 +15,7 @@
     "meetings": {
       "intro": "Check in for meetings here!"
     },
+    "meetingArchive": [],
     "events": [
       {
         "date": "AUG 7",
