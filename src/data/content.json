@@ -266,7 +266,7 @@
     "showCalendar": false,
     "showGoogleForm": true,
     "showMeetingArchive": true,
-    "showMeetingsIntro": true,
+    "showMeetingsIntro": false,
     "showStudyCta": true
   }
 }
