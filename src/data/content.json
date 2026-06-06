@@ -170,7 +170,51 @@
         "title": "Officer POW Meeting",
         "url": "assets/meetings/20260606-fbla-program-of-work-2026-2027-1780778600062.pdf"
       }
-    ]
+    ],
+    "studyResources": {
+      "objective": [
+        {
+          "header": "Mega FBLA Google Drive",
+          "descriptions": [],
+          "links": [
+            {
+              "label": "FBLA Mega Folder",
+              "url": "https://drive.google.com/drive/folders/1DRlxKEErAbA2mK9TpVu7lRHy7tj3mntH",
+              "file": false
+            }
+          ]
+        },
+        {
+          "header": "Websites With Practice Tests",
+          "descriptions": [],
+          "links": [
+            {
+              "label": "bizybear",
+              "url": "https://bizybear.app/",
+              "file": false
+            },
+            {
+              "label": "fatskills",
+              "url": "https://www.fatskills.com/fbla",
+              "file": false
+            }
+          ]
+        },
+        {
+          "header": "Other Sample Materials",
+          "descriptions": [],
+          "links": [
+            {
+              "label": "View Full Email",
+              "url": "https://www.pafbla.org/downloads/15-16_Downloadable_Files/15-16_RLC_Important_Emails/RLC%20Update%208%20--%20Study%20and%20Preparation%20Materials.pdf?utm_source=chatgpt.com",
+              "file": false
+            }
+          ]
+        }
+      ],
+      "roleplay": [],
+      "presentations": []
+    }
   },
   "theme": {
     "showEvents": true,
