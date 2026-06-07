@@ -1,0 +1,37 @@
+# ============================================================
+# Jekyll configuration for phsfbla.com (GitHub Pages)
+# Theme is applied only to Jekyll-generated pages;
+# custom HTML pages (no front-matter) are passed through as-is.
+# ============================================================
+
+title: "Pensacola High FBLA"
+description: >-
+  Pensacola High School's Future Business Leaders of America chapter.
+  Meetings, competitive events, and study resources.
+url: "https://phsfbla.com"
+baseurl: ""
+
+author:
+  name: "Pensacola High FBLA"
+
+# Theme for any Jekyll-generated pages (404, etc.)
+theme: minima
+
+# Plugins available on GitHub Pages
+plugins:
+  - jekyll-seo-tag
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+
+# Keep private pages out of Jekyll processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - "*.gem"
+  - "*.gemspec"
+  - .bundle
+  - .DS_Store
+  - node_modules
+  - vendor
