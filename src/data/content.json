@@ -259,7 +259,22 @@
           ]
         }
       ],
-      "roleplay": [],
+      "roleplay": [
+        {
+          "header": "Testing",
+          "descriptions": [
+            "For testing, see objective test information and files."
+          ],
+          "links": []
+        },
+        {
+          "header": "Presentation",
+          "descriptions": [
+            "For practice prompts, see the objective test mega folder."
+          ],
+          "links": []
+        }
+      ],
       "presentations": []
     }
   },
